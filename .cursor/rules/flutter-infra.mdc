@@ -1,0 +1,143 @@
+---
+description: Flutter infra (bootstrap, stack, project layout, theme)
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+# Application Infra
+
+## Project layout
+
+```text
+lib/
+├── main.dart                 # ProviderScope + runtime overrides
+├── app/
+│   ├── app.dart              # MaterialApp.router (ConsumerWidget)
+│   └── router.dart           # @riverpod GoRouter — aggregates feature routes
+├── core/
+│   ├── error/                # AppError
+│   ├── result/               # Result<T>
+│   ├── providers/            # runtime @riverpod (SharedPreferences, Talker)
+│   ├── theme/                # AppTheme, ThemeExtensions
+│   └── widgets/              # shared UI components (PrimaryButton, etc.)
+└── features/
+    ├── home/                 # TIC-1 — new game / resume
+    ├── game/
+    └── settings/             # TIC-8 — AI difficulty
+
+```
+
+Features follow `feature-architecture.mdc`. `core/` holds shared abstractions with no feature imports. `app/` wires router and theme only.
+
+**Single `ProviderScope`** — declared in `main.dart` only. `App` is a `ConsumerWidget` with `MaterialApp.router`, no nested scope.
+
+## Target stack
+
+| Package | Role |
+| --- | --- |
+| `flutter_riverpod` + `riverpod_annotation` | DI + state |
+| `riverpod_generator` (dev) | `@riverpod` codegen |
+| `go_router` | Navigation |
+| `freezed` + `freezed_annotation` | Immutable entities / UI states |
+| `json_serializable` + `json_annotation` | DTO serialization (data layer) |
+| `build_runner` (dev) | Code generation |
+| `shared_preferences` | Game persistence (TIC-7) |
+| `talker` | Logging (never `print()`) |
+| `mockito` (dev) | Test mocks — `when` / `verify` on domain abstractions |
+
+## Bootstrap (`main.dart`)
+
+- `WidgetsFlutterBinding.ensureInitialized()` before any async init
+- Async initialization in `main()` / `_initApp()` **before** `runApp`
+- Runtime providers: override in `ProviderScope(overrides: [...])` at bootstrap, never instantiated inside features
+
+```dart
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  runApp(ProviderScope(
+    overrides: [
+      sharedPreferencesProvider.overrideWithValue(prefs),
+    ],
+    child: const App(),
+  ));
+}
+```
+
+## Router (`app/router.dart`)
+
+`GoRouter` exposed as a codegen provider, aggregating routes from each feature:
+
+```dart
+@riverpod
+GoRouter router(Ref ref) {
+  return GoRouter(
+    initialLocation: HomeRoutes.path,
+    routes: [
+      ...homeRoutes,
+      ...gameRoutes,
+      ...settingsRoutes,
+    ],
+  );
+}
+
+```
+
+`App` consumes it:
+
+```dart
+class App extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return MaterialApp.router(
+      routerConfig: ref.watch(routerProvider),
+      theme: buildAppTheme(),
+    );
+  }
+}
+```
+
+Features expose route lists from `navigation/<feature>_routes.dart`. No feature imports another feature's internal paths.
+
+## Persistence
+
+| Service | Where initialized | Access from features |
+| --- | --- | --- |
+| SharedPreferences | retrieved in `main()`, injected via `@riverpod` override in `core/providers/` | Repository abstraction in `domain/repositories/` only |
+
+## Logging (Talker)
+
+`Talker` instance provided via `@riverpod` in `core/providers/talker_provider.dart`, injected into repositories via `di/` — never `ref.read` inside a repository.
+
+Use for non-UI diagnostic logging only — never `print()`. Repositories log persistence failures; Notifiers do not log business outcomes.
+
+```dart
+@riverpod
+Talker talker(Ref ref) => Talker();
+
+// di/game_repository_provider.dart — inject via constructor
+@riverpod
+GameRepository gameRepository(Ref ref) {
+  return LocalGameRepository(
+    dataSource: ref.watch(gameLocalDataSourceProvider),
+    talker: ref.watch(talkerProvider),
+  );
+}
+
+```
+
+## Theme (`core/theme/`)
+
+See `design-system.mdc` for ThemeExtension usage. Never hardcode colors or text styles in widgets.
+
+## Generated files — never edit by hand
+
+- `*.g.dart`, `*.freezed.dart` — regenerate via `dart run build_runner build --delete-conflicting-outputs`
+
+## Secrets and config
+
+Local game, no external API. If config is needed: `AppConfig` or `--dart-define`, never hardcoded. Never read or expose secrets from config files.
+
+## flutter_hooks
+
+Not used. Prefer Riverpod for app state and `StatefulWidget` for local UI state when needed.

@@ -1,0 +1,188 @@
+---
+description: Navigation conventions using GoRouter.
+alwaysApply: true
+---
+
+# Navigation
+
+The project uses GoRouter for navigation.
+
+---
+
+## Route Organization
+
+Each feature owns its own routes and navigation abstraction.
+
+```text
+lib/features/<feature>/navigation/
+├── <feature>_routes.dart
+├── <feature>_navigation.dart
+└── <feature>_navigation_impl.dart
+
+```
+
+Each feature that navigates exposes its own abstraction. Examples:
+
+| Feature | Abstraction | Typical methods |
+| --- | --- | --- |
+| `home` | `HomeNavigation` | `openNewGame()`, `openResumeGame()` |
+| `game` | `GameNavigation` | `openSettings()`, `goHome()` |
+| `settings` | `SettingsNavigation` | `close()` |
+
+---
+
+## Responsibilities
+
+Navigation is responsible only for screen transitions.
+
+It must never contain:
+
+- business logic
+- validation
+- persistence
+
+---
+
+## Navigation Abstraction
+
+Every feature exposing navigation provides an abstract interface class.
+
+Example:
+`GameNavigation`
+
+The implementation lives in the feature's navigation folder.
+
+Example:
+`abstract interface class GameNavigation {}`
+
+`final class GameNavigationImpl implements GameNavigation {}`
+
+Same pattern for `HomeNavigation` and `SettingsNavigation`.
+
+Views and Notifiers depend only on the abstraction.
+
+---
+
+## View
+
+Views never call GoRouter directly.
+
+Forbidden:
+
+```dart
+context.go('/game');
+context.push('/settings');
+```
+
+Views only invoke methods on the Notifier.
+
+Navigation methods should express user intent.
+
+Good:
+
+openSettings()
+
+close()
+
+restartGame()
+
+Avoid:
+
+goToScreen()
+
+navigate()
+
+---
+
+## Notifier
+
+The Notifier requests navigation through its navigation abstraction.
+
+Example:
+`navigation.openSettings();`
+
+The Notifier never imports:
+
+- BuildContext
+- GoRouter
+
+---
+
+## Providers
+
+Navigation implementations are injected via a codegen `@riverpod` function (generates a plain `Provider`, not a `NotifierProvider`). See `riverpod-providers.mdc`.
+
+```dart
+@riverpod
+GameNavigation gameNavigation(Ref ref) {
+  return GameNavigationImpl(ref.watch(routerProvider));
+}
+
+```
+
+`GameNavigationImpl` holds a `GoRouter` reference — the only place that calls `go()` / `push()`.
+
+---
+
+## Route Parameters
+
+Use typed parameters whenever possible.
+Avoid parsing raw strings inside Views.
+
+Typed return values must use explicit generics, never `dynamic`.
+
+Example:
+`Future<SettingsResult?> openSettings();`
+
+---
+
+## Navigation Timing
+
+Never trigger navigation during widget build.
+
+Allowed:
+
+- button callbacks
+- lifecycle methods
+- Notifier events
+
+Forbidden:
+
+```dart
+Widget build(...) {
+  context.go(...);
+}
+```
+
+---
+
+## Returning Results
+
+Use typed return values instead of relying on shared mutable state.
+
+Example:
+
+```dart
+final result = await navigation.openSettings();
+
+```
+
+---
+
+## Game end (TIC-6)
+
+No `/game/end` route. End-of-game UI is an overlay inside `GameView`, driven by `GameStatus`. Navigation (`goHome`) is triggered only by explicit user action via the Notifier — see `presentation.mdc`.
+
+---
+
+## Deep Linking
+
+Routes should remain independent.
+A feature must not depend on another feature's internal route structure.
+
+---
+
+## Testing
+
+Navigation must be mockable.
+Notifier tests should verify navigation calls without depending on GoRouter.

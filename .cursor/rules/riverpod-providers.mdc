@@ -1,0 +1,156 @@
+---
+description: Riverpod conventions per feature (codegen)
+globs: lib/features/**/di/*.dart, lib/features/**/presentation/notifiers/*.dart, lib/features/**/data/repositories/*.dart, lib/features/**/data/datasources/*.dart, lib/features/**/navigation/*.dart, lib/core/providers/*.dart, lib/app/*.dart
+alwaysApply: false
+---
+
+# Riverpod — codegen
+
+## Approach
+
+Riverpod 3.0 + `riverpod_generator`. `@riverpod` annotation on classes and functions.
+No manual `Provider<T>((ref) => ...)`, no `ChangeNotifierProvider`, no `StateNotifierProvider` (legacy API).
+
+**Domain stays pure** — Use Case classes live in `domain/usecases/` with no Riverpod. Their providers live in `di/`.
+
+## Ref
+
+Generic `Ref` only. No named typed ref (`GameNotifierRef`, etc.) — deprecated since 2.6.0, removed in 3.0.
+
+## Where providers live
+
+| Provider | Location |
+| --- | --- |
+| Use Case | `features/<feature>/di/<use_case>_provider.dart` |
+| Repository / DataSource | `features/<feature>/di/` or `data/` |
+| Notifier | `presentation/notifiers/<feature>_notifier.dart` |
+| Navigation | `features/<feature>/di/` or `navigation/` |
+| Runtime (SharedPreferences, Talker) | `core/providers/` |
+| GoRouter | `app/router.dart` |
+
+One `@riverpod` function per file. No central `providers.dart` barrel.
+
+## Use Cases (`di/`)
+
+```dart
+// di/play_move_use_case_provider.dart — pure use case, no repository
+@riverpod
+PlayMoveUseCase playMoveUseCase(Ref ref) => const PlayMoveUseCase();
+
+// di/save_game_use_case_provider.dart — depends on repository abstraction
+@riverpod
+SaveGameUseCase saveGameUseCase(Ref ref) {
+  return SaveGameUseCase(ref.watch(gameRepositoryProvider));
+}
+
+// di/start_game_use_case_provider.dart — cross-feature via domain abstraction
+@riverpod
+StartGameUseCase startGameUseCase(Ref ref) {
+  return StartGameUseCase(ref.watch(settingsRepositoryProvider));
+}
+
+```
+
+## Notifier
+
+One Notifier per file, in `presentation/notifiers/<feature>_notifier.dart`.
+
+```dart
+@riverpod
+class GameNotifier extends _$GameNotifier {
+  @override
+  GameState build() {
+    return const GameState.initial();
+  }
+
+  void playMove(int cellIndex) {
+    final result = ref.read(playMoveUseCaseProvider).execute(
+      game: state.game,
+      cellIndex: cellIndex,
+    );
+    state = switch (result) {
+      Success(:final value) => state.copyWith(game: value),
+      Failure(:final error) => state.copyWith(error: error),
+    };
+  }
+}
+```
+
+Rules:
+
+- `build()` handles initialization, never the constructor.
+- The Notifier calls Use Cases, never inline business logic.
+- Exposed state always immutable (`freezed` for states with multiple fields).
+
+## Repositories (`di/`)
+
+```dart
+@riverpod
+GameRepository gameRepository(Ref ref) {
+  return LocalGameRepository(
+    ref.watch(gameLocalDataSourceProvider),
+  );
+}
+
+```
+
+## Navigation
+
+Navigation impl receives `GoRouter` via provider injection:
+
+```dart
+@riverpod
+GameNavigation gameNavigation(Ref ref) {
+  return GameNavigationImpl(ref.watch(routerProvider));
+}
+```
+
+## Naming
+
+- File: `<name>_provider.dart` in `di/`, `<feature>_notifier.dart` in notifiers
+- Generated provider: `<name>Provider` (auto, do not rename manually)
+- Use Dart 3 interface classes for repositories and navigation.
+
+Prefer:
+
+`abstract interface class GameRepository`
+
+Avoid:
+
+`abstract class IGameRepository`
+
+## DI Rules
+
+- `ref.watch`: reactive dependencies (repositories, use cases, router, navigation)
+- `ref.read`: one-shot read inside Notifier callbacks/methods
+- No business logic in a provider body — wiring only
+
+## Forbidden
+
+```dart
+// ❌ @riverpod inside domain/usecases/
+// domain/usecases/play_move_use_case.dart must NOT import riverpod_annotation
+
+// ❌ core provider redeclared inside a feature
+@riverpod
+SharedPreferences sharedPreferences(Ref ref) { ... } // must live in core/
+
+// ❌ importing another feature's notifier or view
+import 'package:tictactoe/features/settings/presentation/notifiers/settings_notifier.dart';
+
+```
+
+## Runtime providers
+
+External dependencies (persistence, env) declared as `@riverpod` with `UnimplementedError` by default, override mandatory in `main()` or in `ProviderScope(overrides: [...])` for tests.
+
+```dart
+@riverpod
+SharedPreferences sharedPreferences(Ref ref) {
+  throw UnimplementedError('Override in main()');
+}
+```
+
+## Testing
+
+Every provider mockable via `overrideWith` / `overrideWithValue` in `ProviderContainer.test()` (Riverpod 3.0) or `ProviderScope(overrides: [...])` for widget tests.
