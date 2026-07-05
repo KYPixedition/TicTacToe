@@ -1,0 +1,97 @@
+---
+description: Design system — theme, colors, typography
+globs: lib/core/theme/**/*.dart, lib/**/presentation/**/*.dart
+alwaysApply: false
+---
+
+# Design System
+
+ThemeExtension-based system. No hardcoded `Color(0xFF...)` or `TextStyle(fontSize: 16)` in widgets.
+
+## Structure
+
+```text
+lib/core/theme/
+├── app_theme.dart              # ThemeData factory (light; dark optional)
+├── app_color_palette.dart      # AppColorPalette extends ThemeExtension
+├── app_typography.dart         # AppTypography extends ThemeExtension
+├── app_spacings.dart           # AppSpacings extends ThemeExtension
+├── app_border_radii.dart       # AppBorderRadii extends ThemeExtension
+├── app_shadows.dart            # AppShadows extends ThemeExtension
+└── app_theme_context.dart      # AppThemeContextX on BuildContext
+
+```
+
+Register all extensions in `AppTheme`. Fallback defaults must match the registered instances:
+
+```dart
+ThemeData buildAppTheme() => ThemeData(
+  colorScheme: ColorScheme.fromSeed(seedColor: AppColorPalette.light.primary),
+  extensions: const [
+    AppColorPalette.light,
+    AppTypography.light,
+    AppSpacings.standard,
+    AppBorderRadii.standard,
+    AppShadows.standard,
+  ],
+);
+```
+
+## Access in widgets — `AppThemeContextX`
+
+Always use the `BuildContext` extension. Never call `Theme.of(context).extension<T>()` directly in widgets.
+
+```dart
+extension AppThemeContextX on BuildContext {
+  AppColorPalette get colors =>
+      Theme.of(this).extension<AppColorPalette>() ?? AppColorPalette.light;
+
+  AppSpacings get spacings =>
+      Theme.of(this).extension<AppSpacings>() ?? AppSpacings.standard;
+
+  AppBorderRadii get radii =>
+      Theme.of(this).extension<AppBorderRadii>() ?? AppBorderRadii.standard;
+
+  AppTypography get typos =>
+      Theme.of(this).extension<AppTypography>() ?? AppTypography.light;
+
+  AppShadows get shadows =>
+      Theme.of(this).extension<AppShadows>() ?? AppShadows.standard;
+}
+
+```
+
+Usage:
+
+```dart
+Container(
+  padding: EdgeInsets.all(context.spacings.md),
+  decoration: BoxDecoration(
+    color: context.colors.boardCellBackground,
+    borderRadius: BorderRadius.circular(context.radii.cell),
+    boxShadow: [context.shadows.card],
+  ),
+  child: Text('X', style: context.typos.cellMark),
+)
+```
+
+Use Material `Theme.of(context).colorScheme` only for generic Material widgets (buttons, surfaces).
+
+## Semantic naming
+
+Prefer names tied to the app, not raw palette tokens:
+
+| Token | Usage |
+| --- | --- |
+| `boardCellBorder` | Grid lines |
+| `boardCellBackground` | Empty cell |
+| `playerX` / `playerO` | Marks on the board |
+| `gameStatusPlaying` / `gameStatusFinished` | Status text |
+
+Avoid `primaryBlue`, `grey500` in `AppColorPalette`.
+
+## Widget rules
+
+- Shared visual components live in `core/widgets/` (e.g. `PrimaryButton`) or feature `presentation/widgets/`.
+- Feature widgets use `context.colors`, `context.typos`, etc.; they never define one-off colors or sizes.
+- Prefer `const` constructors on stateless themed widgets.

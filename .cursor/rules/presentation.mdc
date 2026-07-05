@@ -1,0 +1,90 @@
+---
+description: Flutter presentation layer (views, widgets)
+globs: lib/**/presentation/**/*.dart
+alwaysApply: false
+---
+
+# Presentation Layer
+
+Views render UI and forward user actions to the Notifier. No business logic, no repository access, no GoRouter calls.
+
+## Widget type
+
+- **`ConsumerWidget`** (or `ConsumerStatefulWidget`) for views observing Riverpod.
+- **`StatelessWidget`** for extracted sub-widgets with no local state.
+- **`StatefulWidget`** only when local UI state is required (animation, scroll controller).
+- **No `flutter_hooks`** on this project — Riverpod covers app state; use `StatefulWidget` for rare local UI needs.
+
+## Extraction rules
+
+- Extract sub-widgets as named classes (`BoardGrid`, `CellTile`), never as `_buildXxx()` methods.
+- One public widget per file; file name = class name in snake_case.
+- Prefer `const` constructors and `const` widget instances wherever possible.
+- Maximum widget tree depth: **4 levels** — extract before nesting further.
+
+## View responsibilities
+
+```dart
+class GameView extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(gameNotifierProvider);
+    return BoardGrid(
+      onCellTap: (cell) => ref.read(gameNotifierProvider.notifier).playMove(cell),
+    );
+  }
+}
+
+```
+
+The View reads state via `ref.watch`, invokes Notifier commands via `ref.read(...).notifier`.
+
+## Async and lifecycle
+
+After any `await` before using `BuildContext`, check **`context.mounted`**:
+
+```dart
+await ref.read(gameNotifierProvider.notifier).playMove(cell);
+if (!context.mounted) return;
+ScaffoldMessenger.of(context).showSnackBar(...);
+```
+
+Use `mounted` inside `State` classes. Never trigger navigation from `build()`.
+
+## Theming
+
+No hardcoded colors or text styles. Use `AppThemeContextX` — `context.colors`, `context.typos`, etc. See `design-system.mdc`.
+
+## Game end screen (TIC-6)
+
+No dedicated route. The end state is derived from `GameStatus` (`won`, `draw`) — single source of truth.
+
+Show a `GameEndOverlay` widget inside `GameView` when `state.status != GameStatus.playing`:
+
+```dart
+if (state.status != GameStatus.playing)
+  GameEndOverlay(
+    status: state.status,
+    onPlayAgain: () => ref.read(gameNotifierProvider.notifier).playAgain(),
+    onGoHome: () => ref.read(gameNotifierProvider.notifier).goHome(),
+  ),
+
+```
+
+- **Rejouer** → Notifier calls `StartGameUseCase` (stays on `/game`)
+- **Retour accueil** → Notifier calls `HomeNavigation.goHome()` via navigation abstraction
+
+Do not navigate to `/game/end` on game over. Do not trigger navigation from `build()` when status changes.
+
+## Forbidden
+
+```dart
+// ❌ business rule in widget
+if (board.cells.every((c) => c != null)) { ... }
+
+// ❌ navigation in view
+context.go('/home');
+
+// ❌ build helper returning widget
+Widget _buildBoard() => GridView(...);
+```

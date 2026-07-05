@@ -1,0 +1,373 @@
+---
+description: Feature-first Clean Architecture conventions.
+alwaysApply: true
+---
+
+# Feature-first Architecture
+
+## Structure
+
+Each feature follows the same structure.
+
+```text
+lib/features/<feature>/
+├── data/
+│   ├── datasources/
+│   ├── models/
+│   ├── repositories/
+│   └── mappers/
+├── di/
+│   ├── play_move_use_case_provider.dart   # @riverpod wiring — one file per provider
+│   └── game_repository_provider.dart
+├── domain/
+│   ├── entities/
+│   ├── repositories/
+│   └── usecases/                          # plain Dart only — no Riverpod
+├── navigation/
+│   ├── <feature>_routes.dart
+│   ├── <feature>_navigation.dart
+│   └── <feature>_navigation_impl.dart
+└── presentation/
+    ├── notifiers/
+    │   └── <feature>_notifier.dart        # @riverpod Notifier
+    ├── widgets/
+    └── <feature>_view.dart
+
+```
+
+---
+
+## Dependency Rule
+
+Dependencies always point toward the domain.
+
+```text
+Presentation → DI → Domain ← Data
+```
+
+- Presentation depends on Domain (and consumes providers wired in `di/`).
+- `di/` wires Use Cases and Repositories — imports Domain + Data, never Presentation.
+- Data depends on Domain by implementing repository abstractions.
+- Domain depends on nothing.
+
+Never the opposite.
+
+---
+
+## Layer Responsibilities
+
+### Presentation
+
+Responsible for:
+
+- UI rendering
+- User interactions
+- UI state management
+
+Must never contain:
+
+- business logic
+- repository implementations
+- persistence logic
+
+---
+
+### Notifier
+
+The Notifier never accesses repositories directly.
+All business interactions go through Use Cases.
+
+Responsible for:
+
+- exposing immutable UI state
+- orchestrating Use Cases
+- requesting navigation
+
+Must never contain:
+
+- business rules
+- business validation
+- persistence logic
+
+---
+
+### Domain
+
+Responsible for:
+
+- business rules
+- entities
+- repository abstractions
+- use cases
+
+The domain must never import:
+
+- Flutter
+- Riverpod
+- GoRouter
+- platform SDKs
+
+---
+
+### Data
+
+Responsible for:
+
+- persistence
+- external APIs
+- local storage
+- DTOs
+- mapping
+
+Must never contain:
+
+- business logic
+- business validation
+
+---
+
+### DI (`di/`)
+
+Feature-level composition root. Wires domain Use Cases and Repository implementations via `@riverpod`.
+
+Responsible for:
+
+- declaring Use Case providers (`play_move_use_case_provider.dart`)
+- declaring Repository / DataSource providers
+- injecting dependencies into constructors
+
+Must never contain:
+
+- business logic
+- UI code
+- Riverpod inside `domain/` (providers live here, not in domain)
+
+See `riverpod-providers.mdc`.
+
+---
+
+## Use Cases
+
+A Use Case represents exactly one business action. Plain Dart class in `domain/usecases/`, no Flutter, no Riverpod.
+
+### Shape
+
+One public method: `execute`. Returns `Result<T>`. Dependencies injected via constructor (repository abstractions only).
+
+```dart
+final class PlayMoveUseCase {
+  const PlayMoveUseCase();
+
+  Result<Game> execute({required Game game, required int cellIndex}) {
+    if (!game.canPlayAt(cellIndex)) {
+      return const Result.failure(InvalidMoveError());
+    }
+    final updated = game.applyMove(cellIndex);
+    return Result.success(updated);
+  }
+}
+
+```
+
+No interface required for Use Cases unless multiple implementations exist. File name = class name in snake_case (`play_move_use_case.dart`).
+
+### Project map
+
+| Feature | Use Case | Role |
+| --- | --- | --- |
+| `home` | `HasSavedGameUseCase` | Check if a saved game exists (TIC-1) |
+| `game` | `StartGameUseCase` | Create a new game — reads difficulty via `SettingsRepository` (TIC-2) |
+| `game` | `ResumeGameUseCase` | Load saved game via `GameRepository` |
+| `game` | `PlayMoveUseCase` | Validate + apply human move + detect win/draw (TIC-3, TIC-5, TIC-9) |
+| `game` | `ComputeAiMoveUseCase` | Pick AI cell from board + difficulty (TIC-8) |
+| `game` | `SaveGameUseCase` | Persist game after each change (TIC-7) |
+| `settings` | `GetDifficultyUseCase` | Read AI difficulty |
+| `settings` | `SetDifficultyUseCase` | Save difficulty — applies to **next** game only (TIC-8) |
+
+### Where business logic lives
+
+| Logic | Location |
+| --- | --- |
+| Win / draw detection | Domain — inside `Game` / `Board` entity, called by `PlayMoveUseCase` |
+| Invalid move rules | Domain — `PlayMoveUseCase` + entity guards (`canPlayAt`, `isAiTurn`, `isFinished`) |
+| AI algorithm (easy / hard) | Domain — `ComputeAiMoveUseCase` + strategy per `Difficulty` enum |
+| Auto-save timing | Notifier orchestrates — calls `SaveGameUseCase` after a successful move |
+| AI turn sequencing | Notifier orchestrates — human move → `ComputeAiMoveUseCase` → apply AI move |
+| AI move delay (UX) | Notifier — `Future.delayed` before applying AI move, not in Use Case |
+
+The Notifier sequences Use Cases; it never implements rules itself.
+
+### Rules
+
+- one responsibility per Use Case
+- no orchestration inside a Use Case (no calling another Use Case)
+- never depend on another Use Case — share logic via **entities** instead
+- never import Flutter, Riverpod, GoRouter or platform SDKs
+
+### Testability
+
+Win/draw and invalid moves are tested with **Use Case unit tests** and plain domain objects in Arrange — no mocks needed for board logic. See `testing.mdc`.
+
+```dart
+test('detects horizontal win on top row', () {
+  final game = Game.fromBoard(['X', 'X', null, ...]);
+  final result = useCase.execute(game: game, cellIndex: 2);
+  expect(result, isA<Success<Game>>());
+  expect(switch (result) {
+    Success(:final value) => value.status,
+    Failure() => fail('expected success'),
+  }, GameStatus.won);
+});
+```
+
+### Domain entity vs UI state
+
+- **`Game`**, **`Board`**, **`Difficulty`** — domain entities in `domain/entities/` (manual or `freezed`).
+- **`GameState`** — presentation UI state in `presentation/` (`freezed`), wraps `Game` + UI fields (`error`, `isAiThinking`).
+
+The Notifier maps `Result<Game>` from Use Cases into `GameState`.
+
+---
+
+## Repository
+
+Repositories abstract data access.
+Repositories coordinate one or more data sources.
+They never expose persistence details.
+
+They are responsible for:
+
+- loading
+- saving
+- mapping
+
+They never contain business rules.
+
+---
+
+## View / Notifier
+
+The View observes state through Riverpod providers.
+User interactions are forwarded to the Notifier.
+
+The View only:
+
+- renders UI
+- forwards user actions
+
+The Notifier:
+
+- exposes immutable UI state
+- orchestrates UseCases
+- exposes commands to the View
+
+---
+
+## Immutability
+
+Domain entities are immutable.
+Never mutate an entity in place.
+Always create a new instance.
+
+---
+
+## Single Source of Truth
+
+Each business state has a single source of truth.
+Never duplicate state that can be derived.
+
+---
+
+## Feature Isolation
+
+A feature must not directly depend on another feature.
+
+Forbidden:
+
+- importing another feature's **Notifier** or **View**
+- importing another feature's **routes** or navigation paths
+
+Allowed:
+
+- domain repository abstractions from another feature (e.g. `SettingsRepository` in `settings/domain/`)
+- `ref.watch(settingsRepositoryProvider)` in `game/di/` to wire a Use Case — DI composition only, never in Notifier or View directly
+
+Prefer shared contracts in `core/` when multiple features depend on the same abstraction (e.g. `Difficulty` enum).
+
+### Cross-feature via domain abstractions
+
+A feature may depend on **another feature's domain repository abstraction**, never its Notifier, providers or routes.
+
+Example — `StartGameUseCase` needs AI difficulty from settings:
+
+```dart
+// settings/domain/repositories/settings_repository.dart
+abstract interface class SettingsRepository {
+  Future<Result<Difficulty>> getDifficulty();
+}
+
+// game/di/start_game_use_case_provider.dart
+@riverpod
+StartGameUseCase startGameUseCase(Ref ref) {
+  return StartGameUseCase(ref.watch(settingsRepositoryProvider));
+}
+
+```
+
+`settingsRepositoryProvider` is declared in `settings/di/`. `Difficulty` lives in `core/` or `settings/domain/entities/`.
+
+---
+
+## Navigation
+
+Each feature owns its routes under `navigation/`.
+
+Rules:
+
+- routes are declared as `GoRoute` (or `RouteBase`) constants/builders in `<feature>_routes.dart`
+- a feature exposes its routes for aggregation by the app-level router (see `navigation.mdc`)
+- a feature never references another feature's route paths directly; use route names/constants exposed by `core` or the app router
+
+---
+
+## Error Handling
+
+Use a simple typed `Result<T>` sealed class, no external package.
+
+```dart
+sealed class Result<T> {
+  const Result();
+
+  const factory Result.success(T value) = Success<T>;
+  const factory Result.failure(AppError error) = Failure<T>;
+}
+```
+
+Avoid:
+
+- `Future.error("...")`
+- throwing `String`
+- silent failures
+
+---
+
+## Initialization
+
+Constructors must not perform side effects.
+
+For Notifiers, initialization happens in `build()`, never in the constructor.
+
+For plain classes, initialization must be explicit (e.g. `init()`) rather than performed as a constructor side effect.
+
+---
+
+## Testing
+
+Mock only domain abstractions.
+
+Unit tests must not depend on:
+
+- Flutter
+- local persistence
+- platform APIs
+- external services
