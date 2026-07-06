@@ -12,9 +12,9 @@
   "@homeResumeGame": {
     "description": "Label for the resume game button"
   },
-  "gamePlaceholder": "Partie en cours de construction",
-  "@gamePlaceholder": {
-    "description": "Placeholder text on the game screen"
+  "gameBackToHome": "Menu principal",
+  "@gameBackToHome": {
+    "description": "Label for the button that returns to the home screen"
   },
   "gameEntryModeNew": "Nouvelle partie",
   "@gameEntryModeNew": {

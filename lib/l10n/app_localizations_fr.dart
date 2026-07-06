@@ -18,7 +18,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeResumeGame => 'Reprendre la partie';
 
   @override
-  String get gamePlaceholder => 'Partie en cours de construction';
+  String get gameBackToHome => 'Menu principal';
 
   @override
   String get gameEntryModeNew => 'Nouvelle partie';

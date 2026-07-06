@@ -13,11 +13,11 @@ final class HomeNavigationImpl implements HomeNavigation {
 
   @override
   void openNewGame() {
-    _router.go(GameRoutes.path, extra: GameEntryMode.newGame);
+    _router.push(GameRoutes.path, extra: GameEntryMode.newGame);
   }
 
   @override
   void openResumeGame() {
-    _router.go(GameRoutes.path, extra: GameEntryMode.resume);
+    _router.push(GameRoutes.path, extra: GameEntryMode.resume);
   }
 }
