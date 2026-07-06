@@ -112,11 +112,11 @@ abstract class AppLocalizations {
   /// **'Reprendre la partie'**
   String get homeResumeGame;
 
-  /// Placeholder text on the game screen
+  /// Label for the button that returns to the home screen
   ///
   /// In fr, this message translates to:
-  /// **'Partie en cours de construction'**
-  String get gamePlaceholder;
+  /// **'Menu principal'**
+  String get gameBackToHome;
 
   /// Debug label when entering a new game
   ///

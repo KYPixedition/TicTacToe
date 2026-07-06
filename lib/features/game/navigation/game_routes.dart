@@ -18,8 +18,7 @@ final List<RouteBase> gameRoutes = [
   GoRoute(
     path: GameRoutes.path,
     name: GameRoutes.name,
-    builder: (context, state) => GameView(
-      entryMode: GameRoutes.entryModeFromExtra(state.extra),
-    ),
+    builder: (context, state) =>
+        GameView(entryMode: GameRoutes.entryModeFromExtra(state.extra)),
   ),
 ];
