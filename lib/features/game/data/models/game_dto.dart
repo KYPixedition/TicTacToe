@@ -1,0 +1,59 @@
+import 'package:json_annotation/json_annotation.dart';
+import 'package:tictactoe/features/game/domain/entities/game.dart';
+import 'package:tictactoe/features/game/domain/entities/game_status.dart';
+import 'package:tictactoe/features/game/domain/entities/player.dart';
+
+part 'game_dto.g.dart';
+
+/// Data transfer object for serializing a [Game] to local storage.
+@JsonSerializable()
+class GameDto {
+  const GameDto({
+    required this.board,
+    required this.status,
+    required this.currentPlayer,
+  });
+
+  factory GameDto.fromJson(Map<String, dynamic> json) => _$GameDtoFromJson(json);
+
+  final List<String?> board;
+  final String status;
+  final String currentPlayer;
+
+  Map<String, dynamic> toJson() => _$GameDtoToJson(this);
+
+  /// Maps this DTO to a domain [Game] entity.
+  Game toDomain() {
+    return Game(
+      board: board.map(_parseCell).toList(),
+      status: _parseStatus(status),
+      currentPlayer: _parsePlayer(currentPlayer),
+    );
+  }
+
+  static Player? _parseCell(String? value) {
+    return switch (value) {
+      'x' || 'X' => Player.x,
+      'o' || 'O' => Player.o,
+      null => null,
+      _ => null,
+    };
+  }
+
+  static GameStatus _parseStatus(String value) {
+    return switch (value) {
+      'playing' => GameStatus.playing,
+      'won' => GameStatus.won,
+      'draw' => GameStatus.draw,
+      _ => GameStatus.playing,
+    };
+  }
+
+  static Player _parsePlayer(String value) {
+    return switch (value) {
+      'x' || 'X' => Player.x,
+      'o' || 'O' => Player.o,
+      _ => Player.x,
+    };
+  }
+}

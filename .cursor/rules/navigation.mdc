@@ -134,6 +134,63 @@ Typed return values must use explicit generics, never `dynamic`.
 Example:
 `Future<SettingsResult?> openSettings();`
 
+### Navigation intent — `extra`
+
+When the **same route** must behave differently depending on **user intent**, pass a typed domain value via `extra` — not a query string.
+
+| Mechanism | Use when |
+| --- | --- |
+| `pathParameters` | Identity in the URL (e.g. `/user/:id`) |
+| `queryParameters` | Optional, shareable, deep-linkable filters |
+| **`extra`** | Typed navigation intent, not meant for the URL |
+
+**Send** — only in `<feature>_navigation_impl.dart`:
+
+```dart
+_router.go(GameRoutes.path, extra: GameEntryMode.newGame);
+_router.go(GameRoutes.path, extra: GameEntryMode.resume);
+```
+
+**Receive** — cast in `<feature>_routes.dart`, pass a typed parameter to the View:
+
+```dart
+builder: (context, state) => GameView(
+  entryMode: GameRoutes.entryModeFromExtra(state.extra),
+),
+```
+
+**Resolve** — static helper on route constants (fallback for deep link / missing `extra`):
+
+```dart
+static GameEntryMode entryModeFromExtra(Object? extra) {
+  return extra is GameEntryMode ? extra : GameEntryMode.newGame;
+}
+```
+
+**Consume** — View receives a typed domain value, no cast in the widget:
+
+```dart
+final GameEntryMode entryMode;
+```
+
+Rules:
+
+- Define intent as a **domain enum or sealed type** in `domain/entities/` (e.g. `GameEntryMode`).
+- Never pass business logic or large objects in `extra` — intent only.
+- Cast `state.extra` in the route `builder` (or a route helper) — never in the View.
+- Never read `state.extra` or call GoRouter from a View.
+- Prefer `extra` over `?mode=resume` when the value is a typed enum and does not need to appear in the URL.
+
+Example:
+
+```dart
+// Avoid — string parsing in the View
+final isResume = state.uri.queryParameters['mode'] == 'resume';
+
+// Prefer — typed intent
+_router.go(GameRoutes.path, extra: GameEntryMode.resume);
+```
+
 ---
 
 ## Navigation Timing

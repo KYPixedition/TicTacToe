@@ -65,10 +65,10 @@ Usage:
 
 ```dart
 Container(
-  padding: EdgeInsets.all(context.spacings.md),
+  padding: context.spacings.paddingM,
   decoration: BoxDecoration(
     color: context.colors.boardCellBackground,
-    borderRadius: BorderRadius.circular(context.radii.cell),
+    borderRadius: context.radii.borderCell,
     boxShadow: [context.shadows.card],
   ),
   child: Text('X', style: context.typos.cellMark),
@@ -76,6 +76,74 @@ Container(
 ```
 
 Use Material `Theme.of(context).colorScheme` only for generic Material widgets (buttons, surfaces).
+
+## Spacings
+
+`AppSpacings` exposes raw `double` tokens (`s`, `m`, `l`, `xl`) for theme interpolation, plus derived getters:
+
+### Padding (`EdgeInsets`)
+
+| Token | Getter | Usage |
+| --- | --- | --- |
+| `s` | `paddingS` | Tight padding |
+| `m` | `paddingM` | Standard padding |
+| `l` | `paddingL` | Screen/section padding |
+| `xl` | `paddingXl` | Large section padding |
+| — | `paddingButton` | Labeled buttons (`horizontal: m`, `vertical: s`) |
+
+Prefer `EdgeInsets` getters for padding — never call `EdgeInsets.all(context.spacings.m)` directly:
+
+```dart
+// Good
+padding: context.spacings.paddingM,
+
+// Avoid
+padding: EdgeInsets.all(context.spacings.m),
+```
+
+### Gaps between widgets (`SizedBox`)
+
+| Token | Vertical ([Column]) | Horizontal ([Row]) |
+| --- | --- | --- |
+| `s` | `gapVerticalS` | `gapHorizontalS` |
+| `m` | `gapVerticalM` | `gapHorizontalM` |
+| `l` | `gapVerticalL` | `gapHorizontalL` |
+| `xl` | `gapVerticalXl` | `gapHorizontalXl` |
+
+```dart
+Column(
+  children: [
+    Text('Title'),
+    context.spacings.gapVerticalM,
+    AppButton(...),
+  ],
+)
+```
+
+Prefer gap getters over manual `SizedBox(height: context.spacings.m)`.
+
+Raw `double` tokens (`s`, `m`, `l`, `xl`) are reserved for custom layout math — not for padding or gaps in widgets.
+
+## Border radii
+
+`AppBorderRadii` exposes raw `double` tokens (`s`, `m`, `l`, `cell`) and derived `BorderRadius` getters:
+
+| Token | Getter | Usage |
+| --- | --- | --- |
+| `s` | `borderS` | Small corners |
+| `m` | `borderM` | Buttons, cards |
+| `l` | `borderL` | Large surfaces |
+| `cell` | `borderCell` | Board cells |
+
+Prefer the getters in widgets — never call `BorderRadius.circular(context.radii.m)` directly:
+
+```dart
+// Good
+borderRadius: context.radii.borderM,
+
+// Avoid
+borderRadius: BorderRadius.circular(context.radii.m),
+```
 
 ## Semantic naming
 
