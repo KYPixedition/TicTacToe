@@ -1,0 +1,27 @@
+{
+  "@@locale": "fr",
+  "homeTitle": "Tic Tac Toe",
+  "@homeTitle": {
+    "description": "Title displayed on the home screen"
+  },
+  "homeNewGame": "Nouvelle partie",
+  "@homeNewGame": {
+    "description": "Label for the new game button"
+  },
+  "homeResumeGame": "Reprendre la partie",
+  "@homeResumeGame": {
+    "description": "Label for the resume game button"
+  },
+  "gamePlaceholder": "Partie en cours de construction",
+  "@gamePlaceholder": {
+    "description": "Placeholder text on the game screen"
+  },
+  "gameEntryModeNew": "Nouvelle partie",
+  "@gameEntryModeNew": {
+    "description": "Debug label when entering a new game"
+  },
+  "gameEntryModeResume": "Reprise de partie",
+  "@gameEntryModeResume": {
+    "description": "Debug label when resuming a saved game"
+  }
+}

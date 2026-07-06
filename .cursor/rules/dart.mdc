@@ -126,6 +126,85 @@ if (game.isActive) {
 - Prefer dependency injection over object creation.
 - Avoid utility classes containing only static methods unless there is no better alternative.
 
+### Member order
+
+1. `final` fields (dependencies and state)
+2. Constructors
+3. Methods
+
+---
+
+## Constructors & dependency injection
+
+Applies to classes with **constructor-injected dependencies**: repositories, data sources, use cases, navigation implementations, services.
+
+### Rules
+
+- Declare `final` dependency fields **before** the constructor.
+- Use **named parameters** with `required` for every injected dependency — **from the first dependency onward** (even when there is only one).
+- Prefer **initializing formals** for private fields: `{required this._dependency}`.
+- At the call site, use the **public parameter name** (without underscore): `preferences:` for `this._preferences`.
+- Use `const` constructors when all dependencies allow it.
+- Never instantiate platform SDKs or singletons inside the class body — inject them via the constructor.
+
+### Good
+
+```dart
+final class SharedPreferencesGameLocalDataSource implements GameLocalDataSource {
+  final SharedPreferences _preferences;
+
+  const SharedPreferencesGameLocalDataSource({
+    required this._preferences,
+  });
+}
+
+// Call site (any library):
+SharedPreferencesGameLocalDataSource(
+  preferences: ref.watch(sharedPreferencesProvider),
+);
+```
+
+```dart
+final class LocalGameRepository implements GameRepository {
+  final GameLocalDataSource _dataSource;
+  final Talker _talker;
+
+  const LocalGameRepository({
+    required this._dataSource,
+    required this._talker,
+  });
+}
+```
+
+### Avoid
+
+Positional parameters for injected dependencies:
+
+```dart
+const HasSavedGameUseCase(this._repository);
+```
+
+Fields declared after the constructor:
+
+```dart
+const HasSavedGameUseCase({required this._repository});
+
+final GameRepository _repository; // too late — field must come first
+```
+
+Initializer lists when an initializing formal suffices:
+
+```dart
+const HasSavedGameUseCase({
+  required GameRepository repository,
+}) : _repository = repository;
+```
+
+### Exceptions
+
+- **Value objects** with a single public field may keep a positional parameter (e.g. `Success(this.value)`).
+- **Widgets** follow `presentation.mdc` (`const MyWidget({super.key, ...})`).
+
 ---
 
 ## Collections
