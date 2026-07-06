@@ -1,0 +1,24 @@
+---
+description: US pipeline human gates — mandatory agent actions on OK PO / review / MERGE
+alwaysApply: true
+---
+
+# US Pipeline — gates obligatoires
+
+Quand l'utilisateur envoie un **gate explicite**, exécuter **immédiatement** l'action associée — ne pas se contenter d'un message informatif.
+
+| Gate utilisateur | Action obligatoire |
+| --- | --- |
+| `OK MERGE` (ou « PR mergée », « nettoie la branche ») | Lire `.cursor/skills/us-post-merge/SKILL.md` et exécuter **toute** la procédure Git (fetch, checkout develop, pull --rebase, `git branch -d`, `git push origin --delete`). Produire `## Cleanup Summary`. |
+| `OK review` | Passer à l'étape 5 (commit / push / `gh pr create`) si pas encore fait. |
+| `OK PR` | Commit, push, `gh pr create` selon `.cursor/skills/us-pipeline/SKILL.md` étape 5. |
+
+## OK MERGE — règles strictes
+
+1. **Ne jamais** répondre uniquement « la PR est déjà mergée » sans lancer le cleanup.
+2. Vérifier `gh pr view` → `state: MERGED` **avant** le cleanup ; si pas mergée → stop.
+3. Si modifications non commitées sur la branche feature → stop, lister les fichiers.
+4. Branche de base : `develop` (sauf indication contraire).
+5. **Jamais** `git config`, `git branch -D`, ni `push --force` sans demande explicite.
+
+Après cleanup, terminer par : « Branche feature supprimée. Prêt pour la prochaine US avec `/us-pipeline TIC-X`. »

@@ -1,11 +1,9 @@
 ---
 name: us-post-merge
 description: >-
-  Post-merge Git cleanup after a merged US PR: verify merge, checkout develop,
-  fetch --prune, pull --rebase, delete feature branch. Use after OK MERGE gate
-  (step 6 of US pipeline) or when the user confirms a PR is merged and wants
-  branch cleanup.
-disable-model-invocation: true
+  Post-merge Git cleanup after a merged US PR. MANDATORY when user says OK MERGE:
+  verify merge via gh pr view, checkout develop, fetch --prune, pull --rebase,
+  delete local and remote feature branch. Produce Cleanup Summary.
 ---
 
 # Agent Post-Merge — nettoyage Git
