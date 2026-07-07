@@ -94,6 +94,87 @@ void main() {
     expect(status, GameStatus.draw);
   });
 
+  test('winner returns Player.x when top row is complete', () {
+    final game = Game(
+      board: <Player?>[
+        Player.x,
+        Player.x,
+        Player.x,
+        null,
+        Player.o,
+        null,
+        null,
+        null,
+        null,
+      ],
+      status: GameStatus.won,
+      currentPlayer: Player.x,
+    );
+
+    expect(game.winner, Player.x);
+  });
+
+  test('winner returns Player.o when middle column is complete', () {
+    final game = Game(
+      board: <Player?>[
+        null,
+        Player.o,
+        null,
+        Player.x,
+        Player.o,
+        null,
+        Player.x,
+        Player.o,
+        null,
+      ],
+      status: GameStatus.won,
+      currentPlayer: Player.o,
+    );
+
+    expect(game.winner, Player.o);
+  });
+
+  test('winner is null when game is playing', () {
+    expect(Game.initial().winner, isNull);
+  });
+
+  test('winner is null when game is draw', () {
+    final game = Game(
+      board: <Player?>[
+        Player.x,
+        Player.o,
+        Player.x,
+        Player.x,
+        Player.o,
+        Player.o,
+        Player.o,
+        Player.x,
+        Player.x,
+      ],
+      status: GameStatus.draw,
+      currentPlayer: Player.x,
+    );
+
+    expect(game.winner, isNull);
+  });
+
+  test('winnerForBoard matches statusForBoard winner detection', () {
+    final board = <Player?>[
+      Player.o,
+      Player.x,
+      null,
+      Player.x,
+      Player.o,
+      null,
+      null,
+      null,
+      Player.o,
+    ];
+
+    expect(Game.winnerForBoard(board), Player.o);
+    expect(Game.statusForBoard(board), GameStatus.won);
+  });
+
   test('applyHumanMove updates board and switches turn to cpu', () {
     final updatedGame = Game.initial().applyHumanMove(0);
 

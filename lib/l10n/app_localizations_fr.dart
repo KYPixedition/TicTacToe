@@ -25,4 +25,22 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get gameEntryModeResume => 'Reprise de partie';
+
+  @override
+  String get gameStatusPlaying => 'En cours';
+
+  @override
+  String get gameStatusPlayerWon => 'Victoire du joueur';
+
+  @override
+  String get gameStatusCpuWon => 'Victoire de l\'ordinateur';
+
+  @override
+  String get gameStatusDraw => 'Égalité';
+
+  @override
+  String get gamePlayerHuman => 'Joueur';
+
+  @override
+  String get gamePlayerCpu => 'Ordinateur';
 }

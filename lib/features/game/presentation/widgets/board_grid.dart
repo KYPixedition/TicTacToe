@@ -43,7 +43,8 @@ class BoardGrid extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        return Center(
+        return Align(
+          alignment: Alignment.topCenter,
           child: SizedBox(
             width: side,
             height: side,

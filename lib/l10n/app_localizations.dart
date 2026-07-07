@@ -129,6 +129,42 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Reprise de partie'**
   String get gameEntryModeResume;
+
+  /// Label shown while the game is in progress
+  ///
+  /// In fr, this message translates to:
+  /// **'En cours'**
+  String get gameStatusPlaying;
+
+  /// Label shown when the human player wins
+  ///
+  /// In fr, this message translates to:
+  /// **'Victoire du joueur'**
+  String get gameStatusPlayerWon;
+
+  /// Label shown when the CPU wins
+  ///
+  /// In fr, this message translates to:
+  /// **'Victoire de l\'ordinateur'**
+  String get gameStatusCpuWon;
+
+  /// Label shown when the game ends in a draw
+  ///
+  /// In fr, this message translates to:
+  /// **'Égalité'**
+  String get gameStatusDraw;
+
+  /// Label for the human player in the turn row
+  ///
+  /// In fr, this message translates to:
+  /// **'Joueur'**
+  String get gamePlayerHuman;
+
+  /// Label for the CPU player in the turn row
+  ///
+  /// In fr, this message translates to:
+  /// **'Ordinateur'**
+  String get gamePlayerCpu;
 }
 
 class _AppLocalizationsDelegate

@@ -23,5 +23,29 @@
   "gameEntryModeResume": "Reprise de partie",
   "@gameEntryModeResume": {
     "description": "Debug label when resuming a saved game"
+  },
+  "gameStatusPlaying": "En cours",
+  "@gameStatusPlaying": {
+    "description": "Label shown while the game is in progress"
+  },
+  "gameStatusPlayerWon": "Victoire du joueur",
+  "@gameStatusPlayerWon": {
+    "description": "Label shown when the human player wins"
+  },
+  "gameStatusCpuWon": "Victoire de l'ordinateur",
+  "@gameStatusCpuWon": {
+    "description": "Label shown when the CPU wins"
+  },
+  "gameStatusDraw": "Égalité",
+  "@gameStatusDraw": {
+    "description": "Label shown when the game ends in a draw"
+  },
+  "gamePlayerHuman": "Joueur",
+  "@gamePlayerHuman": {
+    "description": "Label for the human player in the turn row"
+  },
+  "gamePlayerCpu": "Ordinateur",
+  "@gamePlayerCpu": {
+    "description": "Label for the CPU player in the turn row"
   }
 }
