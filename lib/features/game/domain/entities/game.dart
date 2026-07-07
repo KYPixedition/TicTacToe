@@ -81,19 +81,26 @@ abstract class Game with _$Game {
     return _applyMove(cellIndex: cellIndex, player: Player.o);
   }
 
+  /// Returns the winning player for [board], or null when there is no winner.
+  static Player? winnerForBoard(List<Player?> board) {
+    for (final line in _winningLines) {
+      final first = board[line[0]];
+      if (first == null) {
+        continue;
+      }
+      if (board[line[1]] == first && board[line[2]] == first) {
+        return first;
+      }
+    }
+    return null;
+  }
+
+  /// The winning player when [status] is [GameStatus.won].
+  Player? get winner => status == GameStatus.won ? winnerForBoard(board) : null;
+
   /// Resolves the game status for a board state.
   static GameStatus statusForBoard(List<Player?> board) {
-    final hasWinner = _winningLines.any(
-      (line) {
-        final first = board[line[0]];
-        if (first == null) {
-          return false;
-        }
-        return board[line[1]] == first && board[line[2]] == first;
-      },
-    );
-
-    if (hasWinner) {
+    if (winnerForBoard(board) != null) {
       return GameStatus.won;
     }
 

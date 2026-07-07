@@ -6,6 +6,8 @@ import 'package:tictactoe/features/game/domain/entities/game_entry_mode.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/presentation/notifiers/game_notifier.dart';
 import 'package:tictactoe/features/game/presentation/widgets/board_grid.dart';
+import 'package:tictactoe/features/game/presentation/widgets/game_status_label.dart';
+import 'package:tictactoe/features/game/presentation/widgets/player_turn_row.dart';
 import 'package:tictactoe/l10n/app_localizations.dart';
 
 /// Game screen for a new or resumed match.
@@ -31,26 +33,42 @@ class GameView extends ConsumerWidget {
           padding: spacings.paddingL,
           child: Column(
             children: [
-              Expanded(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: game != null
-                      ? SizedBox(
-                          width: double.infinity,
-                          child: BoardGrid(
-                            board: game.board,
-                            isInteractionEnabled:
-                                !state.isCpuThinking && game.status == GameStatus.playing,
-                            onCellTap: (cellIndex) {
-                              ref
-                                  .read(gameNotifierProvider(entryMode).notifier)
-                                  .playMove(cellIndex: cellIndex);
-                            },
-                          ),
-                        )
-                      : _GameResumePlaceholder(entryMode: entryMode),
+              if (game != null) ...[
+                PlayerTurnRow(
+                  currentPlayer: game.currentPlayer,
+                  status: game.status,
                 ),
-              ),
+                spacings.gapVerticalM,
+                GameStatusLabel(
+                  status: game.status,
+                  winner: game.winner,
+                  isCpuThinking: state.isCpuThinking,
+                ),
+                spacings.gapVerticalXxl,
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: BoardGrid(
+                      board: game.board,
+                      isInteractionEnabled:
+                          !state.isCpuThinking &&
+                          game.status == GameStatus.playing,
+                      onCellTap: (cellIndex) {
+                        ref
+                            .read(gameNotifierProvider(entryMode).notifier)
+                            .playMove(cellIndex: cellIndex);
+                      },
+                    ),
+                  ),
+                ),
+              ] else ...[
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: _GameResumePlaceholder(entryMode: entryMode),
+                  ),
+                ),
+              ],
               spacings.gapVerticalM,
               AppButton(
                 onPressed: () =>

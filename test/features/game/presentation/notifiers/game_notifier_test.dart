@@ -52,6 +52,17 @@ void main() {
     );
   }
 
+  void keepGameNotifierAlive(
+    ProviderContainer container, {
+    GameEntryMode entryMode = GameEntryMode.newGame,
+  }) {
+    container.listen(
+      gameNotifierProvider(entryMode),
+      (_, _) {},
+      fireImmediately: true,
+    );
+  }
+
   test('newGame initializes with a fresh game from the use case', () {
     final container = createContainer();
     addTearDown(container.dispose);
@@ -89,6 +100,7 @@ void main() {
   test('playMove applies player and CPU moves then saves twice', () async {
     final container = createContainer();
     addTearDown(container.dispose);
+    keepGameNotifierAlive(container);
     final notifier = container.read(gameNotifierProvider(GameEntryMode.newGame).notifier);
 
     await notifier.playMove(cellIndex: 0);
@@ -105,6 +117,7 @@ void main() {
   test('playMove refuses occupied cell and does not save', () async {
     final container = createContainer();
     addTearDown(container.dispose);
+    keepGameNotifierAlive(container);
     final notifier = container.read(gameNotifierProvider(GameEntryMode.newGame).notifier);
 
     await notifier.playMove(cellIndex: 0);
@@ -125,6 +138,7 @@ void main() {
   test('playMove does not trigger cpu when player wins', () async {
     final container = createContainer();
     addTearDown(container.dispose);
+    keepGameNotifierAlive(container);
     final notifier = container.read(gameNotifierProvider(GameEntryMode.newGame).notifier);
 
     await notifier.playMove(cellIndex: 0);
@@ -145,6 +159,7 @@ void main() {
   test('playMove reverts human move when save fails', () async {
     final container = createContainer();
     addTearDown(container.dispose);
+    keepGameNotifierAlive(container);
     fakeGameRepository.shouldFailSave = true;
     final notifier = container.read(gameNotifierProvider(GameEntryMode.newGame).notifier);
 

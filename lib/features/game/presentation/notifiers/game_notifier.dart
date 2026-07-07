@@ -12,6 +12,8 @@ import 'package:tictactoe/features/game/presentation/notifiers/game_state.dart';
 
 part 'game_notifier.g.dart';
 
+const Duration _cpuTurnDelay = Duration(milliseconds: 400);
+
 /// Manages game screen state and user commands.
 @Riverpod(name: 'gameNotifierProvider')
 class GameNotifier extends _$GameNotifier {
@@ -39,15 +41,17 @@ class GameNotifier extends _$GameNotifier {
       return;
     }
 
-    final playResult = ref.read(playMoveUseCaseProvider).execute(
-      game: currentGame,
-      cellIndex: cellIndex,
-    );
+    final playResult = ref
+        .read(playMoveUseCaseProvider)
+        .execute(game: currentGame, cellIndex: cellIndex);
 
     switch (playResult) {
       case Success(:final value):
         state = state.copyWith(game: value, error: null);
         final saved = await _saveCurrentGame(game: value);
+        if (!ref.mounted) {
+          return;
+        }
         if (!saved) {
           state = state.copyWith(game: currentGame);
           return;
@@ -73,15 +77,15 @@ class GameNotifier extends _$GameNotifier {
     }
 
     state = state.copyWith(isCpuThinking: true);
+    await Future<void>.delayed(_cpuTurnDelay);
+    if (!ref.mounted) {
+      return;
+    }
     final cpuResult = ref.read(playCpuMoveUseCaseProvider).execute(game: game);
 
     switch (cpuResult) {
       case Success(:final value):
-        state = state.copyWith(
-          game: value,
-          error: null,
-          isCpuThinking: false,
-        );
+        state = state.copyWith(game: value, error: null, isCpuThinking: false);
         final saved = await _saveCurrentGame(game: value);
         if (!saved) {
           state = state.copyWith(game: game);
@@ -92,7 +96,9 @@ class GameNotifier extends _$GameNotifier {
   }
 
   Future<bool> _saveCurrentGame({required Game game}) async {
-    final saveResult = await ref.read(saveGameUseCaseProvider).execute(game: game);
+    final saveResult = await ref
+        .read(saveGameUseCaseProvider)
+        .execute(game: game);
     switch (saveResult) {
       case Success():
         return true;

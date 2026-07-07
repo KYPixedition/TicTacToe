@@ -7,18 +7,21 @@ final class AppTypography extends ThemeExtension<AppTypography> {
     required this.body,
     required this.button,
     required this.cellMark,
+    required this.gameStatus,
   });
 
   final TextStyle title;
   final TextStyle body;
   final TextStyle button;
   final TextStyle cellMark;
+  final TextStyle gameStatus;
 
   static const AppTypography light = AppTypography(
     title: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
     body: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
     button: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
     cellMark: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+    gameStatus: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
   );
 
   @override
@@ -27,12 +30,14 @@ final class AppTypography extends ThemeExtension<AppTypography> {
     TextStyle? body,
     TextStyle? button,
     TextStyle? cellMark,
+    TextStyle? gameStatus,
   }) {
     return AppTypography(
       title: title ?? this.title,
       body: body ?? this.body,
       button: button ?? this.button,
       cellMark: cellMark ?? this.cellMark,
+      gameStatus: gameStatus ?? this.gameStatus,
     );
   }
 
@@ -47,6 +52,7 @@ final class AppTypography extends ThemeExtension<AppTypography> {
       body: TextStyle.lerp(body, other.body, t) ?? body,
       button: TextStyle.lerp(button, other.button, t) ?? button,
       cellMark: TextStyle.lerp(cellMark, other.cellMark, t) ?? cellMark,
+      gameStatus: TextStyle.lerp(gameStatus, other.gameStatus, t) ?? gameStatus,
     );
   }
 }

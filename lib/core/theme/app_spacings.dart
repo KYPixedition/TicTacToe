@@ -9,6 +9,7 @@ final class AppSpacings extends ThemeExtension<AppSpacings> {
     required this.m,
     required this.l,
     required this.xl,
+    required this.xxl,
     required this.huge,
   });
 
@@ -16,6 +17,7 @@ final class AppSpacings extends ThemeExtension<AppSpacings> {
   final double m;
   final double l;
   final double xl;
+  final double xxl;
   final double huge;
 
   static const AppSpacings standard = AppSpacings(
@@ -23,6 +25,7 @@ final class AppSpacings extends ThemeExtension<AppSpacings> {
     m: 16,
     l: 24,
     xl: 32,
+    xxl: 64,
     huge: 200,
   );
 
@@ -54,6 +57,9 @@ final class AppSpacings extends ThemeExtension<AppSpacings> {
   /// Extra-large vertical gap between widgets in a [Column].
   SizedBox get gapVerticalXl => SizedBox(height: xl);
 
+  /// Double extra-large vertical gap between widgets in a [Column].
+  SizedBox get gapVerticalXxl => SizedBox(height: xxl);
+
   /// Huge vertical gap between widgets in a [Column].
   SizedBox get gapVerticalHuge => SizedBox(height: huge);
 
@@ -69,6 +75,9 @@ final class AppSpacings extends ThemeExtension<AppSpacings> {
   /// Extra-large horizontal gap between widgets in a [Row].
   SizedBox get gapHorizontalXl => SizedBox(width: xl);
 
+  /// Double extra-large horizontal gap between widgets in a [Row].
+  SizedBox get gapHorizontalXxl => SizedBox(width: xxl);
+
   /// Returns symmetric padding using the given horizontal and vertical values.
   EdgeInsets symmetric({double? horizontal, double? vertical}) {
     return EdgeInsets.symmetric(
@@ -83,6 +92,7 @@ final class AppSpacings extends ThemeExtension<AppSpacings> {
     double? m,
     double? l,
     double? xl,
+    double? xxl,
     double? huge,
   }) {
     return AppSpacings(
@@ -90,6 +100,7 @@ final class AppSpacings extends ThemeExtension<AppSpacings> {
       m: m ?? this.m,
       l: l ?? this.l,
       xl: xl ?? this.xl,
+      xxl: xxl ?? this.xxl,
       huge: huge ?? this.huge,
     );
   }
@@ -105,6 +116,7 @@ final class AppSpacings extends ThemeExtension<AppSpacings> {
       m: lerpDouble(m, other.m, t) ?? m,
       l: lerpDouble(l, other.l, t) ?? l,
       xl: lerpDouble(xl, other.xl, t) ?? xl,
+      xxl: lerpDouble(xxl, other.xxl, t) ?? xxl,
       huge: lerpDouble(huge, other.huge, t) ?? huge,
     );
   }
