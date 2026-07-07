@@ -9,6 +9,9 @@ const String gameStateStorageKey = 'game_state';
 abstract interface class GameLocalDataSource {
   /// Reads the raw persisted game JSON string, if any.
   Future<Result<String?>> readRawGameState();
+
+  /// Writes the raw game JSON string.
+  Future<Result<void>> writeRawGameState({required String value});
 }
 
 /// [SharedPreferences] implementation of [GameLocalDataSource].
@@ -24,6 +27,16 @@ final class SharedPreferencesGameLocalDataSource
       return Result.success(_preferences.getString(gameStateStorageKey));
     } on Object {
       return const Result.failure(StorageReadError());
+    }
+  }
+
+  @override
+  Future<Result<void>> writeRawGameState({required String value}) async {
+    try {
+      await _preferences.setString(gameStateStorageKey, value);
+      return const Result.success(null);
+    } on Object {
+      return const Result.failure(StorageWriteError());
     }
   }
 }

@@ -61,7 +61,7 @@ final class GameNotifierProvider
   }
 }
 
-String _$gameNotifierHash() => r'c0dd6313ce68367bccde4cb8bc3d87217b68a506';
+String _$gameNotifierHash() => r'e215f426f18234aaa706e970d454d9371f24972e';
 
 /// Manages game screen state and user commands.
 

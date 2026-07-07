@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$GameState {
 
- Game? get game; AppError? get error;
+ Game? get game; AppError? get error; bool get isCpuThinking;
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $GameStateCopyWith<GameState> get copyWith => _$GameStateCopyWithImpl<GameState>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameState&&(identical(other.game, game) || other.game == game)&&(identical(other.error, error) || other.error == error));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameState&&(identical(other.game, game) || other.game == game)&&(identical(other.error, error) || other.error == error)&&(identical(other.isCpuThinking, isCpuThinking) || other.isCpuThinking == isCpuThinking));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,game,error);
+int get hashCode => Object.hash(runtimeType,game,error,isCpuThinking);
 
 @override
 String toString() {
-  return 'GameState(game: $game, error: $error)';
+  return 'GameState(game: $game, error: $error, isCpuThinking: $isCpuThinking)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $GameStateCopyWith<$Res>  {
   factory $GameStateCopyWith(GameState value, $Res Function(GameState) _then) = _$GameStateCopyWithImpl;
 @useResult
 $Res call({
- Game? game, AppError? error
+ Game? game, AppError? error, bool isCpuThinking
 });
 
 
@@ -62,11 +62,12 @@ class _$GameStateCopyWithImpl<$Res>
 
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? game = freezed,Object? error = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? game = freezed,Object? error = freezed,Object? isCpuThinking = null,}) {
   return _then(_self.copyWith(
 game: freezed == game ? _self.game : game // ignore: cast_nullable_to_non_nullable
 as Game?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
-as AppError?,
+as AppError?,isCpuThinking: null == isCpuThinking ? _self.isCpuThinking : isCpuThinking // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 /// Create a copy of GameState
@@ -163,10 +164,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Game? game,  AppError? error)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Game? game,  AppError? error,  bool isCpuThinking)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GameState() when $default != null:
-return $default(_that.game,_that.error);case _:
+return $default(_that.game,_that.error,_that.isCpuThinking);case _:
   return orElse();
 
 }
@@ -184,10 +185,10 @@ return $default(_that.game,_that.error);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Game? game,  AppError? error)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Game? game,  AppError? error,  bool isCpuThinking)  $default,) {final _that = this;
 switch (_that) {
 case _GameState():
-return $default(_that.game,_that.error);case _:
+return $default(_that.game,_that.error,_that.isCpuThinking);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -204,10 +205,10 @@ return $default(_that.game,_that.error);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Game? game,  AppError? error)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Game? game,  AppError? error,  bool isCpuThinking)?  $default,) {final _that = this;
 switch (_that) {
 case _GameState() when $default != null:
-return $default(_that.game,_that.error);case _:
+return $default(_that.game,_that.error,_that.isCpuThinking);case _:
   return null;
 
 }
@@ -219,11 +220,12 @@ return $default(_that.game,_that.error);case _:
 
 
 class _GameState implements GameState {
-  const _GameState({this.game, this.error});
+  const _GameState({this.game, this.error, this.isCpuThinking = false});
   
 
 @override final  Game? game;
 @override final  AppError? error;
+@override@JsonKey() final  bool isCpuThinking;
 
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
@@ -235,16 +237,16 @@ _$GameStateCopyWith<_GameState> get copyWith => __$GameStateCopyWithImpl<_GameSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GameState&&(identical(other.game, game) || other.game == game)&&(identical(other.error, error) || other.error == error));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GameState&&(identical(other.game, game) || other.game == game)&&(identical(other.error, error) || other.error == error)&&(identical(other.isCpuThinking, isCpuThinking) || other.isCpuThinking == isCpuThinking));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,game,error);
+int get hashCode => Object.hash(runtimeType,game,error,isCpuThinking);
 
 @override
 String toString() {
-  return 'GameState(game: $game, error: $error)';
+  return 'GameState(game: $game, error: $error, isCpuThinking: $isCpuThinking)';
 }
 
 
@@ -255,7 +257,7 @@ abstract mixin class _$GameStateCopyWith<$Res> implements $GameStateCopyWith<$Re
   factory _$GameStateCopyWith(_GameState value, $Res Function(_GameState) _then) = __$GameStateCopyWithImpl;
 @override @useResult
 $Res call({
- Game? game, AppError? error
+ Game? game, AppError? error, bool isCpuThinking
 });
 
 
@@ -272,11 +274,12 @@ class __$GameStateCopyWithImpl<$Res>
 
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? game = freezed,Object? error = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? game = freezed,Object? error = freezed,Object? isCpuThinking = null,}) {
   return _then(_GameState(
 game: freezed == game ? _self.game : game // ignore: cast_nullable_to_non_nullable
 as Game?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
-as AppError?,
+as AppError?,isCpuThinking: null == isCpuThinking ? _self.isCpuThinking : isCpuThinking // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

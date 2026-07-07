@@ -10,12 +10,13 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: buildAppTheme(),
-        home: const Scaffold(
+        home: Scaffold(
           body: SizedBox(
             width: 300,
             height: 300,
             child: BoardGrid(
               board: <Player?>[],
+              onCellTap: (_) {},
             ),
           ),
         ),
@@ -30,7 +31,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: buildAppTheme(),
-        home: const Scaffold(
+        home: Scaffold(
           body: SizedBox(
             width: 300,
             height: 300,
@@ -46,6 +47,7 @@ void main() {
                 null,
                 null,
               ],
+              onCellTap: (_) {},
             ),
           ),
         ),
@@ -54,5 +56,41 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(BoardCell), findsNWidgets(9));
+  });
+
+  testWidgets('propagates tapped cell index', (tester) async {
+    int? tappedIndex;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: Scaffold(
+          body: SizedBox(
+            width: 300,
+            height: 300,
+            child: BoardGrid(
+              board: const <Player?>[
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+              ],
+              onCellTap: (index) => tappedIndex = index,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BoardCell).at(4));
+    await tester.pumpAndSettle();
+
+    expect(tappedIndex, 4);
   });
 }
