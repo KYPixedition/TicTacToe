@@ -95,7 +95,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(BoardCell).at(0));
-    await tester.pumpAndSettle();
+    await tester.pumpAndSettle(const Duration(seconds: 1));
 
     expect(boardCellCount(tester, Player.x), 1);
   });
@@ -107,27 +107,34 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(BoardCell).at(0));
-    await tester.pumpAndSettle();
+    await tester.pumpAndSettle(const Duration(seconds: 1));
     expect(boardCellCount(tester, Player.x), 1);
 
     await tester.tap(find.byType(BoardCell).at(0));
-    await tester.pumpAndSettle();
+    await tester.pumpAndSettle(const Duration(seconds: 1));
 
     expect(boardCellCount(tester, Player.x), 1);
     expect(boardCellCount(tester, Player.o), 1);
   });
 
-  testWidgets('shows cpu mark after player move', (tester) async {
+  testWidgets('shows cpu thinking label after player move', (tester) async {
     await tester.pumpWidget(
       buildTestApp(home: const GameView(entryMode: GameEntryMode.newGame)),
     );
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(BoardCell).at(0));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(find.text("L'ordinateur réfléchit…"), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump();
 
     expect(boardCellCount(tester, Player.x), 1);
     expect(boardCellCount(tester, Player.o), 1);
+    expect(find.text('En cours'), findsOneWidget);
   });
 
   testWidgets('shows player won label after human wins', (tester) async {
@@ -137,11 +144,11 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(BoardCell).at(0));
-    await tester.pumpAndSettle();
+    await tester.pumpAndSettle(const Duration(seconds: 1));
     await tester.tap(find.byType(BoardCell).at(4));
-    await tester.pumpAndSettle();
+    await tester.pumpAndSettle(const Duration(seconds: 1));
     await tester.tap(find.byType(BoardCell).at(8));
-    await tester.pumpAndSettle();
+    await tester.pumpAndSettle(const Duration(seconds: 1));
 
     expect(find.text('Victoire du joueur'), findsOneWidget);
   });

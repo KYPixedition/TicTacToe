@@ -39,7 +39,11 @@ class GameView extends ConsumerWidget {
                   status: game.status,
                 ),
                 spacings.gapVerticalM,
-                GameStatusLabel(status: game.status, winner: game.winner),
+                GameStatusLabel(
+                  status: game.status,
+                  winner: game.winner,
+                  isCpuThinking: state.isCpuThinking,
+                ),
                 spacings.gapVerticalXxl,
                 Expanded(
                   child: Align(

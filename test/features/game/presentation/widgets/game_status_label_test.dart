@@ -11,6 +11,7 @@ void main() {
   Widget buildTestWidget({
     required GameStatus status,
     Player? winner,
+    bool isCpuThinking = false,
   }) {
     return MaterialApp(
       theme: buildAppTheme(),
@@ -25,6 +26,7 @@ void main() {
         body: GameStatusLabel(
           status: status,
           winner: winner,
+          isCpuThinking: isCpuThinking,
         ),
       ),
     );
@@ -37,6 +39,19 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('En cours'), findsOneWidget);
+  });
+
+  testWidgets('shows cpu thinking label while cpu is computing', (tester) async {
+    await tester.pumpWidget(
+      buildTestWidget(
+        status: GameStatus.playing,
+        isCpuThinking: true,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text("L'ordinateur réfléchit…"), findsOneWidget);
+    expect(find.text('En cours'), findsNothing);
   });
 
   testWidgets('shows player won label when human wins', (tester) async {

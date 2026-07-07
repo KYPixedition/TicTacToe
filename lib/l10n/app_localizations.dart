@@ -136,6 +136,12 @@ abstract class AppLocalizations {
   /// **'En cours'**
   String get gameStatusPlaying;
 
+  /// Label shown while the CPU is computing its move
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'ordinateur réfléchit…'**
+  String get gameStatusCpuThinking;
+
   /// Label shown when the human player wins
   ///
   /// In fr, this message translates to:

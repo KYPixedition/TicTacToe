@@ -11,10 +11,12 @@ class GameStatusLabel extends StatelessWidget {
     super.key,
     required this.status,
     required this.winner,
+    this.isCpuThinking = false,
   });
 
   final GameStatus status;
   final Player? winner;
+  final bool isCpuThinking;
 
   static const double _iconSize = 28;
   static const int _maxTextLines = 2;
@@ -83,6 +85,14 @@ class GameStatusLabel extends StatelessWidget {
     required AppLocalizations? l10n,
     required AppColorPalette colors,
   }) {
+    if (isCpuThinking && status == GameStatus.playing) {
+      return _StatusPresentation(
+        label: l10n?.gameStatusCpuThinking ?? '',
+        icon: Icons.smart_toy_rounded,
+        accentColor: colors.playerO,
+      );
+    }
+
     return switch (status) {
       GameStatus.playing => _StatusPresentation(
         label: l10n?.gameStatusPlaying ?? '',

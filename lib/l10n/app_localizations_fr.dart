@@ -30,6 +30,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get gameStatusPlaying => 'En cours';
 
   @override
+  String get gameStatusCpuThinking => 'L\'ordinateur réfléchit…';
+
+  @override
   String get gameStatusPlayerWon => 'Victoire du joueur';
 
   @override

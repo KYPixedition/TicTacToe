@@ -28,6 +28,10 @@
   "@gameStatusPlaying": {
     "description": "Label shown while the game is in progress"
   },
+  "gameStatusCpuThinking": "L'ordinateur réfléchit…",
+  "@gameStatusCpuThinking": {
+    "description": "Label shown while the CPU is computing its move"
+  },
   "gameStatusPlayerWon": "Victoire du joueur",
   "@gameStatusPlayerWon": {
     "description": "Label shown when the human player wins"
