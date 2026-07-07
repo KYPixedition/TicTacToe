@@ -11,11 +11,13 @@ class GameStatusLabel extends StatelessWidget {
     super.key,
     required this.status,
     required this.winner,
+    required this.currentPlayer,
     this.isCpuThinking = false,
   });
 
   final GameStatus status;
   final Player? winner;
+  final Player currentPlayer;
   final bool isCpuThinking;
 
   static const double _iconSize = 28;
@@ -94,6 +96,11 @@ class GameStatusLabel extends StatelessWidget {
     }
 
     return switch (status) {
+      GameStatus.playing when currentPlayer == Player.x => _StatusPresentation(
+        label: l10n?.gameStatusYourTurn ?? '',
+        icon: Icons.person_rounded,
+        accentColor: colors.gameStatusPlaying,
+      ),
       GameStatus.playing => _StatusPresentation(
         label: l10n?.gameStatusPlaying ?? '',
         icon: Icons.sports_esports_rounded,
@@ -108,7 +115,7 @@ class GameStatusLabel extends StatelessWidget {
         Player.x => _StatusPresentation(
           label: l10n?.gameStatusPlayerWon ?? '',
           icon: Icons.emoji_events_rounded,
-          accentColor: colors.gameStatusFinished,
+          accentColor: colors.playerX,
         ),
         Player.o => _StatusPresentation(
           label: l10n?.gameStatusCpuWon ?? '',

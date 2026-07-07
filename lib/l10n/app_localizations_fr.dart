@@ -21,6 +21,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get gameBackToHome => 'Menu principal';
 
   @override
+  String get gamePlayAgain => 'Rejouer';
+
+  @override
   String get gameEntryModeNew => 'Nouvelle partie';
 
   @override
@@ -28,6 +31,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get gameStatusPlaying => 'En cours';
+
+  @override
+  String get gameStatusYourTurn => 'À votre tour';
 
   @override
   String get gameStatusCpuThinking => 'L\'ordinateur réfléchit…';

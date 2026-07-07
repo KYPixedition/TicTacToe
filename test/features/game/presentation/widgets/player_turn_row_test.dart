@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tictactoe/core/theme/app_color_palette.dart';
 import 'package:tictactoe/core/theme/app_theme.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
@@ -80,6 +81,10 @@ void main() {
 
     expect((humanDecoration.border as Border).top.width, 1);
     expect((cpuDecoration.border as Border).top.width, 2);
+    expect(
+      (cpuDecoration.border as Border).top.color,
+      AppColorPalette.light.playerO,
+    );
   });
 
   testWidgets('shows no active border when game is won', (tester) async {

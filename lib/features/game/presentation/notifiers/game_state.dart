@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:tictactoe/core/error/app_error.dart';
 import 'package:tictactoe/features/game/domain/entities/game.dart';
+import 'package:tictactoe/features/game/domain/entities/player.dart';
 
 part 'game_state.freezed.dart';
 
@@ -11,5 +12,7 @@ abstract class GameState with _$GameState {
     Game? game,
     AppError? error,
     @Default(false) bool isCpuThinking,
+    @Default(false) bool isPlayAgainInProgress,
+    @Default(Player.x) Player lastStartingPlayer,
   }) = _GameState;
 }

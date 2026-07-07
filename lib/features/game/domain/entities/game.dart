@@ -29,12 +29,12 @@ abstract class Game with _$Game {
     <int>[2, 4, 6],
   ];
 
-  /// Creates a new game with an empty board and the human player to move first.
-  factory Game.initial() {
+  /// Creates a new game with an empty board and [firstPlayer] to move first.
+  factory Game.initial({Player firstPlayer = Player.x}) {
     return Game(
       board: List<Player?>.filled(boardSize, null),
       status: GameStatus.playing,
-      currentPlayer: Player.x,
+      currentPlayer: firstPlayer,
     );
   }
 

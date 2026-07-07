@@ -9,12 +9,14 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
     required this.onSurface,
     required this.buttonDisabledBackground,
     required this.buttonDisabledForeground,
+    required this.buttonSecondaryBackground,
+    required this.buttonSecondaryForeground,
+    required this.buttonSecondaryBorder,
     required this.boardCellBorder,
     required this.boardCellBackground,
     required this.playerX,
     required this.playerO,
     required this.gameStatusPlaying,
-    required this.gameStatusFinished,
   });
 
   final Color primary;
@@ -23,12 +25,14 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
   final Color onSurface;
   final Color buttonDisabledBackground;
   final Color buttonDisabledForeground;
+  final Color buttonSecondaryBackground;
+  final Color buttonSecondaryForeground;
+  final Color buttonSecondaryBorder;
   final Color boardCellBorder;
   final Color boardCellBackground;
   final Color playerX;
   final Color playerO;
   final Color gameStatusPlaying;
-  final Color gameStatusFinished;
 
   static const AppColorPalette light = AppColorPalette(
     primary: Color(0xFFE53935),
@@ -37,12 +41,14 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
     onSurface: Color(0xFF212121),
     buttonDisabledBackground: Color(0xFFBDBDBD),
     buttonDisabledForeground: Color(0xFF757575),
+    buttonSecondaryBackground: Color(0xFFFFFFFF),
+    buttonSecondaryForeground: Color(0xFFE53935),
+    buttonSecondaryBorder: Color(0xFFE53935),
     boardCellBorder: Color(0xFF9E9E9E),
     boardCellBackground: Color(0xFFFFFFFF),
     playerX: Color(0xFFE53935),
     playerO: Color(0xFF1E88E5),
     gameStatusPlaying: Color(0xFFE53935),
-    gameStatusFinished: Color(0xFF43A047),
   );
 
   @override
@@ -53,12 +59,14 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
     Color? onSurface,
     Color? buttonDisabledBackground,
     Color? buttonDisabledForeground,
+    Color? buttonSecondaryBackground,
+    Color? buttonSecondaryForeground,
+    Color? buttonSecondaryBorder,
     Color? boardCellBorder,
     Color? boardCellBackground,
     Color? playerX,
     Color? playerO,
     Color? gameStatusPlaying,
-    Color? gameStatusFinished,
   }) {
     return AppColorPalette(
       primary: primary ?? this.primary,
@@ -67,12 +75,16 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
       onSurface: onSurface ?? this.onSurface,
       buttonDisabledBackground: buttonDisabledBackground ?? this.buttonDisabledBackground,
       buttonDisabledForeground: buttonDisabledForeground ?? this.buttonDisabledForeground,
+      buttonSecondaryBackground:
+          buttonSecondaryBackground ?? this.buttonSecondaryBackground,
+      buttonSecondaryForeground:
+          buttonSecondaryForeground ?? this.buttonSecondaryForeground,
+      buttonSecondaryBorder: buttonSecondaryBorder ?? this.buttonSecondaryBorder,
       boardCellBorder: boardCellBorder ?? this.boardCellBorder,
       boardCellBackground: boardCellBackground ?? this.boardCellBackground,
       playerX: playerX ?? this.playerX,
       playerO: playerO ?? this.playerO,
       gameStatusPlaying: gameStatusPlaying ?? this.gameStatusPlaying,
-      gameStatusFinished: gameStatusFinished ?? this.gameStatusFinished,
     );
   }
 
@@ -93,13 +105,21 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
       buttonDisabledForeground:
           Color.lerp(buttonDisabledForeground, other.buttonDisabledForeground, t) ??
           buttonDisabledForeground,
+      buttonSecondaryBackground:
+          Color.lerp(buttonSecondaryBackground, other.buttonSecondaryBackground, t) ??
+          buttonSecondaryBackground,
+      buttonSecondaryForeground:
+          Color.lerp(buttonSecondaryForeground, other.buttonSecondaryForeground, t) ??
+          buttonSecondaryForeground,
+      buttonSecondaryBorder:
+          Color.lerp(buttonSecondaryBorder, other.buttonSecondaryBorder, t) ??
+          buttonSecondaryBorder,
       boardCellBorder: Color.lerp(boardCellBorder, other.boardCellBorder, t) ?? boardCellBorder,
       boardCellBackground:
           Color.lerp(boardCellBackground, other.boardCellBackground, t) ?? boardCellBackground,
       playerX: Color.lerp(playerX, other.playerX, t) ?? playerX,
       playerO: Color.lerp(playerO, other.playerO, t) ?? playerO,
       gameStatusPlaying: Color.lerp(gameStatusPlaying, other.gameStatusPlaying, t) ?? gameStatusPlaying,
-      gameStatusFinished: Color.lerp(gameStatusFinished, other.gameStatusFinished, t) ?? gameStatusFinished,
     );
   }
 }

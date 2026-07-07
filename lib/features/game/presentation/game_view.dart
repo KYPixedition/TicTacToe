@@ -16,8 +16,6 @@ class GameView extends ConsumerWidget {
 
   final GameEntryMode entryMode;
 
-  static const double _buttonMinWidth = 240;
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
@@ -42,6 +40,7 @@ class GameView extends ConsumerWidget {
                 GameStatusLabel(
                   status: game.status,
                   winner: game.winner,
+                  currentPlayer: game.currentPlayer,
                   isCpuThinking: state.isCpuThinking,
                 ),
                 spacings.gapVerticalXxl,
@@ -70,14 +69,25 @@ class GameView extends ConsumerWidget {
                 ),
               ],
               spacings.gapVerticalM,
-              AppButton(
+              if (game != null &&
+                  game.status != GameStatus.playing &&
+                  !state.isPlayAgainInProgress) ...[
+                AppButton.primary(
+                  onPressed: () => ref
+                      .read(gameNotifierProvider(entryMode).notifier)
+                      .playAgain(),
+                  label: l10n?.gamePlayAgain ?? '',
+                  icon: Icons.replay_rounded,
+                  minWidth: AppButton.defaultMinWidth,
+                ),
+                spacings.gapVerticalM,
+              ],
+              AppButton.secondary(
                 onPressed: () =>
                     ref.read(gameNotifierProvider(entryMode).notifier).goHome(),
                 label: l10n?.gameBackToHome ?? '',
                 icon: Icons.home_rounded,
-                backgroundColor: colors.primary,
-                foregroundColor: colors.onPrimary,
-                minWidth: _buttonMinWidth,
+                minWidth: AppButton.defaultMinWidth,
               ),
             ],
           ),
