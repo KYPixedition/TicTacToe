@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tictactoe/core/theme/app_color_palette.dart';
 import 'package:tictactoe/core/theme/app_theme.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
@@ -11,6 +12,7 @@ void main() {
   Widget buildTestWidget({
     required GameStatus status,
     Player? winner,
+    Player currentPlayer = Player.x,
     bool isCpuThinking = false,
   }) {
     return MaterialApp(
@@ -26,15 +28,33 @@ void main() {
         body: GameStatusLabel(
           status: status,
           winner: winner,
+          currentPlayer: currentPlayer,
           isCpuThinking: isCpuThinking,
         ),
       ),
     );
   }
 
-  testWidgets('shows playing label while game is in progress', (tester) async {
+  testWidgets('shows your turn label when human can play', (tester) async {
     await tester.pumpWidget(
-      buildTestWidget(status: GameStatus.playing),
+      buildTestWidget(
+        status: GameStatus.playing,
+        currentPlayer: Player.x,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('À votre tour'), findsOneWidget);
+  });
+
+  testWidgets('shows playing label when it is cpu turn without thinking', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      buildTestWidget(
+        status: GameStatus.playing,
+        currentPlayer: Player.o,
+      ),
     );
     await tester.pumpAndSettle();
 
@@ -51,8 +71,19 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text("L'ordinateur réfléchit…"), findsOneWidget);
+    expect(find.text('À votre tour'), findsNothing);
     expect(find.text('En cours'), findsNothing);
   });
+
+  Future<BoxDecoration> statusBannerDecoration(WidgetTester tester) async {
+    final statusText = find.byType(GameStatusLabel);
+    final decoratedBox = find.descendant(
+      of: statusText,
+      matching: find.byType(DecoratedBox),
+    );
+    final widget = tester.widget<DecoratedBox>(decoratedBox);
+    return widget.decoration as BoxDecoration;
+  }
 
   testWidgets('shows player won label when human wins', (tester) async {
     await tester.pumpWidget(
@@ -64,6 +95,23 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Victoire du joueur'), findsOneWidget);
+  });
+
+  testWidgets('uses player red accent when human wins', (tester) async {
+    await tester.pumpWidget(
+      buildTestWidget(
+        status: GameStatus.won,
+        winner: Player.x,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final decoration = await statusBannerDecoration(tester);
+
+    expect(
+      (decoration.border as Border).top.color,
+      AppColorPalette.light.playerX,
+    );
   });
 
   testWidgets('shows cpu won label when cpu wins', (tester) async {

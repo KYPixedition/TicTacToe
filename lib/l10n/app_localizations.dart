@@ -118,6 +118,12 @@ abstract class AppLocalizations {
   /// **'Menu principal'**
   String get gameBackToHome;
 
+  /// Label for the button that starts a new match after game over
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejouer'**
+  String get gamePlayAgain;
+
   /// Debug label when entering a new game
   ///
   /// In fr, this message translates to:
@@ -135,6 +141,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'En cours'**
   String get gameStatusPlaying;
+
+  /// Label shown while the game is in progress and the human player can move
+  ///
+  /// In fr, this message translates to:
+  /// **'À votre tour'**
+  String get gameStatusYourTurn;
 
   /// Label shown while the CPU is computing its move
   ///

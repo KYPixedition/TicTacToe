@@ -8,6 +8,7 @@ import 'package:tictactoe/features/game/di/start_game_use_case_provider.dart';
 import 'package:tictactoe/features/game/domain/entities/game_entry_mode.dart';
 import 'package:tictactoe/features/game/domain/entities/game.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
+import 'package:tictactoe/features/game/domain/entities/player.dart';
 import 'package:tictactoe/features/game/presentation/notifiers/game_state.dart';
 
 part 'game_notifier.g.dart';
@@ -20,7 +21,7 @@ class GameNotifier extends _$GameNotifier {
   @override
   GameState build(GameEntryMode entryMode) {
     return switch (entryMode) {
-      GameEntryMode.newGame => _startNewGame(),
+      GameEntryMode.newGame => _createNewGameState(firstPlayer: Player.x),
       GameEntryMode.resume => const GameState(),
     };
   }
@@ -28,6 +29,44 @@ class GameNotifier extends _$GameNotifier {
   /// Navigates back to the home screen.
   void goHome() {
     ref.read(gameNavigationProvider).goHome();
+  }
+
+  /// Starts a new match on the same screen, alternating the opening player.
+  Future<void> playAgain() async {
+    final currentGame = state.game;
+    if (currentGame == null || currentGame.status == GameStatus.playing) {
+      return;
+    }
+    if (state.isPlayAgainInProgress) {
+      return;
+    }
+
+    state = state.copyWith(isPlayAgainInProgress: true);
+
+    final nextStartingPlayer =
+        state.lastStartingPlayer == Player.x ? Player.o : Player.x;
+    final startResult = ref
+        .read(startGameUseCaseProvider)
+        .execute(firstPlayer: nextStartingPlayer);
+
+    switch (startResult) {
+      case Success(:final value):
+        state = state.copyWith(
+          game: value,
+          lastStartingPlayer: nextStartingPlayer,
+          error: null,
+          isCpuThinking: false,
+          isPlayAgainInProgress: false,
+        );
+        if (nextStartingPlayer == Player.o) {
+          await _runCpuTurnIfNeeded(game: value);
+        }
+      case Failure(:final error):
+        state = state.copyWith(
+          error: error,
+          isPlayAgainInProgress: false,
+        );
+    }
   }
 
   /// Plays one human move and triggers the CPU move when needed.
@@ -62,11 +101,16 @@ class GameNotifier extends _$GameNotifier {
     }
   }
 
-  GameState _startNewGame() {
-    final result = ref.read(startGameUseCaseProvider).execute();
+  GameState _createNewGameState({required Player firstPlayer}) {
+    final result = ref
+        .read(startGameUseCaseProvider)
+        .execute(firstPlayer: firstPlayer);
 
     return switch (result) {
-      Success(:final value) => GameState(game: value),
+      Success(:final value) => GameState(
+        game: value,
+        lastStartingPlayer: firstPlayer,
+      ),
       Failure(:final error) => GameState(error: error),
     };
   }

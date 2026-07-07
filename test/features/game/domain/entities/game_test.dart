@@ -205,4 +205,12 @@ void main() {
     expect(updatedGame.board[1], Player.o);
     expect(updatedGame.currentPlayer, Player.x);
   });
+
+  test('initial with firstPlayer O sets cpu to move first', () {
+    final game = Game.initial(firstPlayer: Player.o);
+
+    expect(game.currentPlayer, Player.o);
+    expect(game.status, GameStatus.playing);
+    expect(game.board, List<Player?>.filled(9, null));
+  });
 }

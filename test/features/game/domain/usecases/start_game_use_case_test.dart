@@ -39,4 +39,16 @@ void main() {
 
     expect(game.status, GameStatus.playing);
   });
+
+  test('sets cpu player O to move first when requested', () {
+    final result = useCase.execute(firstPlayer: Player.o);
+    final game = switch (result) {
+      Success(:final value) => value,
+      Failure() => throw StateError('expected success'),
+    };
+
+    expect(game.currentPlayer, Player.o);
+    expect(game.board, List<Player?>.filled(9, null));
+    expect(game.status, GameStatus.playing);
+  });
 }

@@ -16,6 +16,10 @@
   "@gameBackToHome": {
     "description": "Label for the button that returns to the home screen"
   },
+  "gamePlayAgain": "Rejouer",
+  "@gamePlayAgain": {
+    "description": "Label for the button that starts a new match after game over"
+  },
   "gameEntryModeNew": "Nouvelle partie",
   "@gameEntryModeNew": {
     "description": "Debug label when entering a new game"
@@ -27,6 +31,10 @@
   "gameStatusPlaying": "En cours",
   "@gameStatusPlaying": {
     "description": "Label shown while the game is in progress"
+  },
+  "gameStatusYourTurn": "À votre tour",
+  "@gameStatusYourTurn": {
+    "description": "Label shown while the game is in progress and the human player can move"
   },
   "gameStatusCpuThinking": "L'ordinateur réfléchit…",
   "@gameStatusCpuThinking": {

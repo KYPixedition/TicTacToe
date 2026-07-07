@@ -34,17 +34,15 @@ class HomeView extends ConsumerWidget {
                 child: HomeLogo(semanticsLabel: l10n?.homeTitle ?? ''),
               ),
               spacings.gapVerticalXl,
-              AppButton(
+              AppButton.primary(
                 onPressed: () =>
                     ref.read(homeNotifierProvider.notifier).openNewGame(),
                 label: l10n?.homeNewGame ?? '',
                 icon: Icons.play_arrow_rounded,
-                backgroundColor: colors.primary,
-                foregroundColor: colors.onPrimary,
                 minWidth: _buttonMinWidth,
               ),
               spacings.gapVerticalL,
-              AppButton(
+              AppButton.secondary(
                 onPressed: isResumeEnabled
                     ? () => ref
                           .read(homeNotifierProvider.notifier)
@@ -52,12 +50,6 @@ class HomeView extends ConsumerWidget {
                     : null,
                 label: l10n?.homeResumeGame ?? '',
                 icon: Icons.replay_rounded,
-                backgroundColor: isResumeEnabled
-                    ? colors.primary
-                    : colors.buttonDisabledBackground,
-                foregroundColor: isResumeEnabled
-                    ? colors.onPrimary
-                    : colors.buttonDisabledForeground,
                 minWidth: _buttonMinWidth,
               ),
             ],

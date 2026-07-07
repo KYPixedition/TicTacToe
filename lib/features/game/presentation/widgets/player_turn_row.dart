@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tictactoe/core/theme/app_color_palette.dart';
 import 'package:tictactoe/core/theme/app_theme_context.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
@@ -79,12 +80,14 @@ class _PlayerTurnCell extends StatelessWidget {
     final markStyle = context.typos.cellMark.copyWith(color: iconColor);
     final markWidth = markStyle.fontSize;
 
+    final activeBorderColor = isActive ? _activeBorderColor(colors) : colors.boardCellBorder;
+
     return DecoratedBox(
       decoration: BoxDecoration(
         color: colors.boardCellBackground,
         borderRadius: context.radii.borderM,
         border: Border.all(
-          color: isActive ? colors.gameStatusPlaying : colors.boardCellBorder,
+          color: activeBorderColor,
           width: isActive ? 2 : 1,
         ),
       ),
@@ -115,5 +118,12 @@ class _PlayerTurnCell extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _activeBorderColor(AppColorPalette colors) {
+    return switch (player) {
+      Player.x => colors.gameStatusPlaying,
+      Player.o => colors.playerO,
+    };
   }
 }
