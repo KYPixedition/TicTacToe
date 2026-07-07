@@ -10,5 +10,6 @@ abstract class GameState with _$GameState {
   const factory GameState({
     Game? game,
     AppError? error,
+    @Default(false) bool isCpuThinking,
   }) = _GameState;
 }

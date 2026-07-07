@@ -5,6 +5,7 @@ import 'package:tictactoe/core/error/app_error.dart';
 import 'package:tictactoe/core/result/result.dart';
 import 'package:tictactoe/features/game/data/datasources/game_local_data_source.dart';
 import 'package:tictactoe/features/game/data/models/game_dto.dart';
+import 'package:tictactoe/features/game/domain/entities/game.dart';
 import 'package:tictactoe/features/game/domain/repositories/game_repository.dart';
 
 /// Local implementation of [GameRepository] backed by [GameLocalDataSource].
@@ -25,6 +26,12 @@ final class LocalGameRepository implements GameRepository {
       Failure(:final error) => _handleReadFailure(error),
       Success(:final value) => _parseSavedGame(value),
     };
+  }
+
+  @override
+  Future<Result<void>> saveGame({required Game game}) async {
+    final encodedGame = jsonEncode(GameDto.fromDomain(game).toJson());
+    return _dataSource.writeRawGameState(value: encodedGame);
   }
 
   Result<bool> _handleReadFailure(AppError error) {

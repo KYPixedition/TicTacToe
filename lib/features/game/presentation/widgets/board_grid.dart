@@ -11,9 +11,13 @@ class BoardGrid extends StatelessWidget {
   const BoardGrid({
     super.key,
     required this.board,
+    required this.onCellTap,
+    this.isInteractionEnabled = true,
   });
 
   final List<Player?> board;
+  final ValueChanged<int> onCellTap;
+  final bool isInteractionEnabled;
 
   static const int _gridDimension = 3;
 
@@ -49,7 +53,13 @@ class BoardGrid extends StatelessWidget {
               crossAxisSpacing: gap,
               padding: EdgeInsets.zero,
               physics: const NeverScrollableScrollPhysics(),
-              children: [for (final player in board) BoardCell(player: player)],
+              children: [
+                for (int index = 0; index < board.length; index++)
+                  GestureDetector(
+                    onTap: isInteractionEnabled ? () => onCellTap(index) : null,
+                    child: BoardCell(player: board[index]),
+                  ),
+              ],
             ),
           ),
         );

@@ -18,6 +18,17 @@ abstract class Game with _$Game {
   /// Number of cells on the board.
   static const int boardSize = 9;
 
+  static const List<List<int>> _winningLines = <List<int>>[
+    <int>[0, 1, 2],
+    <int>[3, 4, 5],
+    <int>[6, 7, 8],
+    <int>[0, 3, 6],
+    <int>[1, 4, 7],
+    <int>[2, 5, 8],
+    <int>[0, 4, 8],
+    <int>[2, 4, 6],
+  ];
+
   /// Creates a new game with an empty board and the human player to move first.
   factory Game.initial() {
     return Game(
@@ -29,4 +40,80 @@ abstract class Game with _$Game {
 
   /// Whether the game can be resumed by the player.
   bool get isResumable => status == GameStatus.playing;
+
+  /// Whether the human player can play at [cellIndex].
+  bool canHumanPlayAt(int cellIndex) {
+    if (cellIndex < 0 || cellIndex >= boardSize) {
+      return false;
+    }
+    if (status != GameStatus.playing) {
+      return false;
+    }
+    if (currentPlayer != Player.x) {
+      return false;
+    }
+    return board[cellIndex] == null;
+  }
+
+  /// Whether the CPU can play a move.
+  bool canCpuPlay() {
+    if (status != GameStatus.playing) {
+      return false;
+    }
+    if (currentPlayer != Player.o) {
+      return false;
+    }
+    return board.any((cell) => cell == null);
+  }
+
+  /// Applies a human move at [cellIndex].
+  ///
+  /// Caller must ensure [canHumanPlayAt] is true.
+  Game applyHumanMove(int cellIndex) {
+    return _applyMove(cellIndex: cellIndex, player: Player.x);
+  }
+
+  /// Applies a CPU move on the first available cell.
+  ///
+  /// Caller must ensure [canCpuPlay] is true.
+  Game applyCpuMoveFirstAvailable() {
+    final cellIndex = board.indexWhere((cell) => cell == null);
+    return _applyMove(cellIndex: cellIndex, player: Player.o);
+  }
+
+  /// Resolves the game status for a board state.
+  static GameStatus statusForBoard(List<Player?> board) {
+    final hasWinner = _winningLines.any(
+      (line) {
+        final first = board[line[0]];
+        if (first == null) {
+          return false;
+        }
+        return board[line[1]] == first && board[line[2]] == first;
+      },
+    );
+
+    if (hasWinner) {
+      return GameStatus.won;
+    }
+
+    final hasFreeCell = board.any((cell) => cell == null);
+    return hasFreeCell ? GameStatus.playing : GameStatus.draw;
+  }
+
+  Game _applyMove({
+    required int cellIndex,
+    required Player player,
+  }) {
+    final updatedBoard = List<Player?>.from(board);
+    updatedBoard[cellIndex] = player;
+    final updatedStatus = statusForBoard(updatedBoard);
+    final nextPlayer = player == Player.x ? Player.o : Player.x;
+
+    return copyWith(
+      board: updatedBoard,
+      status: updatedStatus,
+      currentPlayer: updatedStatus == GameStatus.playing ? nextPlayer : currentPlayer,
+    );
+  }
 }

@@ -4,12 +4,14 @@ import 'package:tictactoe/core/error/app_error.dart';
 import 'package:tictactoe/core/result/result.dart';
 import 'package:tictactoe/features/game/data/datasources/game_local_data_source.dart';
 import 'package:tictactoe/features/game/data/repositories/local_game_repository.dart';
+import 'package:tictactoe/features/game/domain/entities/game.dart';
 
 final class _FakeGameLocalDataSource implements GameLocalDataSource {
   _FakeGameLocalDataSource(this._value, {this.shouldFail = false});
 
   final String? _value;
   final bool shouldFail;
+  String? lastWrittenValue;
 
   @override
   Future<Result<String?>> readRawGameState() async {
@@ -18,6 +20,12 @@ final class _FakeGameLocalDataSource implements GameLocalDataSource {
     }
 
     return Result.success(_value);
+  }
+
+  @override
+  Future<Result<void>> writeRawGameState({required String value}) async {
+    lastWrittenValue = value;
+    return const Result.success(null);
   }
 }
 
@@ -100,5 +108,19 @@ void main() {
       Success(:final value) => value,
       Failure() => fail('expected success'),
     }, isFalse);
+  });
+
+  test('saveGame writes serialized game state', () async {
+    final dataSource = _FakeGameLocalDataSource(null);
+    final repository = LocalGameRepository(
+      dataSource: dataSource,
+      talker: talker,
+    );
+
+    final result = await repository.saveGame(game: Game.initial());
+
+    expect(result, isA<Success<void>>());
+    expect(dataSource.lastWrittenValue, isNotNull);
+    expect(dataSource.lastWrittenValue, contains('"status":"playing"'));
   });
 }

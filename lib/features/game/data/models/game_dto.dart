@@ -31,6 +31,15 @@ class GameDto {
     );
   }
 
+  /// Maps a domain [Game] entity to DTO.
+  factory GameDto.fromDomain(Game game) {
+    return GameDto(
+      board: game.board.map(_playerToJson).toList(),
+      status: game.status.name,
+      currentPlayer: game.currentPlayer.name,
+    );
+  }
+
   static Player? _parseCell(String? value) {
     return switch (value) {
       'x' || 'X' => Player.x,
@@ -54,6 +63,14 @@ class GameDto {
       'x' || 'X' => Player.x,
       'o' || 'O' => Player.o,
       _ => Player.x,
+    };
+  }
+
+  static String? _playerToJson(Player? player) {
+    return switch (player) {
+      Player.x => 'x',
+      Player.o => 'o',
+      null => null,
     };
   }
 }

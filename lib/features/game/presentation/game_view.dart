@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tictactoe/core/theme/app_theme_context.dart';
 import 'package:tictactoe/core/widgets/app_button.dart';
 import 'package:tictactoe/features/game/domain/entities/game_entry_mode.dart';
+import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/presentation/notifiers/game_notifier.dart';
 import 'package:tictactoe/features/game/presentation/widgets/board_grid.dart';
 import 'package:tictactoe/l10n/app_localizations.dart';
@@ -36,7 +37,16 @@ class GameView extends ConsumerWidget {
                   child: game != null
                       ? SizedBox(
                           width: double.infinity,
-                          child: BoardGrid(board: game.board),
+                          child: BoardGrid(
+                            board: game.board,
+                            isInteractionEnabled:
+                                !state.isCpuThinking && game.status == GameStatus.playing,
+                            onCellTap: (cellIndex) {
+                              ref
+                                  .read(gameNotifierProvider(entryMode).notifier)
+                                  .playMove(cellIndex: cellIndex);
+                            },
+                          ),
                         )
                       : _GameResumePlaceholder(entryMode: entryMode),
                 ),
