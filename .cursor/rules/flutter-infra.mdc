@@ -140,4 +140,8 @@ Local game, no external API. If config is needed: `AppConfig` or `--dart-define`
 
 ## flutter_hooks
 
-Not used. Prefer Riverpod for app state and `StatefulWidget` for local UI state when needed.
+Used with `hooks_riverpod` for view-level lifecycle and local UI state.
+
+- **Riverpod Notifiers** → app / business state
+- **Hooks** → route visibility, animations, `TextEditingController`, `ScrollController`, etc.
+- Shared hooks → `lib/core/hooks/`

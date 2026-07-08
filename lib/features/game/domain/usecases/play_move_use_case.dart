@@ -7,10 +7,7 @@ final class PlayMoveUseCase {
   const PlayMoveUseCase();
 
   /// Applies a move and returns the updated game.
-  Result<Game> execute({
-    required Game game,
-    required int cellIndex,
-  }) {
+  Result<Game> execute({required Game game, required int cellIndex}) {
     if (!game.canHumanPlayAt(cellIndex)) {
       return const Result.failure(InvalidMoveError());
     }

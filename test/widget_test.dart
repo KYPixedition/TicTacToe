@@ -1,11 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:tictactoe/app/app.dart';
 import 'package:tictactoe/core/providers/shared_preferences_provider.dart';
-import 'fakes/fake_game_repository.dart';
 import 'package:tictactoe/features/home/di/has_saved_game_use_case_provider.dart';
 import 'package:tictactoe/features/home/domain/usecases/has_saved_game_use_case.dart';
+
+import 'fakes/fake_game_repository.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +25,9 @@ void main() {
           sharedPreferencesProvider.overrideWithValue(
             await SharedPreferences.getInstance(),
           ),
-          hasSavedGameUseCaseProvider.overrideWithValue(HasSavedGameUseCase(repository: repository)),
+          hasSavedGameUseCaseProvider.overrideWithValue(
+            HasSavedGameUseCase(repository: repository),
+          ),
         ],
         child: const App(),
       ),

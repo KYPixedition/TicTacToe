@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import 'package:tictactoe/features/game/domain/entities/game.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
@@ -14,7 +15,8 @@ class GameDto {
     required this.currentPlayer,
   });
 
-  factory GameDto.fromJson(Map<String, dynamic> json) => _$GameDtoFromJson(json);
+  factory GameDto.fromJson(Map<String, dynamic> json) =>
+      _$GameDtoFromJson(json);
 
   final List<String?> board;
   final String status;

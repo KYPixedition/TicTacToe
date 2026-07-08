@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
 
@@ -108,10 +109,7 @@ abstract class Game with _$Game {
     return hasFreeCell ? GameStatus.playing : GameStatus.draw;
   }
 
-  Game _applyMove({
-    required int cellIndex,
-    required Player player,
-  }) {
+  Game _applyMove({required int cellIndex, required Player player}) {
     final updatedBoard = List<Player?>.from(board);
     updatedBoard[cellIndex] = player;
     final updatedStatus = statusForBoard(updatedBoard);
@@ -120,7 +118,9 @@ abstract class Game with _$Game {
     return copyWith(
       board: updatedBoard,
       status: updatedStatus,
-      currentPlayer: updatedStatus == GameStatus.playing ? nextPlayer : currentPlayer,
+      currentPlayer: updatedStatus == GameStatus.playing
+          ? nextPlayer
+          : currentPlayer,
     );
   }
 }

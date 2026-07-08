@@ -9,15 +9,23 @@ part 'home_notifier.g.dart';
 /// Manages home screen state and user commands.
 @Riverpod(name: 'homeNotifierProvider')
 class HomeNotifier extends _$HomeNotifier {
+  int _resumeAvailabilityRequestId = 0;
+
   @override
   HomeState build() {
     _loadResumeAvailability();
     return const HomeState(isResumeEnabled: false);
   }
 
+  /// Reloads whether a saved game can be resumed.
+  void refreshResumeAvailability() {
+    _loadResumeAvailability();
+  }
+
   Future<void> _loadResumeAvailability() async {
+    final requestId = ++_resumeAvailabilityRequestId;
     final result = await ref.read(hasSavedGameUseCaseProvider).execute();
-    if (!ref.mounted) {
+    if (!ref.mounted || requestId != _resumeAvailabilityRequestId) {
       return;
     }
 

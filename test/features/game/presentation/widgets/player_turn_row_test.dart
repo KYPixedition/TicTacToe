@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'package:tictactoe/core/theme/app_color_palette.dart';
 import 'package:tictactoe/core/theme/app_theme.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
@@ -23,10 +25,7 @@ void main() {
       ],
       supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
-        body: PlayerTurnRow(
-          currentPlayer: currentPlayer,
-          status: status,
-        ),
+        body: PlayerTurnRow(currentPlayer: currentPlayer, status: status),
       ),
     );
   }
@@ -53,10 +52,7 @@ void main() {
 
   testWidgets('highlights human player when it is their turn', (tester) async {
     await tester.pumpWidget(
-      buildTestWidget(
-        currentPlayer: Player.x,
-        status: GameStatus.playing,
-      ),
+      buildTestWidget(currentPlayer: Player.x, status: GameStatus.playing),
     );
     await tester.pumpAndSettle();
 
@@ -69,10 +65,7 @@ void main() {
 
   testWidgets('highlights cpu player when it is their turn', (tester) async {
     await tester.pumpWidget(
-      buildTestWidget(
-        currentPlayer: Player.o,
-        status: GameStatus.playing,
-      ),
+      buildTestWidget(currentPlayer: Player.o, status: GameStatus.playing),
     );
     await tester.pumpAndSettle();
 
@@ -89,10 +82,7 @@ void main() {
 
   testWidgets('shows no active border when game is won', (tester) async {
     await tester.pumpWidget(
-      buildTestWidget(
-        currentPlayer: Player.x,
-        status: GameStatus.won,
-      ),
+      buildTestWidget(currentPlayer: Player.x, status: GameStatus.won),
     );
     await tester.pumpAndSettle();
 
@@ -105,10 +95,7 @@ void main() {
 
   testWidgets('shows no active border when game is draw', (tester) async {
     await tester.pumpWidget(
-      buildTestWidget(
-        currentPlayer: Player.o,
-        status: GameStatus.draw,
-      ),
+      buildTestWidget(currentPlayer: Player.o, status: GameStatus.draw),
     );
     await tester.pumpAndSettle();
 

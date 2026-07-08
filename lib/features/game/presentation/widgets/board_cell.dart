@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+
 import 'package:tictactoe/core/theme/app_theme_context.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
 
 /// Read-only display of a single board cell.
 class BoardCell extends StatelessWidget {
-  const BoardCell({
-    super.key,
-    required this.player,
-  });
+  const BoardCell({super.key, required this.player});
 
   final Player? player;
 

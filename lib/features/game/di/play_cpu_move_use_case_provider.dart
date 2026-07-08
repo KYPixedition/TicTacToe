@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 import 'package:tictactoe/features/game/domain/usecases/play_cpu_move_use_case.dart';
 
 part 'play_cpu_move_use_case_provider.g.dart';

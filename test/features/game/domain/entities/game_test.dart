@@ -1,66 +1,62 @@
 import 'package:flutter_test/flutter_test.dart';
+
 import 'package:tictactoe/features/game/domain/entities/game.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
 
 void main() {
   test('statusForBoard returns won when top row is complete', () {
-    final status = Game.statusForBoard(
-      <Player?>[
-        Player.x,
-        Player.x,
-        Player.x,
-        null,
-        Player.o,
-        null,
-        null,
-        null,
-        null,
-      ],
-    );
+    final status = Game.statusForBoard(<Player?>[
+      Player.x,
+      Player.x,
+      Player.x,
+      null,
+      Player.o,
+      null,
+      null,
+      null,
+      null,
+    ]);
 
     expect(status, GameStatus.won);
   });
 
   test('statusForBoard returns won when middle column is complete', () {
-    final status = Game.statusForBoard(
-      <Player?>[
-        null,
-        Player.o,
-        null,
-        Player.x,
-        Player.o,
-        null,
-        Player.x,
-        Player.o,
-        null,
-      ],
-    );
+    final status = Game.statusForBoard(<Player?>[
+      null,
+      Player.o,
+      null,
+      Player.x,
+      Player.o,
+      null,
+      Player.x,
+      Player.o,
+      null,
+    ]);
 
     expect(status, GameStatus.won);
   });
 
   test('statusForBoard returns won when main diagonal is complete', () {
-    final status = Game.statusForBoard(
-      <Player?>[
-        Player.o,
-        Player.x,
-        null,
-        Player.x,
-        Player.o,
-        null,
-        null,
-        null,
-        Player.o,
-      ],
-    );
+    final status = Game.statusForBoard(<Player?>[
+      Player.o,
+      Player.x,
+      null,
+      Player.x,
+      Player.o,
+      null,
+      null,
+      null,
+      Player.o,
+    ]);
 
     expect(status, GameStatus.won);
   });
 
-  test('statusForBoard returns playing when board is not full and has no winner', () {
-    final status = Game.statusForBoard(
-      <Player?>[
+  test(
+    'statusForBoard returns playing when board is not full and has no winner',
+    () {
+      final status = Game.statusForBoard(<Player?>[
         Player.x,
         null,
         Player.o,
@@ -70,26 +66,24 @@ void main() {
         null,
         null,
         null,
-      ],
-    );
+      ]);
 
-    expect(status, GameStatus.playing);
-  });
+      expect(status, GameStatus.playing);
+    },
+  );
 
   test('statusForBoard returns draw when board is full without winner', () {
-    final status = Game.statusForBoard(
-      <Player?>[
-        Player.x,
-        Player.o,
-        Player.x,
-        Player.x,
-        Player.o,
-        Player.o,
-        Player.o,
-        Player.x,
-        Player.x,
-      ],
-    );
+    final status = Game.statusForBoard(<Player?>[
+      Player.x,
+      Player.o,
+      Player.x,
+      Player.x,
+      Player.o,
+      Player.o,
+      Player.o,
+      Player.x,
+      Player.x,
+    ]);
 
     expect(status, GameStatus.draw);
   });

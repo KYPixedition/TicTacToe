@@ -12,6 +12,9 @@ abstract interface class GameLocalDataSource {
 
   /// Writes the raw game JSON string.
   Future<Result<void>> writeRawGameState({required String value});
+
+  /// Deletes any persisted game state.
+  Future<Result<void>> clearRawGameState();
 }
 
 /// [SharedPreferences] implementation of [GameLocalDataSource].
@@ -34,6 +37,16 @@ final class SharedPreferencesGameLocalDataSource
   Future<Result<void>> writeRawGameState({required String value}) async {
     try {
       await _preferences.setString(gameStateStorageKey, value);
+      return const Result.success(null);
+    } on Object {
+      return const Result.failure(StorageWriteError());
+    }
+  }
+
+  @override
+  Future<Result<void>> clearRawGameState() async {
+    try {
+      await _preferences.remove(gameStateStorageKey);
       return const Result.success(null);
     } on Object {
       return const Result.failure(StorageWriteError());

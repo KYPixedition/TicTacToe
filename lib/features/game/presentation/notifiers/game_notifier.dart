@@ -1,8 +1,10 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:tictactoe/core/result/result.dart';
+import 'package:tictactoe/features/game/di/clear_saved_game_use_case_provider.dart';
 import 'package:tictactoe/features/game/di/game_navigation_provider.dart';
 import 'package:tictactoe/features/game/di/play_cpu_move_use_case_provider.dart';
 import 'package:tictactoe/features/game/di/play_move_use_case_provider.dart';
+import 'package:tictactoe/features/game/di/resume_game_use_case_provider.dart';
 import 'package:tictactoe/features/game/di/save_game_use_case_provider.dart';
 import 'package:tictactoe/features/game/di/start_game_use_case_provider.dart';
 import 'package:tictactoe/features/game/domain/entities/game_entry_mode.dart';
@@ -20,10 +22,12 @@ const Duration _cpuTurnDelay = Duration(milliseconds: 400);
 class GameNotifier extends _$GameNotifier {
   @override
   GameState build(GameEntryMode entryMode) {
-    return switch (entryMode) {
-      GameEntryMode.newGame => _createNewGameState(firstPlayer: Player.x),
-      GameEntryMode.resume => const GameState(),
-    };
+    switch (entryMode) {
+      case GameEntryMode.newGame:
+        return _createNewGameState(firstPlayer: Player.x);
+      case GameEntryMode.resume:
+        return _restoreOrStartNewGame();
+    }
   }
 
   /// Navigates back to the home screen.
@@ -43,8 +47,9 @@ class GameNotifier extends _$GameNotifier {
 
     state = state.copyWith(isPlayAgainInProgress: true);
 
-    final nextStartingPlayer =
-        state.lastStartingPlayer == Player.x ? Player.o : Player.x;
+    final nextStartingPlayer = state.lastStartingPlayer == Player.x
+        ? Player.o
+        : Player.x;
     final startResult = ref
         .read(startGameUseCaseProvider)
         .execute(firstPlayer: nextStartingPlayer);
@@ -62,10 +67,7 @@ class GameNotifier extends _$GameNotifier {
           await _runCpuTurnIfNeeded(game: value);
         }
       case Failure(:final error):
-        state = state.copyWith(
-          error: error,
-          isPlayAgainInProgress: false,
-        );
+        state = state.copyWith(error: error, isPlayAgainInProgress: false);
     }
   }
 
@@ -115,8 +117,33 @@ class GameNotifier extends _$GameNotifier {
     };
   }
 
+  GameState _restoreOrStartNewGame() {
+    state = const GameState();
+    _restoreOrStartNewGameAsync();
+    return state;
+  }
+
+  Future<void> _restoreOrStartNewGameAsync() async {
+    final resumedResult = await ref.read(resumeGameUseCaseProvider).execute();
+    if (!ref.mounted) {
+      return;
+    }
+
+    switch (resumedResult) {
+      case Success(:final value) when value != null:
+        state = state.copyWith(game: value, error: null, isCpuThinking: false);
+        await _runCpuTurnIfNeeded(game: value);
+      default:
+        final fallbackState = _createNewGameState(firstPlayer: Player.x);
+        state = fallbackState;
+        if (fallbackState.game == null) {
+          goHome();
+        }
+    }
+  }
+
   Future<void> _runCpuTurnIfNeeded({required Game game}) async {
-    if (game.status != GameStatus.playing) {
+    if (game.status != GameStatus.playing || game.currentPlayer != Player.o) {
       return;
     }
 
@@ -140,6 +167,19 @@ class GameNotifier extends _$GameNotifier {
   }
 
   Future<bool> _saveCurrentGame({required Game game}) async {
+    if (!game.isResumable) {
+      final clearResult = await ref
+          .read(clearSavedGameUseCaseProvider)
+          .execute();
+      switch (clearResult) {
+        case Success():
+          return true;
+        case Failure(:final error):
+          state = state.copyWith(error: error);
+          return false;
+      }
+    }
+
     final saveResult = await ref
         .read(saveGameUseCaseProvider)
         .execute(game: game);
