@@ -1,0 +1,147 @@
+---
+description: Test conventions (unit, notifier, widget)
+globs: test/**/*.dart
+alwaysApply: false
+---
+
+# Testing
+
+Test-first for domain logic. Prefer meaningful tests over coverage padding.
+
+## Structure
+
+Mirror `lib/` under `test/`:
+
+```text
+test/
+└── features/
+    ├── home/
+    │   ├── domain/
+    │   │   └── usecases/
+    │   │       └── has_saved_game_use_case_test.dart
+    │   └── presentation/
+    │       └── notifiers/
+    │           └── home_notifier_test.dart
+    ├── game/
+    │   ├── domain/
+    │   │   └── usecases/
+    │   │       └── play_move_use_case_test.dart
+    │   ├── fakes/
+    │   │   └── fake_game_repository.dart
+    │   └── presentation/
+    │       ├── notifiers/
+    │       │   └── game_notifier_test.dart
+    │       └── game_view_test.dart
+    └── settings/
+        └── domain/
+            └── usecases/
+                └── set_difficulty_use_case_test.dart
+
+```
+
+Domain tests import Use Cases directly — no `di/` providers needed. Notifier tests override providers from `di/`.
+
+File suffix: `*_test.dart`. One test file per class under test.
+
+## What to test where
+
+| Layer | Type | Depends on | Priority |
+| --- | --- | --- | --- |
+| Use Cases | Unit | mocks of domain abstractions only | **High** — win/draw, invalid moves, AI |
+| Notifier | Unit | `ProviderContainer.test()` + mocked use cases / navigation | Medium |
+| View | Widget | `ProviderScope(overrides: [...])` + `pumpWidget` | Low — smoke + key interactions |
+| Repository | Unit | fake datasource or in-memory impl | Medium — save/resume (TIC-7) |
+
+Domain unit tests must not import Flutter, Riverpod, GoRouter or platform SDKs.
+
+## Mocks and fakes
+
+Mock only **domain abstractions** (`GameRepository`, `GameNavigation`, etc.).
+
+### Mockito — interactions to verify
+
+Use `mockito` (dev) for dependencies where you need `when` / `verify` (navigation, use cases in Notifier tests).
+
+Manual mocks, no codegen required for this project:
+
+```dart
+import 'package:mockito/mockito.dart';
+
+class MockGameNavigation extends Mock implements GameNavigation {}
+
+// when(mockNavigation.openSettings()).thenAnswer((_) async => null);
+// verify(mockNavigation.goHome()).called(1);
+```
+
+Add `@GenerateMocks([GameRepository])` + codegen only if an interface grows large.
+
+### Manual fakes — stateful behaviour
+
+Prefer a hand-written fake when behaviour is simple and explicit (persistence, in-memory storage):
+
+```dart
+final class FakeGameRepository implements GameRepository {
+  Game? _saved;
+
+  @override
+  Future<Result<Game>> load() async {
+    final saved = _saved;
+    if (saved == null) {
+      return const Result.failure(GameNotFoundError());
+    }
+    return Result.success(saved);
+  }
+
+  @override
+  Future<Result<void>> save(Game game) async {
+    _saved = game;
+    return const Result.success(null);
+  }
+}
+
+```
+
+Place fakes in `test/features/<feature>/fakes/` or next to the test file.
+
+| Need | Tool |
+| --- | --- |
+| Verify a method was called (`verify`) | Mockito |
+| Simulate save/load with real state | Manual fake |
+| Win detection / board logic | Plain domain objects in Arrange — no mock needed |
+
+## Unit test pattern
+
+Arrange / Act / Assert. One behavior per test. Name tests after the scenario:
+
+```dart
+test('returns failure when cell is already occupied', () { ... });
+test('detects horizontal win on top row', () { ... });
+```
+
+## Notifier tests
+
+```dart
+final container = ProviderContainer.test(
+  overrides: [
+    playMoveUseCaseProvider.overrideWithValue(mockUseCase),
+  ],
+);
+addTearDown(container.dispose);
+
+final notifier = container.read(gameNotifierProvider.notifier);
+
+```
+
+Verify state transitions and navigation calls with Mockito `verify` — never depend on GoRouter.
+
+## Widget tests
+
+Wrap with `ProviderScope(overrides: [...])`. Override the Notifier provider or its dependencies.
+
+Test user-visible outcomes (text, enabled/disabled cells), not implementation details.
+
+## Forbidden
+
+- Testing business rules only through widget tests when a Use Case unit test suffices.
+- `late` in tests is allowed; `!` remains forbidden.
+- Skipping assertions or empty `catch` blocks in test helpers.

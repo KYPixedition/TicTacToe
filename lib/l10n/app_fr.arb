@@ -1,0 +1,79 @@
+{
+  "@@locale": "fr",
+  "homeTitle": "Tic Tac Toe",
+  "@homeTitle": {
+    "description": "Title displayed on the home screen"
+  },
+  "homeNewGame": "Nouvelle partie",
+  "@homeNewGame": {
+    "description": "Label for the new game button"
+  },
+  "homeResumeGame": "Reprendre la partie",
+  "@homeResumeGame": {
+    "description": "Label for the resume game button"
+  },
+  "difficultySelectionTitle": "Choisissez la difficulté",
+  "@difficultySelectionTitle": {
+    "description": "Title of the dialog asking the player to choose a CPU difficulty"
+  },
+  "difficultyEasy": "Facile",
+  "@difficultyEasy": {
+    "description": "Easy CPU difficulty label"
+  },
+  "difficultyMedium": "Moyen",
+  "@difficultyMedium": {
+    "description": "Medium CPU difficulty label"
+  },
+  "difficultyHard": "Difficile",
+  "@difficultyHard": {
+    "description": "Hard CPU difficulty label"
+  },
+  "gameBackToHome": "Menu principal",
+  "@gameBackToHome": {
+    "description": "Label for the button that returns to the home screen"
+  },
+  "gamePlayAgain": "Rejouer",
+  "@gamePlayAgain": {
+    "description": "Label for the button that starts a new match after game over"
+  },
+  "gameEntryModeNew": "Nouvelle partie",
+  "@gameEntryModeNew": {
+    "description": "Debug label when entering a new game"
+  },
+  "gameEntryModeResume": "Reprise de partie",
+  "@gameEntryModeResume": {
+    "description": "Debug label when resuming a saved game"
+  },
+  "gameStatusPlaying": "En cours",
+  "@gameStatusPlaying": {
+    "description": "Label shown while the game is in progress"
+  },
+  "gameStatusYourTurn": "À votre tour",
+  "@gameStatusYourTurn": {
+    "description": "Label shown while the game is in progress and the human player can move"
+  },
+  "gameStatusCpuThinking": "L'ordinateur réfléchit…",
+  "@gameStatusCpuThinking": {
+    "description": "Label shown while the CPU is computing its move"
+  },
+  "gameStatusPlayerWon": "Victoire du joueur",
+  "@gameStatusPlayerWon": {
+    "description": "Label shown when the human player wins"
+  },
+  "gameStatusCpuWon": "Victoire de l'ordinateur",
+  "@gameStatusCpuWon": {
+    "description": "Label shown when the CPU wins"
+  },
+  "gameStatusDraw": "Égalité",
+  "@gameStatusDraw": {
+    "description": "Label shown when the game ends in a draw"
+  },
+  "gamePlayerHuman": "Joueur",
+  "@gamePlayerHuman": {
+    "description": "Label for the human player in the turn row"
+  },
+  "gamePlayerCpu": "Bot AI",
+  "@gamePlayerCpu": {
+    "description": "Label for the CPU player in the turn row"
+  }
+}

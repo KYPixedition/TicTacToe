@@ -1,0 +1,89 @@
+---
+description: General project conventions applicable to the entire codebase.
+globs:
+alwaysApply: true
+---
+
+# General Rules
+
+These rules apply to every file in the project.
+
+## Terminology
+
+Project conventions take precedence over any conflicting global rules:
+
+- Presentation layer uses **Notifier** (`<feature>_notifier.dart` in `presentation/notifiers/`), not ViewModel.
+- Abstractions use Dart 3 `abstract interface class`, not an `I*` prefix (e.g. `GameRepository`, not `IGameRepository`).
+- Providers are declared via `@riverpod` codegen — one provider per file, no central `providers.dart` barrel.
+- Use Case / Repository providers live in `features/<feature>/di/`; Notifier providers live in `presentation/notifiers/`. Never in `domain/`.
+
+## Naming
+
+- Use `PascalCase` for classes, enums, mixins and extensions.
+- Use `camelCase` for variables, methods and parameters.
+- Use `snake_case` for file and folder names.
+- Prefix private members with `_`.
+
+## File Organization
+
+- Export only one public class, widget or extension per file.
+- File name must match the exported type.
+- Do not use barrel files (`index.dart`).
+
+## Imports
+
+Import order:
+
+1. `dart:`
+2. `package:flutter`
+3. Third-party packages
+4. Project imports
+
+Within each group, sort imports alphabetically by URI and keep exactly one blank line between groups.
+`package:` imports are mandatory for imports to `core/` and between layers within the same feature (e.g. `data` → `domain`).
+Relative imports are tolerated only within the same layer/folder and for test-only helpers under `test/`.
+Direct imports between two features are strictly forbidden (see Feature Isolation).
+
+## Clean Code
+
+- One class = one responsibility.
+- One method = one responsibility.
+- Prefer explicit names over comments.
+- Avoid duplicated code.
+- Keep methods focused and easy to read.
+
+## Null Safety
+
+- Never use the null assertion operator (`!`).
+- Extract nullable values into local variables before null checks.
+- Avoid `late`.
+- `late` is only allowed in test files.
+
+## Typing
+
+- Never use `dynamic`.
+- Always use explicit types when they improve readability.
+
+## Formatting
+
+- Maximum line length: 120 characters.
+- Always use trailing commas where supported.
+- Remove unused imports.
+- Remove dead code before committing.
+
+## Logging
+
+- Never use `print()`.
+- Use Talker for application logging.
+
+## Security
+
+Never read, modify or expose secrets stored in configuration files.
+
+## Codegen
+
+- `freezed`: entities and states with multiple fields (e.g. `GameState`, `Board`).
+- `json_serializable`: DTOs/models in the `data` layer requiring JSON serialization.
+- Manual sealed classes allowed for simple, stable cases (e.g. `Result<T>`, `AppError`).
+- Generated files (`.g.dart`, `.freezed.dart`) always committed.
+- Never manually write code that `build_runner` can generate.

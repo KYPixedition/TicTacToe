@@ -1,0 +1,49 @@
+---
+description: Focus Agent Review / Bugbot (runtime behavior, business zones, severity)
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+# Agent Review — review focus
+
+Prioritize reporting **runtime** issues or **functional regressions**:
+
+- **Async / errors**: empty `catch`, un-awaited `Future` without justification, loading/error UI not updated after failure, double submission (button still active during a call).
+- **Data → domain mapping**: silent field loss, nullability mismatch between entity and domain model.
+
+Do not re-report style or conventions already covered by other rules, unless it introduces a bug.
+
+## Review by zone
+
+### Home (`home_view`, `home_notifier`)
+
+- New game (TIC-1 / TIC-2): navigates to game, does not start game logic in Home Notifier.
+- Resume game (TIC-1): `HasSavedGameUseCase` result drives button visibility; resume path loads via `ResumeGameUseCase` in game feature.
+- No direct GoRouter calls in View.
+
+### Game (`game_view`, `game_notifier`)
+
+- Win/draw detection: all cases tested (rows, columns, diagonals), no false positive/negative.
+- Invalid actions blocked: move on an occupied cell, move after game end, move during the AI's turn (TIC-9).
+- AI turn: delay/async correctly handled, no player move possible while AI is computing, no double trigger.
+- Game state (`GameStatus`) always consistent with the displayed board — no desync between state and UI.
+- Game end (TIC-6): overlay driven by `GameStatus`, not a separate route; no navigation triggered from `build()`.
+
+### Save (`game_repository`, persistence)
+
+- Auto-save (TIC-7): write triggered at the right moment, no silent data loss if the write fails.
+- Resume game (TIC-1): restored state identical to the saved state, no default value masking a read error.
+
+### AI difficulty (`settings`)
+
+- Difficulty change: applied to the next game or immediately — behavior consistent with the spec, no side effect on an ongoing game.
+
+## Severity level
+
+| Severity | Examples |
+| --- | --- |
+| **Blocking** | runtime crash, committed secret, pure domain violation, incorrect win/draw result |
+| **Important** | wrong layer, functional regression, incomplete mapping, unblocked invalid action |
+| **Suggestion** | cosmetic style already covered by other rules |
+
+Prioritize real bugs over style.

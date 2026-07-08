@@ -1,0 +1,303 @@
+---
+description: Dart language conventions and best practices.
+alwaysApply: true
+---
+
+# Dart Language
+
+These rules apply to all Dart source files.
+
+## General Principles
+
+- Write simple, readable and explicit code.
+- Prefer clarity over cleverness.
+- Favor composition over inheritance.
+- Keep the codebase consistent with existing conventions.
+
+---
+
+## Immutability
+
+- Prefer immutable objects.
+- Mark fields as `final` whenever possible.
+- Domain entities must always be immutable.
+- Never mutate an object in place.
+- Prefer creating a new instance using `copyWith()`.
+
+Example:
+
+```dart
+final updatedGame = game.copyWith(
+  currentPlayer: Player.o,
+);
+
+```
+
+---
+
+## Types
+
+- Prefer explicit types when they improve readability.
+- Use `var` only when the inferred type is immediately obvious.
+- Prefer `final` over mutable local variables.
+- Avoid unnecessary type aliases.
+
+Good:
+
+```dart
+final Game game = repository.currentGame;
+```
+
+Acceptable:
+
+```dart
+final game = repository.currentGame;
+
+```
+
+Avoid:
+
+```dart
+var game = repository.currentGame;
+```
+
+when the inferred type is not obvious.
+
+---
+
+## Enums
+
+Use enums whenever a value represents a finite set of business states.
+
+Prefer:
+
+```dart
+enum GameStatus {
+  playing,
+  draw,
+  won,
+}
+
+```
+
+Avoid:
+
+```dart
+bool isFinished;
+bool hasWinner;
+```
+
+Avoid using `bool?` to represent three or more business states.
+
+---
+
+## Functions
+
+- A function must have a single responsibility.
+- Keep functions short and focused.
+- Prefer early returns over nested conditions.
+- Extract complex logic into private helper methods when necessary.
+
+Good:
+
+```dart
+if (!game.isActive) {
+  return;
+}
+
+playMove();
+
+```
+
+Avoid:
+
+```dart
+if (game.isActive) {
+  playMove();
+}
+```
+
+---
+
+## Classes
+
+- A class must have a single responsibility.
+- Keep public APIs minimal.
+- Prefer dependency injection over object creation.
+- Avoid utility classes containing only static methods unless there is no better alternative.
+
+### Member order
+
+1. `final` fields (dependencies and state)
+2. Constructors
+3. Methods
+
+---
+
+## Constructors & dependency injection
+
+Applies to classes with **constructor-injected dependencies**: repositories, data sources, use cases, navigation implementations, services.
+
+### Rules
+
+- Declare `final` dependency fields **before** the constructor.
+- Use **named parameters** with `required` for every injected dependency — **from the first dependency onward** (even when there is only one).
+- Prefer **initializing formals** for private fields: `{required this._dependency}`.
+- At the call site, use the **public parameter name** (without underscore): `preferences:` for `this._preferences`.
+- Use `const` constructors when all dependencies allow it.
+- Never instantiate platform SDKs or singletons inside the class body — inject them via the constructor.
+
+### Good
+
+```dart
+final class SharedPreferencesGameLocalDataSource implements GameLocalDataSource {
+  final SharedPreferences _preferences;
+
+  const SharedPreferencesGameLocalDataSource({
+    required this._preferences,
+  });
+}
+
+// Call site (any library):
+SharedPreferencesGameLocalDataSource(
+  preferences: ref.watch(sharedPreferencesProvider),
+);
+```
+
+```dart
+final class LocalGameRepository implements GameRepository {
+  final GameLocalDataSource _dataSource;
+  final Talker _talker;
+
+  const LocalGameRepository({
+    required this._dataSource,
+    required this._talker,
+  });
+}
+```
+
+### Avoid
+
+Positional parameters for injected dependencies:
+
+```dart
+const HasSavedGameUseCase(this._repository);
+```
+
+Fields declared after the constructor:
+
+```dart
+const HasSavedGameUseCase({required this._repository});
+
+final GameRepository _repository; // too late — field must come first
+```
+
+Initializer lists when an initializing formal suffices:
+
+```dart
+const HasSavedGameUseCase({
+  required GameRepository repository,
+}) : _repository = repository;
+```
+
+### Exceptions
+
+- **Value objects** with a single public field may keep a positional parameter (e.g. `Success(this.value)`).
+- **Widgets** follow `presentation.mdc` (`const MyWidget({super.key, ...})`).
+
+---
+
+## Collections
+
+- Prefer collection literals.
+- Prefer `map`, `where`, `expand` and `fold` when they improve readability.
+- Avoid unnecessary collection copies.
+- Prefer unmodifiable collections when mutation is not required.
+
+---
+
+## Error Handling
+
+- Prefer typed errors.
+- Never throw a `String`.
+- Never silently ignore exceptions.
+- Catch only exceptions that can be handled.
+- Prefer `Result<T>` or sealed result types for expected business failures.
+
+// Avoid:
+throw 'Something went wrong';
+
+// Prefer:
+return Result.failure(const UnexpectedError());
+
+---
+
+## Documentation
+
+- Write documentation in English.
+- Document every public API using `///`.
+- Explain the purpose and behavior, not the implementation.
+- Keep documentation synchronized with the code.
+
+Example:
+
+```dart
+/// Plays a move on the current board.
+///
+/// Returns a failure if the move is invalid.
+
+```
+
+---
+
+## Comments
+
+- Write comments in English.
+- Explain **why**, not **what**.
+- Avoid comments that duplicate the code.
+- Remove obsolete comments.
+
+Good:
+
+```dart
+// The AI move is delayed to improve the player experience.
+```
+
+Avoid:
+
+```dart
+// Increment the index.
+index++;
+
+```
+
+---
+
+## TODOs
+
+- Write TODOs in English.
+- Every TODO must describe the intended work.
+- Remove completed TODOs.
+
+Good:
+
+```dart
+// TODO: Implement impossible AI using the Minimax algorithm.
+```
+
+Avoid:
+
+```dart
+// TODO
+
+```
+
+---
+
+## Readability
+
+- Prefer expressive code over abbreviations.
+- Avoid deeply nested control flow.
+- Use guard clauses when appropriate.
+- Keep related code together.
+- Remove dead code immediately.

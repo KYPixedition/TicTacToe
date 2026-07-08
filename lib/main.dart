@@ -1,24 +1,24 @@
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const TicTacToeApp());
-}
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class TicTacToeApp extends StatelessWidget {
-  const TicTacToeApp({super.key});
+import 'package:tictactoe/app/app.dart';
+import 'package:tictactoe/core/providers/shared_preferences_provider.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'TicTacToe',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final preferences = await SharedPreferences.getInstance();
+
+  runApp(
+    ProviderScope(
+      overrides: [sharedPreferencesProvider.overrideWithValue(preferences)],
+      child: DevicePreview(
+        enabled: kDebugMode,
+        builder: (context) => const App(),
       ),
-      home: const Scaffold(
-        body: Center(
-          child: Text('TicTacToe'),
-        ),
-      ),
-    );
-  }
+    ),
+  );
 }
