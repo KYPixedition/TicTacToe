@@ -1,101 +1,127 @@
 # TicTacToe
 
-Local Tic-Tac-Toe game built with Flutter — **Human vs CPU**, offline only.  
-This repository is a **Betclic Flutter technical test**: the focus is production-ready engineering (Clean Architecture, tests, maintainability), not feature breadth.
+Local Tic-Tac-Toe game built with Flutter. The game is offline only: a human player competes against a
+local CPU opponent.
 
-## Stack
+This repository is a Betclic Flutter technical test. The goal is not to build a large game engine, but to
+show production-ready Flutter engineering practices: Clean Architecture, feature-first organization,
+dependency inversion, testable business logic, Riverpod state management, GoRouter navigation, and
+maintainable code.
+
+![Home screen](docs/screenshots/home.png)
+
+## Features
+
+### Current Features
+
+- Human vs CPU gameplay.
+- New game creation from the home screen.
+- Resume game entry point when a saved game exists.
+- Turn management for human and CPU players.
+- Win and draw detection.
+- End-of-game state handling inside the game screen.
+- Local game persistence with `SharedPreferences`.
+- CPU difficulty selection before starting a new game.
+- Invalid action prevention, including occupied cells, finished games, and CPU turns.
+
+## Technical Stack
 
 | Area | Choice |
 | --- | --- |
-| State & DI | Riverpod 3 (codegen) |
+| Framework | Flutter |
+| Language | Dart `^3.12.1` |
+| State management and DI | Riverpod 3 with code generation |
 | Navigation | GoRouter |
-| Architecture | Feature-first Clean Architecture |
 | Immutability | freezed |
 | Persistence | SharedPreferences |
 | Logging | Talker |
-| Tests | Mockito + manual fakes |
+| Tests | `flutter_test`, Mockito, manual fakes |
+| Code generation | build_runner, riverpod_generator, freezed, json_serializable |
 
-## Architecture (overview)
+## Architecture
+
+The project follows Clean Architecture principles with a feature-first structure.
+
+The dependency rule is:
+
+```text
+Presentation -> DI -> Domain <- Data
+```
+
+The domain layer stays independent from Flutter, Riverpod, GoRouter, and platform SDKs. Business rules
+live in domain entities and use cases. Notifiers orchestrate use cases and expose immutable UI state.
+Repositories hide persistence details behind domain abstractions.
+
+## Folder Structure
 
 ```text
 lib/
-├── app/          # bootstrap, GoRouter
-├── core/         # Result, AppError, theme, shared providers
-└── features/
-    ├── home/
-    ├── game/
-    └── settings/
-        ├── data/
-        ├── di/           # @riverpod wiring (never in domain/)
-        ├── domain/       # pure Dart — no Flutter / Riverpod
-        ├── navigation/
-        └── presentation/
+├── app/
+│   ├── app.dart
+│   └── router.dart
+├── core/
+│   ├── constants/
+│   ├── error/
+│   ├── hooks/
+│   ├── navigation/
+│   ├── providers/
+│   ├── result/
+│   ├── theme/
+│   └── widgets/
+├── features/
+│   ├── game/
+│   │   ├── data/
+│   │   ├── di/
+│   │   ├── domain/
+│   │   ├── navigation/
+│   │   └── presentation/
+│   └── home/
+│       ├── di/
+│       ├── domain/
+│       ├── navigation/
+│       └── presentation/
+└── l10n/
 ```
 
-Dependency rule: **Presentation → DI → Domain ← Data**
+## Dependency Injection
 
-User stories are tracked as **TIC-1** … **TIC-9** (home, gameplay, save, AI difficulty, etc.).
+Dependencies are wired with Riverpod code generation. Providers live in the composition layer, not in
+domain code:
 
----
+- Use case providers live in `lib/features/<feature>/di/`.
+- Repository and data source providers live in `lib/features/<feature>/di/`.
+- Notifier providers live in `lib/features/<feature>/presentation/notifiers/`.
+- Runtime providers such as `SharedPreferences` live in `lib/core/providers/`.
 
-## Cursor rules (for reviewers & contributors)
-
-This project defines **Cursor project rules** under [`.cursor/rules/`](.cursor/rules/).  
-They document conventions intentionally applied across the codebase. When reviewing, please treat them as the source of truth for architectural and style decisions.
-
-| Rule | Purpose |
-| --- | --- |
-| [`general.mdc`](.cursor/rules/general.mdc) | Naming, null safety, codegen, terminology (Notifier, `di/`) |
-| [`dart.mdc`](.cursor/rules/dart.mdc) | Dart idioms, immutability, error handling |
-| [`feature-architecture.mdc`](.cursor/rules/feature-architecture.mdc) | Clean Architecture, Use Cases, feature isolation |
-| [`riverpod-providers.mdc`](.cursor/rules/riverpod-providers.mdc) | Riverpod 3 codegen, provider placement |
-| [`navigation.mdc`](.cursor/rules/navigation.mdc) | GoRouter, navigation abstractions |
-| [`presentation.mdc`](.cursor/rules/presentation.mdc) | Views, widgets, `ref.watch` / `ref.read` |
-| [`flutter-infra.mdc`](.cursor/rules/flutter-infra.mdc) | Bootstrap, stack, router, Talker |
-| [`design-system.mdc`](.cursor/rules/design-system.mdc) | ThemeExtensions, `AppThemeContextX` |
-| [`testing.mdc`](.cursor/rules/testing.mdc) | Unit / notifier / widget tests, Mockito |
-| [`agent-review.mdc`](.cursor/rules/agent-review.mdc) | Runtime review focus (game, save, settings) |
-
-Review index for automated / agent review: [`.cursor/BUGBOT.md`](.cursor/BUGBOT.md)
-
-> **Note for reviewers:** some choices (Riverpod, GoRouter, feature-first layout) are **candidate decisions** to demonstrate engineering standards — they are not part of the official Betclic test requirements (which ask for Clean Architecture, local Human vs CPU, and a Git repo).
-
----
-
-## Cursor skills (development workflow)
-
-Agent skills under [`.cursor/skills/`](.cursor/skills/) orchestrate user-story delivery:
-
-| Skill | Role |
-| --- | --- |
-| [`us-product-owner`](.cursor/skills/us-product-owner/SKILL.md) | PO analysis, acceptance criteria, estimation |
-| [`us-flutter-architect`](.cursor/skills/us-flutter-architect/SKILL.md) | Implementation plan (no code) |
-| [`us-flutter-developer`](.cursor/skills/us-flutter-developer/SKILL.md) | Implementation following the plan |
-| [`us-reviewer`](.cursor/skills/us-reviewer/SKILL.md) | Local code review before PR |
-| [`us-pipeline`](.cursor/skills/us-pipeline/SKILL.md) | End-to-end US pipeline with human gates |
-| [`us-post-merge`](.cursor/skills/us-post-merge/SKILL.md) | Git cleanup after merge |
-
-Pipeline flow: **PO → Architect → Developer → Review → PR → Post-merge**  
-Handoff templates: [`.cursor/skills/us-pipeline/handoff-templates.md`](.cursor/skills/us-pipeline/handoff-templates.md)
-
----
-
-## Getting started
+## Getting Started
 
 ### Prerequisites
 
-- Flutter SDK compatible with Dart `^3.12.1`
-- Git
+- Flutter SDK compatible with Dart `^3.12.1`.
+- Git.
 
-### Setup
+### Clone Repository
+
+```bash
+git clone https://github.com/KYPixedition/TicTacToe.git
+cd TicTacToe
+```
+
+### Install Dependencies
 
 ```bash
 flutter pub get
 ```
 
-### Code generation
+### Run Application
 
-After changing `@riverpod`, `freezed`, or `json_serializable` sources:
+```bash
+flutter run
+```
+
+### Code Generation
+
+After changing `@riverpod`, `freezed`, or `json_serializable` sources, regenerate code with:
 
 ```bash
 dart run build_runner build --delete-conflicting-outputs
@@ -103,15 +129,94 @@ dart run build_runner build --delete-conflicting-outputs
 
 Generated files (`.g.dart`, `.freezed.dart`) are committed to the repository.
 
-### Quality checks
+## Quality Checks
+
+Run static analysis:
 
 ```bash
 dart analyze
+```
+
+Run tests:
+
+```bash
 flutter test
 ```
 
----
+## Testing Strategy
+
+The test suite focuses on behavior that is valuable to keep stable:
+
+- Domain and use case tests for game rules, win detection, draw detection, invalid moves, and CPU moves.
+- Notifier tests for orchestration, persistence calls, state transitions, and navigation requests.
+- Widget tests for visible UI behavior and key user interactions.
+
+Business rules are tested independently from Flutter widgets whenever possible, which keeps failures easier
+to diagnose.
+
+## Development Guidelines
+
+The project follows these conventions:
+
+- Feature-first architecture.
+- SOLID principles.
+- No business logic inside widgets.
+- No direct dependency between features.
+- Explicit dependency injection.
+- Immutable domain entities and UI states.
+- Small and focused classes.
+- Tests for business-critical logic.
+- Talker for application logging instead of `print()`.
+
+## AI-Assisted Development
+
+Cursor was used as an AI development assistant for this project. The goal was not to let the AI decide the
+architecture freely, but to constrain it with explicit project rules and a user-story delivery workflow.
+
+The repository includes local rules under [`.cursor/rules/`](.cursor/rules/) to keep generated and assisted
+changes aligned with the expected codebase standards:
+
+- [`general.mdc`](.cursor/rules/general.mdc): naming, imports, null safety, generated files, and repository-wide
+  conventions.
+- [`dart.mdc`](.cursor/rules/dart.mdc): Dart style, immutability, constructors, error handling, and
+  documentation.
+- [`feature-architecture.mdc`](.cursor/rules/feature-architecture.mdc): feature-first Clean Architecture
+  boundaries.
+- [`riverpod-providers.mdc`](.cursor/rules/riverpod-providers.mdc): Riverpod 3 code generation and provider
+  placement.
+- [`navigation.mdc`](.cursor/rules/navigation.mdc): GoRouter usage through feature navigation abstractions.
+- [`presentation.mdc`](.cursor/rules/presentation.mdc): widget extraction, view responsibilities, and UI state
+  orchestration.
+- [`flutter-infra.mdc`](.cursor/rules/flutter-infra.mdc): bootstrap, runtime providers, router, theme, and
+  logging.
+- [`design-system.mdc`](.cursor/rules/design-system.mdc): ThemeExtension-based colors, typography, spacing, and
+  reusable UI patterns.
+- [`testing.mdc`](.cursor/rules/testing.mdc): unit, notifier, widget, fake, and Mockito testing conventions.
+- [`agent-review.mdc`](.cursor/rules/agent-review.mdc): local review focus for runtime and functional
+  regressions.
+
+The `.cursor/skills/` workflow also structures delivery by user story: Product Owner analysis, implementation
+planning, development, local review, pull request creation, and post-merge cleanup.
+
+## Reviewer Notes
+
+The main architectural decisions to review are:
+
+1. Clean Architecture separation.
+2. Feature-first organization.
+3. Riverpod dependency management.
+4. Testability of business logic.
+5. Navigation through abstractions instead of direct `GoRouter` calls in views.
+6. Separation between UI rendering and application rules.
+
+The automated review entry point is [`.cursor/BUGBOT.md`](.cursor/BUGBOT.md).
+
+## Trade-Offs
+
+This project intentionally favors readability over premature abstraction, simple solutions over unnecessary
+complexity, and maintainability over feature quantity. The result is a compact foundation that can evolve
+without blurring responsibilities between layers.
 
 ## License
 
-Private project — not published to pub.dev (`publish_to: none`).
+Private project, not published to pub.dev (`publish_to: none`).
