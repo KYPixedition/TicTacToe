@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'package:tictactoe/features/game/domain/entities/difficulty.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
 
@@ -12,6 +13,7 @@ abstract class Game with _$Game {
     required List<Player?> board,
     required GameStatus status,
     required Player currentPlayer,
+    required Difficulty difficulty,
   }) = _Game;
 
   const Game._();
@@ -31,11 +33,15 @@ abstract class Game with _$Game {
   ];
 
   /// Creates a new game with an empty board and [firstPlayer] to move first.
-  factory Game.initial({Player firstPlayer = Player.x}) {
+  factory Game.initial({
+    required Difficulty difficulty,
+    Player firstPlayer = Player.x,
+  }) {
     return Game(
       board: List<Player?>.filled(boardSize, null),
       status: GameStatus.playing,
       currentPlayer: firstPlayer,
+      difficulty: difficulty,
     );
   }
 
@@ -67,6 +73,17 @@ abstract class Game with _$Game {
     return board.any((cell) => cell == null);
   }
 
+  /// Whether the CPU can play at [cellIndex].
+  bool canCpuPlayAt(int cellIndex) {
+    if (cellIndex < 0 || cellIndex >= boardSize) {
+      return false;
+    }
+    if (!canCpuPlay()) {
+      return false;
+    }
+    return board[cellIndex] == null;
+  }
+
   /// Applies a human move at [cellIndex].
   ///
   /// Caller must ensure [canHumanPlayAt] is true.
@@ -74,11 +91,10 @@ abstract class Game with _$Game {
     return _applyMove(cellIndex: cellIndex, player: Player.x);
   }
 
-  /// Applies a CPU move on the first available cell.
+  /// Applies a CPU move at [cellIndex].
   ///
-  /// Caller must ensure [canCpuPlay] is true.
-  Game applyCpuMoveFirstAvailable() {
-    final cellIndex = board.indexWhere((cell) => cell == null);
+  /// Caller must ensure [canCpuPlayAt] is true.
+  Game applyCpuMove(int cellIndex) {
     return _applyMove(cellIndex: cellIndex, player: Player.o);
   }
 

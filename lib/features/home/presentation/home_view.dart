@@ -4,6 +4,7 @@ import 'package:tictactoe/core/hooks/use_on_route_visible.dart';
 import 'package:tictactoe/core/theme/app_theme_context.dart';
 import 'package:tictactoe/core/widgets/app_button.dart';
 import 'package:tictactoe/features/home/presentation/notifiers/home_notifier.dart';
+import 'package:tictactoe/features/home/presentation/widgets/difficulty_selection_dialog.dart';
 import 'package:tictactoe/features/home/presentation/widgets/home_logo.dart';
 import 'package:tictactoe/l10n/app_localizations.dart';
 
@@ -40,8 +41,17 @@ class HomeView extends HookConsumerWidget {
               ),
               spacings.gapVerticalXl,
               AppButton.primary(
-                onPressed: () =>
-                    ref.read(homeNotifierProvider.notifier).openNewGame(),
+                onPressed: () async {
+                  final difficulty = await DifficultySelectionDialog.show(
+                    context,
+                  );
+                  if (!context.mounted || difficulty == null) {
+                    return;
+                  }
+                  ref
+                      .read(homeNotifierProvider.notifier)
+                      .openNewGame(difficulty: difficulty);
+                },
                 label: l10n?.homeNewGame ?? '',
                 icon: Icons.play_arrow_rounded,
                 minWidth: _buttonMinWidth,

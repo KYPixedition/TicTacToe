@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tictactoe/core/result/result.dart';
+import 'package:tictactoe/features/game/domain/entities/difficulty.dart';
 import 'package:tictactoe/features/game/domain/entities/game.dart';
 import 'package:tictactoe/features/game/domain/repositories/game_repository.dart';
 import 'package:tictactoe/features/game/domain/usecases/save_game_use_case.dart';
@@ -36,7 +37,7 @@ void main() {
   test('delegates game saving to repository', () async {
     final fakeRepository = _FakeGameRepository();
     final useCase = SaveGameUseCase(repository: fakeRepository);
-    final game = Game.initial();
+    final game = Game.initial(difficulty: Difficulty.easy);
 
     final result = await useCase.execute(game: game);
 

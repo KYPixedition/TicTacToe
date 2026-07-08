@@ -7,7 +7,8 @@ import 'package:tictactoe/features/game/di/play_move_use_case_provider.dart';
 import 'package:tictactoe/features/game/di/resume_game_use_case_provider.dart';
 import 'package:tictactoe/features/game/di/save_game_use_case_provider.dart';
 import 'package:tictactoe/features/game/di/start_game_use_case_provider.dart';
-import 'package:tictactoe/features/game/domain/entities/game_entry_mode.dart';
+import 'package:tictactoe/features/game/domain/entities/difficulty.dart';
+import 'package:tictactoe/features/game/domain/entities/game_entry_intent.dart';
 import 'package:tictactoe/features/game/domain/entities/game.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
@@ -21,13 +22,14 @@ const Duration _cpuTurnDelay = Duration(milliseconds: 400);
 @Riverpod(name: 'gameNotifierProvider')
 class GameNotifier extends _$GameNotifier {
   @override
-  GameState build(GameEntryMode entryMode) {
-    switch (entryMode) {
-      case GameEntryMode.newGame:
-        return _createNewGameState(firstPlayer: Player.x);
-      case GameEntryMode.resume:
-        return _restoreOrStartNewGame();
-    }
+  GameState build(GameEntryIntent entryIntent) {
+    return switch (entryIntent) {
+      NewGameEntryIntent(:final difficulty) => _createNewGameState(
+        difficulty: difficulty,
+        firstPlayer: Player.x,
+      ),
+      ResumeGameEntryIntent() => _restoreSavedGame(),
+    };
   }
 
   /// Navigates back to the home screen.
@@ -35,7 +37,7 @@ class GameNotifier extends _$GameNotifier {
     ref.read(gameNavigationProvider).goHome();
   }
 
-  /// Starts a new match on the same screen, alternating the opening player.
+  /// Starts a new match on the same screen, keeping the current difficulty.
   Future<void> playAgain() async {
     final currentGame = state.game;
     if (currentGame == null || currentGame.status == GameStatus.playing) {
@@ -52,7 +54,10 @@ class GameNotifier extends _$GameNotifier {
         : Player.x;
     final startResult = ref
         .read(startGameUseCaseProvider)
-        .execute(firstPlayer: nextStartingPlayer);
+        .execute(
+          difficulty: currentGame.difficulty,
+          firstPlayer: nextStartingPlayer,
+        );
 
     switch (startResult) {
       case Success(:final value):
@@ -103,10 +108,13 @@ class GameNotifier extends _$GameNotifier {
     }
   }
 
-  GameState _createNewGameState({required Player firstPlayer}) {
+  GameState _createNewGameState({
+    required Difficulty difficulty,
+    required Player firstPlayer,
+  }) {
     final result = ref
         .read(startGameUseCaseProvider)
-        .execute(firstPlayer: firstPlayer);
+        .execute(difficulty: difficulty, firstPlayer: firstPlayer);
 
     return switch (result) {
       Success(:final value) => GameState(
@@ -117,13 +125,13 @@ class GameNotifier extends _$GameNotifier {
     };
   }
 
-  GameState _restoreOrStartNewGame() {
+  GameState _restoreSavedGame() {
     state = const GameState();
-    _restoreOrStartNewGameAsync();
+    _restoreSavedGameAsync();
     return state;
   }
 
-  Future<void> _restoreOrStartNewGameAsync() async {
+  Future<void> _restoreSavedGameAsync() async {
     final resumedResult = await ref.read(resumeGameUseCaseProvider).execute();
     if (!ref.mounted) {
       return;
@@ -134,11 +142,7 @@ class GameNotifier extends _$GameNotifier {
         state = state.copyWith(game: value, error: null, isCpuThinking: false);
         await _runCpuTurnIfNeeded(game: value);
       default:
-        final fallbackState = _createNewGameState(firstPlayer: Player.x);
-        state = fallbackState;
-        if (fallbackState.game == null) {
-          goHome();
-        }
+        goHome();
     }
   }
 

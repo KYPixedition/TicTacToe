@@ -6,8 +6,9 @@ import 'package:mockito/mockito.dart';
 import 'package:tictactoe/core/theme/app_theme.dart';
 import 'package:tictactoe/features/game/di/game_navigation_provider.dart';
 import 'package:tictactoe/features/game/di/game_repository_provider.dart';
+import 'package:tictactoe/features/game/domain/entities/difficulty.dart';
 import 'package:tictactoe/features/game/domain/entities/game.dart';
-import 'package:tictactoe/features/game/domain/entities/game_entry_mode.dart';
+import 'package:tictactoe/features/game/domain/entities/game_entry_intent.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
 import 'package:tictactoe/features/game/navigation/game_navigation.dart';
@@ -19,6 +20,11 @@ import 'package:tictactoe/l10n/app_localizations.dart';
 import '../../../fakes/fake_game_repository.dart';
 
 class MockGameNavigation extends Mock implements GameNavigation {}
+
+const GameEntryIntent _newGameIntent = GameEntryIntent.newGame(
+  difficulty: Difficulty.easy,
+);
+const GameEntryIntent _resumeIntent = GameEntryIntent.resume();
 
 int boardCellCount(WidgetTester tester, Player? player) {
   return tester
@@ -63,9 +69,7 @@ void main() {
       ProviderScope(
         overrides: [
           gameRepositoryProvider.overrideWithValue(fakeGameRepository),
-          gameNotifierProvider(
-            GameEntryMode.newGame,
-          ).overrideWithValue(gameState),
+          gameNotifierProvider(_newGameIntent).overrideWithValue(gameState),
         ],
         child: MaterialApp(
           theme: buildAppTheme(),
@@ -76,7 +80,7 @@ void main() {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const GameView(entryMode: GameEntryMode.newGame),
+          home: const GameView(entryIntent: _newGameIntent),
         ),
       ),
     );
@@ -87,7 +91,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      buildTestApp(home: const GameView(entryMode: GameEntryMode.newGame)),
+      buildTestApp(home: const GameView(entryIntent: _newGameIntent)),
     );
     await tester.pumpAndSettle();
 
@@ -109,7 +113,7 @@ void main() {
 
     await tester.pumpWidget(
       buildTestApp(
-        home: const GameView(entryMode: GameEntryMode.newGame),
+        home: const GameView(entryIntent: _newGameIntent),
         navigation: mockNavigation,
       ),
     );
@@ -123,7 +127,7 @@ void main() {
 
   testWidgets('shows player mark when tapping an empty cell', (tester) async {
     await tester.pumpWidget(
-      buildTestApp(home: const GameView(entryMode: GameEntryMode.newGame)),
+      buildTestApp(home: const GameView(entryIntent: _newGameIntent)),
     );
     await tester.pumpAndSettle();
 
@@ -137,7 +141,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      buildTestApp(home: const GameView(entryMode: GameEntryMode.newGame)),
+      buildTestApp(home: const GameView(entryIntent: _newGameIntent)),
     );
     await tester.pumpAndSettle();
 
@@ -154,7 +158,7 @@ void main() {
 
   testWidgets('shows cpu thinking label after player move', (tester) async {
     await tester.pumpWidget(
-      buildTestApp(home: const GameView(entryMode: GameEntryMode.newGame)),
+      buildTestApp(home: const GameView(entryIntent: _newGameIntent)),
     );
     await tester.pumpAndSettle();
 
@@ -174,7 +178,7 @@ void main() {
 
   testWidgets('shows player won label after human wins', (tester) async {
     await tester.pumpWidget(
-      buildTestApp(home: const GameView(entryMode: GameEntryMode.newGame)),
+      buildTestApp(home: const GameView(entryIntent: _newGameIntent)),
     );
     await tester.pumpAndSettle();
 
@@ -190,7 +194,7 @@ void main() {
 
   testWidgets('shows play again button after human wins', (tester) async {
     await tester.pumpWidget(
-      buildTestApp(home: const GameView(entryMode: GameEntryMode.newGame)),
+      buildTestApp(home: const GameView(entryIntent: _newGameIntent)),
     );
     await tester.pumpAndSettle();
 
@@ -223,6 +227,7 @@ void main() {
           ],
           status: GameStatus.draw,
           currentPlayer: Player.x,
+          difficulty: Difficulty.easy,
         ),
       ),
     );
@@ -249,6 +254,7 @@ void main() {
           ],
           status: GameStatus.won,
           currentPlayer: Player.o,
+          difficulty: Difficulty.easy,
         ),
       ),
     );
@@ -259,7 +265,7 @@ void main() {
 
   testWidgets('hides play again button while game is playing', (tester) async {
     await tester.pumpWidget(
-      buildTestApp(home: const GameView(entryMode: GameEntryMode.newGame)),
+      buildTestApp(home: const GameView(entryIntent: _newGameIntent)),
     );
     await tester.pumpAndSettle();
 
@@ -268,7 +274,7 @@ void main() {
 
   testWidgets('play again resets the board', (tester) async {
     await tester.pumpWidget(
-      buildTestApp(home: const GameView(entryMode: GameEntryMode.newGame)),
+      buildTestApp(home: const GameView(entryIntent: _newGameIntent)),
     );
     await tester.pumpAndSettle();
 
@@ -302,10 +308,11 @@ void main() {
       ],
       status: GameStatus.playing,
       currentPlayer: Player.x,
+      difficulty: Difficulty.easy,
     );
 
     await tester.pumpWidget(
-      buildTestApp(home: const GameView(entryMode: GameEntryMode.resume)),
+      buildTestApp(home: const GameView(entryIntent: _resumeIntent)),
     );
     await tester.pumpAndSettle();
 
@@ -314,18 +321,22 @@ void main() {
     expect(boardCellCount(tester, Player.o), 1);
   });
 
-  testWidgets('starts a new game in resume mode when save is missing', (tester) async {
+  testWidgets('navigates home in resume mode when save is missing', (
+    tester,
+  ) async {
     fakeGameRepository.savedGame = null;
+    final mockNavigation = MockGameNavigation();
 
     await tester.pumpWidget(
-      buildTestApp(home: const GameView(entryMode: GameEntryMode.resume)),
+      buildTestApp(
+        home: const GameView(entryIntent: _resumeIntent),
+        navigation: mockNavigation,
+      ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 1));
 
-    expect(find.byType(BoardCell), findsNWidgets(9));
-    expect(boardCellCount(tester, Player.x), 0);
-    expect(boardCellCount(tester, Player.o), 0);
-    expect(find.text('À votre tour'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    verify(mockNavigation.goHome()).called(1);
   });
-
 }

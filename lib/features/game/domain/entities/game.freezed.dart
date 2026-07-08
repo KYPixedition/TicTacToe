@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Game {
 
- List<Player?> get board; GameStatus get status; Player get currentPlayer;
+ List<Player?> get board; GameStatus get status; Player get currentPlayer; Difficulty get difficulty;
 /// Create a copy of Game
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $GameCopyWith<Game> get copyWith => _$GameCopyWithImpl<Game>(this as Game, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Game&&const DeepCollectionEquality().equals(other.board, board)&&(identical(other.status, status) || other.status == status)&&(identical(other.currentPlayer, currentPlayer) || other.currentPlayer == currentPlayer));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Game&&const DeepCollectionEquality().equals(other.board, board)&&(identical(other.status, status) || other.status == status)&&(identical(other.currentPlayer, currentPlayer) || other.currentPlayer == currentPlayer)&&(identical(other.difficulty, difficulty) || other.difficulty == difficulty));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(board),status,currentPlayer);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(board),status,currentPlayer,difficulty);
 
 @override
 String toString() {
-  return 'Game(board: $board, status: $status, currentPlayer: $currentPlayer)';
+  return 'Game(board: $board, status: $status, currentPlayer: $currentPlayer, difficulty: $difficulty)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $GameCopyWith<$Res>  {
   factory $GameCopyWith(Game value, $Res Function(Game) _then) = _$GameCopyWithImpl;
 @useResult
 $Res call({
- List<Player?> board, GameStatus status, Player currentPlayer
+ List<Player?> board, GameStatus status, Player currentPlayer, Difficulty difficulty
 });
 
 
@@ -62,12 +62,13 @@ class _$GameCopyWithImpl<$Res>
 
 /// Create a copy of Game
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? board = null,Object? status = null,Object? currentPlayer = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? board = null,Object? status = null,Object? currentPlayer = null,Object? difficulty = null,}) {
   return _then(_self.copyWith(
 board: null == board ? _self.board : board // ignore: cast_nullable_to_non_nullable
 as List<Player?>,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as GameStatus,currentPlayer: null == currentPlayer ? _self.currentPlayer : currentPlayer // ignore: cast_nullable_to_non_nullable
-as Player,
+as Player,difficulty: null == difficulty ? _self.difficulty : difficulty // ignore: cast_nullable_to_non_nullable
+as Difficulty,
   ));
 }
 
@@ -152,10 +153,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Player?> board,  GameStatus status,  Player currentPlayer)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Player?> board,  GameStatus status,  Player currentPlayer,  Difficulty difficulty)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Game() when $default != null:
-return $default(_that.board,_that.status,_that.currentPlayer);case _:
+return $default(_that.board,_that.status,_that.currentPlayer,_that.difficulty);case _:
   return orElse();
 
 }
@@ -173,10 +174,10 @@ return $default(_that.board,_that.status,_that.currentPlayer);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Player?> board,  GameStatus status,  Player currentPlayer)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Player?> board,  GameStatus status,  Player currentPlayer,  Difficulty difficulty)  $default,) {final _that = this;
 switch (_that) {
 case _Game():
-return $default(_that.board,_that.status,_that.currentPlayer);case _:
+return $default(_that.board,_that.status,_that.currentPlayer,_that.difficulty);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +194,10 @@ return $default(_that.board,_that.status,_that.currentPlayer);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Player?> board,  GameStatus status,  Player currentPlayer)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Player?> board,  GameStatus status,  Player currentPlayer,  Difficulty difficulty)?  $default,) {final _that = this;
 switch (_that) {
 case _Game() when $default != null:
-return $default(_that.board,_that.status,_that.currentPlayer);case _:
+return $default(_that.board,_that.status,_that.currentPlayer,_that.difficulty);case _:
   return null;
 
 }
@@ -208,7 +209,7 @@ return $default(_that.board,_that.status,_that.currentPlayer);case _:
 
 
 class _Game extends Game {
-  const _Game({required final  List<Player?> board, required this.status, required this.currentPlayer}): _board = board,super._();
+  const _Game({required final  List<Player?> board, required this.status, required this.currentPlayer, required this.difficulty}): _board = board,super._();
   
 
  final  List<Player?> _board;
@@ -220,6 +221,7 @@ class _Game extends Game {
 
 @override final  GameStatus status;
 @override final  Player currentPlayer;
+@override final  Difficulty difficulty;
 
 /// Create a copy of Game
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +233,16 @@ _$GameCopyWith<_Game> get copyWith => __$GameCopyWithImpl<_Game>(this, _$identit
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Game&&const DeepCollectionEquality().equals(other._board, _board)&&(identical(other.status, status) || other.status == status)&&(identical(other.currentPlayer, currentPlayer) || other.currentPlayer == currentPlayer));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Game&&const DeepCollectionEquality().equals(other._board, _board)&&(identical(other.status, status) || other.status == status)&&(identical(other.currentPlayer, currentPlayer) || other.currentPlayer == currentPlayer)&&(identical(other.difficulty, difficulty) || other.difficulty == difficulty));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_board),status,currentPlayer);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_board),status,currentPlayer,difficulty);
 
 @override
 String toString() {
-  return 'Game(board: $board, status: $status, currentPlayer: $currentPlayer)';
+  return 'Game(board: $board, status: $status, currentPlayer: $currentPlayer, difficulty: $difficulty)';
 }
 
 
@@ -251,7 +253,7 @@ abstract mixin class _$GameCopyWith<$Res> implements $GameCopyWith<$Res> {
   factory _$GameCopyWith(_Game value, $Res Function(_Game) _then) = __$GameCopyWithImpl;
 @override @useResult
 $Res call({
- List<Player?> board, GameStatus status, Player currentPlayer
+ List<Player?> board, GameStatus status, Player currentPlayer, Difficulty difficulty
 });
 
 
@@ -268,12 +270,13 @@ class __$GameCopyWithImpl<$Res>
 
 /// Create a copy of Game
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? board = null,Object? status = null,Object? currentPlayer = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? board = null,Object? status = null,Object? currentPlayer = null,Object? difficulty = null,}) {
   return _then(_Game(
 board: null == board ? _self._board : board // ignore: cast_nullable_to_non_nullable
 as List<Player?>,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as GameStatus,currentPlayer: null == currentPlayer ? _self.currentPlayer : currentPlayer // ignore: cast_nullable_to_non_nullable
-as Player,
+as Player,difficulty: null == difficulty ? _self.difficulty : difficulty // ignore: cast_nullable_to_non_nullable
+as Difficulty,
   ));
 }
 

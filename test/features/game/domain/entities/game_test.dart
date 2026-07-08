@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:tictactoe/features/game/domain/entities/difficulty.dart';
 import 'package:tictactoe/features/game/domain/entities/game.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
@@ -103,6 +104,7 @@ void main() {
       ],
       status: GameStatus.won,
       currentPlayer: Player.x,
+      difficulty: Difficulty.easy,
     );
 
     expect(game.winner, Player.x);
@@ -123,13 +125,14 @@ void main() {
       ],
       status: GameStatus.won,
       currentPlayer: Player.o,
+      difficulty: Difficulty.easy,
     );
 
     expect(game.winner, Player.o);
   });
 
   test('winner is null when game is playing', () {
-    expect(Game.initial().winner, isNull);
+    expect(Game.initial(difficulty: Difficulty.easy).winner, isNull);
   });
 
   test('winner is null when game is draw', () {
@@ -147,6 +150,7 @@ void main() {
       ],
       status: GameStatus.draw,
       currentPlayer: Player.x,
+      difficulty: Difficulty.easy,
     );
 
     expect(game.winner, isNull);
@@ -170,38 +174,20 @@ void main() {
   });
 
   test('applyHumanMove updates board and switches turn to cpu', () {
-    final updatedGame = Game.initial().applyHumanMove(0);
+    final updatedGame = Game.initial(
+      difficulty: Difficulty.easy,
+    ).applyHumanMove(0);
 
     expect(updatedGame.board[0], Player.x);
     expect(updatedGame.currentPlayer, Player.o);
     expect(updatedGame.status, GameStatus.playing);
   });
 
-  test('applyCpuMoveFirstAvailable plays on first free cell', () {
-    final game = Game(
-      board: <Player?>[
-        Player.x,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-      ],
-      status: GameStatus.playing,
-      currentPlayer: Player.o,
-    );
-
-    final updatedGame = game.applyCpuMoveFirstAvailable();
-
-    expect(updatedGame.board[1], Player.o);
-    expect(updatedGame.currentPlayer, Player.x);
-  });
-
   test('initial with firstPlayer O sets cpu to move first', () {
-    final game = Game.initial(firstPlayer: Player.o);
+    final game = Game.initial(
+      difficulty: Difficulty.easy,
+      firstPlayer: Player.o,
+    );
 
     expect(game.currentPlayer, Player.o);
     expect(game.status, GameStatus.playing);

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tictactoe/core/error/app_error.dart';
 import 'package:tictactoe/core/result/result.dart';
+import 'package:tictactoe/features/game/domain/entities/difficulty.dart';
 import 'package:tictactoe/features/game/domain/entities/game.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
@@ -59,6 +60,7 @@ void main() {
         ],
         status: GameStatus.playing,
         currentPlayer: Player.x,
+        difficulty: Difficulty.medium,
       ),
     );
 
@@ -72,6 +74,7 @@ void main() {
     expect(restoredGame, isNotNull);
     expect(restoredGame?.board[0], Player.x);
     expect(restoredGame?.board[1], Player.o);
+    expect(restoredGame?.difficulty, Difficulty.medium);
   });
 
   test('returns null when repository has no saved game', () async {

@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 
-import 'package:tictactoe/features/game/domain/entities/game_entry_mode.dart';
+import 'package:tictactoe/features/game/domain/entities/difficulty.dart';
+import 'package:tictactoe/features/game/domain/entities/game_entry_intent.dart';
 import 'package:tictactoe/features/game/navigation/game_routes.dart';
 import 'package:tictactoe/features/home/navigation/home_navigation.dart';
 
@@ -11,12 +12,15 @@ final class HomeNavigationImpl implements HomeNavigation {
   const HomeNavigationImpl({required this._router});
 
   @override
-  void openNewGame() {
-    _router.push(GameRoutes.path, extra: GameEntryMode.newGame);
+  void openNewGame({required Difficulty difficulty}) {
+    _router.push(
+      GameRoutes.path,
+      extra: GameEntryIntent.newGame(difficulty: difficulty),
+    );
   }
 
   @override
   void openResumeGame() {
-    _router.push(GameRoutes.path, extra: GameEntryMode.resume);
+    _router.push(GameRoutes.path);
   }
 }

@@ -112,6 +112,30 @@ abstract class AppLocalizations {
   /// **'Reprendre la partie'**
   String get homeResumeGame;
 
+  /// Title of the dialog asking the player to choose a CPU difficulty
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez la difficulté'**
+  String get difficultySelectionTitle;
+
+  /// Easy CPU difficulty label
+  ///
+  /// In fr, this message translates to:
+  /// **'Facile'**
+  String get difficultyEasy;
+
+  /// Medium CPU difficulty label
+  ///
+  /// In fr, this message translates to:
+  /// **'Moyen'**
+  String get difficultyMedium;
+
+  /// Hard CPU difficulty label
+  ///
+  /// In fr, this message translates to:
+  /// **'Difficile'**
+  String get difficultyHard;
+
   /// Label for the button that returns to the home screen
   ///
   /// In fr, this message translates to:
