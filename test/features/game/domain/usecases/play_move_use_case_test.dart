@@ -52,6 +52,77 @@ void main() {
     expect(error, isA<InvalidMoveError>());
   });
 
+  test('refuses move when game is already won', () {
+    final initialGame = Game.initial(difficulty: Difficulty.easy).copyWith(
+      board: <Player?>[
+        Player.x,
+        Player.x,
+        Player.x,
+        Player.o,
+        Player.o,
+        null,
+        null,
+        null,
+        null,
+      ],
+      status: GameStatus.won,
+    );
+
+    final result = useCase.execute(game: initialGame, cellIndex: 6);
+
+    expect(result, isA<Failure<Game>>());
+    expect(initialGame.board[6], isNull);
+    expect(initialGame.currentPlayer, Player.x);
+  });
+
+  test('refuses move when game is already draw', () {
+    final initialGame = Game(
+      board: <Player?>[
+        Player.x,
+        Player.o,
+        Player.x,
+        Player.x,
+        Player.o,
+        Player.o,
+        Player.o,
+        Player.x,
+        Player.o,
+      ],
+      status: GameStatus.draw,
+      currentPlayer: Player.x,
+      difficulty: Difficulty.easy,
+    );
+
+    final result = useCase.execute(game: initialGame, cellIndex: 0);
+
+    expect(result, isA<Failure<Game>>());
+    expect(initialGame.currentPlayer, Player.x);
+    expect(initialGame.status, GameStatus.draw);
+  });
+
+  test('refuses move during cpu turn', () {
+    final initialGame = Game.initial(
+      difficulty: Difficulty.easy,
+    ).copyWith(currentPlayer: Player.o);
+
+    final result = useCase.execute(game: initialGame, cellIndex: 0);
+
+    expect(result, isA<Failure<Game>>());
+    expect(initialGame.board[0], isNull);
+    expect(initialGame.currentPlayer, Player.o);
+  });
+
+  test('refuses move outside board bounds', () {
+    final initialGame = Game.initial(difficulty: Difficulty.easy);
+
+    final negativeResult = useCase.execute(game: initialGame, cellIndex: -1);
+    final overflowResult = useCase.execute(game: initialGame, cellIndex: 9);
+
+    expect(negativeResult, isA<Failure<Game>>());
+    expect(overflowResult, isA<Failure<Game>>());
+    expect(initialGame.board, List<Player?>.filled(9, null));
+  });
+
   test('sets status to won when move completes a line', () {
     final game = Game(
       board: <Player?>[

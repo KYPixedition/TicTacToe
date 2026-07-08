@@ -205,7 +205,7 @@ abstract class AppLocalizations {
   /// Label for the CPU player in the turn row
   ///
   /// In fr, this message translates to:
-  /// **'Ordinateur'**
+  /// **'Bot AI'**
   String get gamePlayerCpu;
 }
 

@@ -58,7 +58,9 @@ class BoardGrid extends StatelessWidget {
               children: [
                 for (int index = 0; index < board.length; index++)
                   GestureDetector(
-                    onTap: isInteractionEnabled ? () => onCellTap(index) : null,
+                    onTap: isInteractionEnabled && board[index] == null
+                        ? () => onCellTap(index)
+                        : null,
                     child: BoardCell(player: board[index]),
                   ),
               ],

@@ -324,6 +324,67 @@ void main() {
     expect(updatedState.error, isNull);
   });
 
+  test(
+    'playMove ignores finished game and does not clear saved game',
+    () async {
+      fakeGameRepository.savedGame = _finishedHumanWinGame();
+      final container = createContainer();
+      addTearDown(container.dispose);
+      keepGameNotifierAlive(container, entryIntent: _resumeIntent);
+      await pumpEventQueue();
+      final notifier = container.read(
+        gameNotifierProvider(_resumeIntent).notifier,
+      );
+      final initialState = container.read(gameNotifierProvider(_resumeIntent));
+
+      await notifier.playMove(cellIndex: 6);
+
+      final updatedState = container.read(gameNotifierProvider(_resumeIntent));
+      expect(updatedState.game, initialState.game);
+      expect(updatedState.error, isNull);
+      expect(fakeGameRepository.saveCalls, 0);
+      expect(fakeGameRepository.clearCalls, 0);
+    },
+  );
+
+  test(
+    'playMove ignores human tap during cpu turn and does not save',
+    () async {
+      fakeGameRepository.savedGame = Game(
+        board: <Player?>[
+          Player.x,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        status: GameStatus.playing,
+        currentPlayer: Player.o,
+        difficulty: Difficulty.easy,
+      );
+      final container = createContainer();
+      addTearDown(container.dispose);
+      keepGameNotifierAlive(container, entryIntent: _resumeIntent);
+      await pumpEventQueue();
+      final notifier = container.read(
+        gameNotifierProvider(_resumeIntent).notifier,
+      );
+      final initialState = container.read(gameNotifierProvider(_resumeIntent));
+
+      await notifier.playMove(cellIndex: 1);
+
+      final updatedState = container.read(gameNotifierProvider(_resumeIntent));
+      expect(updatedState.game, initialState.game);
+      expect(updatedState.error, isNull);
+      expect(fakeGameRepository.saveCalls, 0);
+      expect(fakeGameRepository.clearCalls, 0);
+    },
+  );
+
   test('playMove does not trigger cpu when player wins', () async {
     fakeGameRepository.savedGame = Game(
       board: <Player?>[
