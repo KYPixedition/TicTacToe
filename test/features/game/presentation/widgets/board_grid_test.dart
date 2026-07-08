@@ -92,4 +92,77 @@ void main() {
 
     expect(tappedIndex, 4);
   });
+
+  testWidgets('ignores taps on occupied cells', (tester) async {
+    int tapCount = 0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: Scaffold(
+          body: SizedBox(
+            width: 300,
+            height: 300,
+            child: BoardGrid(
+              board: const <Player?>[
+                Player.x,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+              ],
+              onCellTap: (_) => tapCount++,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BoardCell).first);
+    await tester.pumpAndSettle();
+
+    expect(tapCount, 0);
+  });
+
+  testWidgets('ignores taps when interaction is disabled', (tester) async {
+    int tapCount = 0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: Scaffold(
+          body: SizedBox(
+            width: 300,
+            height: 300,
+            child: BoardGrid(
+              board: const <Player?>[
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+              ],
+              isInteractionEnabled: false,
+              onCellTap: (_) => tapCount++,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BoardCell).first);
+    await tester.pumpAndSettle();
+
+    expect(tapCount, 0);
+  });
 }

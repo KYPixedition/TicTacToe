@@ -98,7 +98,7 @@ void main() {
     expect(find.text('Menu principal'), findsOneWidget);
     expect(find.text('À votre tour'), findsOneWidget);
     expect(find.text('Joueur'), findsOneWidget);
-    expect(find.text('Ordinateur'), findsOneWidget);
+    expect(find.text('Bot AI'), findsOneWidget);
     expect(find.text('X'), findsOneWidget);
     expect(find.text('O'), findsOneWidget);
     expect(find.byType(BoardCell), findsNWidgets(9));
@@ -176,6 +176,25 @@ void main() {
     expect(find.text('À votre tour'), findsOneWidget);
   });
 
+  testWidgets('ignores board taps while cpu is thinking', (tester) async {
+    await tester.pumpWidget(
+      buildTestApp(home: const GameView(entryIntent: _newGameIntent)),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BoardCell).at(0));
+    await tester.pump();
+    // Keep the test inside the CPU thinking window before the delayed CPU move runs.
+    await tester.pump(const Duration(milliseconds: 50));
+    await tester.tap(find.byType(BoardCell).at(1), warnIfMissed: false);
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump();
+
+    expect(boardCellCount(tester, Player.x), 1);
+    expect(boardCellCount(tester, Player.o), 1);
+    expect(find.text('À votre tour'), findsOneWidget);
+  });
+
   testWidgets('shows player won label after human wins', (tester) async {
     await tester.pumpWidget(
       buildTestApp(home: const GameView(entryIntent: _newGameIntent)),
@@ -207,6 +226,39 @@ void main() {
 
     expect(find.text('Rejouer'), findsOneWidget);
     expect(find.text('Menu principal'), findsOneWidget);
+  });
+
+  testWidgets('ignores board taps after game is finished', (tester) async {
+    final finishedGame = Game(
+      board: <Player?>[
+        Player.x,
+        Player.x,
+        Player.x,
+        Player.o,
+        Player.o,
+        null,
+        null,
+        null,
+        null,
+      ],
+      status: GameStatus.won,
+      currentPlayer: Player.x,
+      difficulty: Difficulty.easy,
+    );
+    fakeGameRepository.savedGame = finishedGame;
+
+    await tester.pumpWidget(
+      buildTestApp(home: const GameView(entryIntent: _resumeIntent)),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BoardCell).at(6), warnIfMissed: false);
+    await tester.pumpAndSettle();
+
+    expect(boardCellCount(tester, Player.x), 3);
+    expect(boardCellCount(tester, Player.o), 2);
+    expect(fakeGameRepository.savedGame, finishedGame);
+    expect(find.text('Victoire du joueur'), findsOneWidget);
   });
 
   testWidgets('shows play again button after draw', (tester) async {

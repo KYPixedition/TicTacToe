@@ -63,5 +63,5 @@ class AppLocalizationsFr extends AppLocalizations {
   String get gamePlayerHuman => 'Joueur';
 
   @override
-  String get gamePlayerCpu => 'Ordinateur';
+  String get gamePlayerCpu => 'Bot AI';
 }

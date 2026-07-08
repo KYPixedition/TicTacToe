@@ -72,7 +72,7 @@
   "@gamePlayerHuman": {
     "description": "Label for the human player in the turn row"
   },
-  "gamePlayerCpu": "Ordinateur",
+  "gamePlayerCpu": "Bot AI",
   "@gamePlayerCpu": {
     "description": "Label for the CPU player in the turn row"
   }
