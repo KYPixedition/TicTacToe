@@ -84,13 +84,16 @@ Handoff templates: [`.cursor/skills/us-pipeline/handoff-templates.md`](.cursor/s
 
 ### Prerequisites
 
-- Flutter SDK compatible with Dart `^3.12.1`
+- FVM
 - Git
+
+This project uses FVM to pin Flutter `3.44.4`, which includes Dart `3.12.2`.
 
 ### Setup
 
 ```bash
-flutter pub get
+fvm install
+fvm flutter pub get
 ```
 
 ### Code generation
@@ -98,7 +101,7 @@ flutter pub get
 After changing `@riverpod`, `freezed`, or `json_serializable` sources:
 
 ```bash
-dart run build_runner build --delete-conflicting-outputs
+fvm dart run build_runner build --delete-conflicting-outputs
 ```
 
 Generated files (`.g.dart`, `.freezed.dart`) are committed to the repository.
@@ -106,8 +109,8 @@ Generated files (`.g.dart`, `.freezed.dart`) are committed to the repository.
 ### Quality checks
 
 ```bash
-dart analyze
-flutter test
+fvm dart analyze
+fvm flutter test
 ```
 
 ---
