@@ -44,7 +44,7 @@ final class HomeNotifierProvider
   }
 }
 
-String _$homeNotifierHash() => r'2999522882055abae482c5ed965dabf7fd631eca';
+String _$homeNotifierHash() => r'798b193ef7643875302da898886030ae8ea78d78';
 
 /// Manages home screen state and user commands.
 

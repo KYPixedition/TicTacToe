@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tictactoe/core/theme/app_theme_context.dart';
 import 'package:tictactoe/core/widgets/app_button.dart';
-import 'package:tictactoe/features/game/domain/entities/game_entry_mode.dart';
+import 'package:tictactoe/features/game/domain/entities/game_entry_intent.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/presentation/notifiers/game_notifier.dart';
 import 'package:tictactoe/features/game/presentation/widgets/board_grid.dart';
@@ -12,14 +12,14 @@ import 'package:tictactoe/l10n/app_localizations.dart';
 
 /// Game screen for a new or resumed match.
 class GameView extends ConsumerWidget {
-  const GameView({super.key, required this.entryMode});
+  const GameView({super.key, required this.entryIntent});
 
-  final GameEntryMode entryMode;
+  final GameEntryIntent entryIntent;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final state = ref.watch(gameNotifierProvider(entryMode));
+    final state = ref.watch(gameNotifierProvider(entryIntent));
     final game = state.game;
     final colors = context.colors;
     final spacings = context.spacings;
@@ -54,7 +54,7 @@ class GameView extends ConsumerWidget {
                           game.status == GameStatus.playing,
                       onCellTap: (cellIndex) {
                         ref
-                            .read(gameNotifierProvider(entryMode).notifier)
+                            .read(gameNotifierProvider(entryIntent).notifier)
                             .playMove(cellIndex: cellIndex);
                       },
                     ),
@@ -62,9 +62,7 @@ class GameView extends ConsumerWidget {
                 ),
               ] else ...[
                 const Expanded(
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  child: Center(child: CircularProgressIndicator()),
                 ),
               ],
               spacings.gapVerticalM,
@@ -73,7 +71,7 @@ class GameView extends ConsumerWidget {
                   !state.isPlayAgainInProgress) ...[
                 AppButton.primary(
                   onPressed: () => ref
-                      .read(gameNotifierProvider(entryMode).notifier)
+                      .read(gameNotifierProvider(entryIntent).notifier)
                       .playAgain(),
                   label: l10n?.gamePlayAgain ?? '',
                   icon: Icons.replay_rounded,
@@ -82,8 +80,9 @@ class GameView extends ConsumerWidget {
                 spacings.gapVerticalM,
               ],
               AppButton.secondary(
-                onPressed: () =>
-                    ref.read(gameNotifierProvider(entryMode).notifier).goHome(),
+                onPressed: () => ref
+                    .read(gameNotifierProvider(entryIntent).notifier)
+                    .goHome(),
                 label: l10n?.gameBackToHome ?? '',
                 icon: Icons.home_rounded,
                 minWidth: AppButton.defaultMinWidth,

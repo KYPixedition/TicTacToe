@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:tictactoe/core/result/result.dart';
+import 'package:tictactoe/features/game/domain/entities/difficulty.dart';
 import 'package:tictactoe/features/game/domain/entities/game.dart';
 import 'package:tictactoe/features/game/domain/repositories/game_repository.dart';
 import '../../../../fakes/fake_game_repository.dart';
@@ -102,9 +103,11 @@ void main() {
     final container = createContainer();
     addTearDown(container.dispose);
 
-    container.read(homeNotifierProvider.notifier).openNewGame();
+    container
+        .read(homeNotifierProvider.notifier)
+        .openNewGame(difficulty: Difficulty.hard);
 
-    verify(mockNavigation.openNewGame()).called(1);
+    verify(mockNavigation.openNewGame(difficulty: Difficulty.hard)).called(1);
   });
 
   test(

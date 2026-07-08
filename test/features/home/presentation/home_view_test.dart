@@ -5,21 +5,47 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tictactoe/core/navigation/app_route_observer.dart';
 import 'package:tictactoe/core/theme/app_theme.dart';
-import '../../../fakes/fake_game_repository.dart';
+import 'package:tictactoe/features/game/domain/entities/difficulty.dart';
 import 'package:tictactoe/features/game/navigation/game_routes.dart';
 import 'package:tictactoe/features/home/di/has_saved_game_use_case_provider.dart';
+import 'package:tictactoe/features/home/di/home_navigation_provider.dart';
 import 'package:tictactoe/features/home/domain/usecases/has_saved_game_use_case.dart';
+import 'package:tictactoe/features/home/navigation/home_navigation.dart';
 import 'package:tictactoe/features/home/navigation/home_routes.dart';
 import 'package:tictactoe/features/home/presentation/home_view.dart';
 import 'package:tictactoe/l10n/app_localizations.dart';
 
+import '../../../fakes/fake_game_repository.dart';
+
+final class _FakeHomeNavigation implements HomeNavigation {
+  Difficulty? openedDifficulty;
+  int resumeCalls = 0;
+
+  @override
+  void openNewGame({required Difficulty difficulty}) {
+    openedDifficulty = difficulty;
+  }
+
+  @override
+  void openResumeGame() {
+    resumeCalls++;
+  }
+}
+
 void main() {
-  Widget buildTestApp({required bool hasSavedGame}) {
+  Widget buildTestApp({
+    required bool hasSavedGame,
+    HomeNavigation? navigation,
+  }) {
     final repository = FakeGameRepository()..hasSavedGame = hasSavedGame;
 
     return ProviderScope(
       overrides: [
-        hasSavedGameUseCaseProvider.overrideWithValue(HasSavedGameUseCase(repository: repository)),
+        hasSavedGameUseCaseProvider.overrideWithValue(
+          HasSavedGameUseCase(repository: repository),
+        ),
+        if (navigation != null)
+          homeNavigationProvider.overrideWithValue(navigation),
       ],
       child: MaterialApp(
         theme: buildAppTheme(),
@@ -35,19 +61,24 @@ void main() {
     );
   }
 
-  testWidgets('shows both buttons immediately with resume disabled on first frame', (tester) async {
-    await tester.pumpWidget(buildTestApp(hasSavedGame: true));
+  testWidgets(
+    'shows both buttons immediately with resume disabled on first frame',
+    (tester) async {
+      await tester.pumpWidget(buildTestApp(hasSavedGame: true));
 
-    expect(find.text('Nouvelle partie'), findsOneWidget);
-    expect(find.text('Reprendre la partie'), findsOneWidget);
+      expect(find.text('Nouvelle partie'), findsOneWidget);
+      expect(find.text('Reprendre la partie'), findsOneWidget);
 
-    final resumeButton = tester.widget<ElevatedButton>(
-      find.widgetWithText(ElevatedButton, 'Reprendre la partie'),
-    );
-    expect(resumeButton.onPressed, isNull);
-  });
+      final resumeButton = tester.widget<ElevatedButton>(
+        find.widgetWithText(ElevatedButton, 'Reprendre la partie'),
+      );
+      expect(resumeButton.onPressed, isNull);
+    },
+  );
 
-  testWidgets('shows both buttons with resume disabled when no saved game', (tester) async {
+  testWidgets('shows both buttons with resume disabled when no saved game', (
+    tester,
+  ) async {
     await tester.pumpWidget(buildTestApp(hasSavedGame: false));
     await tester.pumpAndSettle();
 
@@ -70,7 +101,60 @@ void main() {
     expect(resumeButton.onPressed, isNotNull);
   });
 
-  testWidgets('disables resume after pop when saved game was cleared', (tester) async {
+  testWidgets('opens difficulty dialog before starting a new game', (
+    tester,
+  ) async {
+    await tester.pumpWidget(buildTestApp(hasSavedGame: false));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Nouvelle partie'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choisissez la difficulté'), findsOneWidget);
+    expect(find.text('Facile'), findsOneWidget);
+    expect(find.text('Moyen'), findsOneWidget);
+    expect(find.text('Difficile'), findsOneWidget);
+  });
+
+  testWidgets('starts a new game with selected difficulty', (tester) async {
+    final navigation = _FakeHomeNavigation();
+
+    await tester.pumpWidget(
+      buildTestApp(hasSavedGame: false, navigation: navigation),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Nouvelle partie'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Difficile'));
+    await tester.pumpAndSettle();
+
+    expect(navigation.openedDifficulty, Difficulty.hard);
+    expect(find.text('Choisissez la difficulté'), findsNothing);
+  });
+
+  testWidgets('dismisses difficulty dialog without starting a game', (
+    tester,
+  ) async {
+    final navigation = _FakeHomeNavigation();
+
+    await tester.pumpWidget(
+      buildTestApp(hasSavedGame: false, navigation: navigation),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Nouvelle partie'));
+    await tester.pumpAndSettle();
+    await tester.tapAt(const Offset(10, 10));
+    await tester.pumpAndSettle();
+
+    expect(navigation.openedDifficulty, isNull);
+    expect(find.text('Choisissez la difficulté'), findsNothing);
+  });
+
+  testWidgets('disables resume after pop when saved game was cleared', (
+    tester,
+  ) async {
     final repository = FakeGameRepository()..hasSavedGame = true;
 
     final router = GoRouter(
@@ -83,9 +167,8 @@ void main() {
         ),
         GoRoute(
           path: GameRoutes.path,
-          builder: (context, state) => const Scaffold(
-            body: Center(child: Text('Game screen')),
-          ),
+          builder: (context, state) =>
+              const Scaffold(body: Center(child: Text('Game screen'))),
         ),
       ],
     );

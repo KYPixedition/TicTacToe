@@ -19,7 +19,7 @@ final class GameNotifierProvider
   /// Manages game screen state and user commands.
   GameNotifierProvider._({
     required GameNotifierFamily super.from,
-    required GameEntryMode super.argument,
+    required GameEntryIntent super.argument,
   }) : super(
          retry: null,
          name: r'gameNotifierProvider',
@@ -61,7 +61,7 @@ final class GameNotifierProvider
   }
 }
 
-String _$gameNotifierHash() => r'ee4ab037d7107d4c6f69438781adeb71ebe17d0d';
+String _$gameNotifierHash() => r'6775e3c5098560b3669d78a57a97fc065d0b4b2c';
 
 /// Manages game screen state and user commands.
 
@@ -72,7 +72,7 @@ final class GameNotifierFamily extends $Family
           GameState,
           GameState,
           GameState,
-          GameEntryMode
+          GameEntryIntent
         > {
   GameNotifierFamily._()
     : super(
@@ -85,8 +85,8 @@ final class GameNotifierFamily extends $Family
 
   /// Manages game screen state and user commands.
 
-  GameNotifierProvider call(GameEntryMode entryMode) =>
-      GameNotifierProvider._(argument: entryMode, from: this);
+  GameNotifierProvider call(GameEntryIntent entryIntent) =>
+      GameNotifierProvider._(argument: entryIntent, from: this);
 
   @override
   String toString() => r'gameNotifierProvider';
@@ -95,10 +95,10 @@ final class GameNotifierFamily extends $Family
 /// Manages game screen state and user commands.
 
 abstract class _$GameNotifier extends $Notifier<GameState> {
-  late final _$args = ref.$arg as GameEntryMode;
-  GameEntryMode get entryMode => _$args;
+  late final _$args = ref.$arg as GameEntryIntent;
+  GameEntryIntent get entryIntent => _$args;
 
-  GameState build(GameEntryMode entryMode);
+  GameState build(GameEntryIntent entryIntent);
   @$mustCallSuper
   @override
   WhenComplete runBuild() {

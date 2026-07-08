@@ -18,6 +18,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeResumeGame => 'Reprendre la partie';
 
   @override
+  String get difficultySelectionTitle => 'Choisissez la difficulté';
+
+  @override
+  String get difficultyEasy => 'Facile';
+
+  @override
+  String get difficultyMedium => 'Moyen';
+
+  @override
+  String get difficultyHard => 'Difficile';
+
+  @override
   String get gameBackToHome => 'Menu principal';
 
   @override

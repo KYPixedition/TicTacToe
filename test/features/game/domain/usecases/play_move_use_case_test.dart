@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:tictactoe/core/error/app_error.dart';
 import 'package:tictactoe/core/result/result.dart';
+import 'package:tictactoe/features/game/domain/entities/difficulty.dart';
 import 'package:tictactoe/features/game/domain/entities/game.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
@@ -11,7 +12,10 @@ void main() {
   const useCase = PlayMoveUseCase();
 
   test('applies valid move and switches turn to cpu', () {
-    final result = useCase.execute(game: Game.initial(), cellIndex: 0);
+    final result = useCase.execute(
+      game: Game.initial(difficulty: Difficulty.easy),
+      cellIndex: 0,
+    );
 
     final game = switch (result) {
       Success(:final value) => value,
@@ -24,7 +28,7 @@ void main() {
   });
 
   test('refuses move on occupied cell', () {
-    final initialGame = Game.initial().copyWith(
+    final initialGame = Game.initial(difficulty: Difficulty.easy).copyWith(
       board: <Player?>[
         Player.x,
         null,
@@ -63,6 +67,7 @@ void main() {
       ],
       status: GameStatus.playing,
       currentPlayer: Player.x,
+      difficulty: Difficulty.easy,
     );
 
     final result = useCase.execute(game: game, cellIndex: 2);
@@ -90,6 +95,7 @@ void main() {
       ],
       status: GameStatus.playing,
       currentPlayer: Player.x,
+      difficulty: Difficulty.easy,
     );
 
     final result = useCase.execute(game: game, cellIndex: 8);

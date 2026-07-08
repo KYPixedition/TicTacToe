@@ -59,4 +59,4 @@ final class PlayCpuMoveUseCaseProvider
 }
 
 String _$playCpuMoveUseCaseHash() =>
-    r'3bbaefaaf2758207bc7002d23d1a604b43526116';
+    r'4be8ed6c755ee8c8f60105bac180b59ae513971a';

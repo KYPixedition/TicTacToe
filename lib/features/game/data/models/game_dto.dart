@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'package:tictactoe/features/game/domain/entities/difficulty.dart';
 import 'package:tictactoe/features/game/domain/entities/game.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
@@ -13,6 +14,7 @@ class GameDto {
     required this.board,
     required this.status,
     required this.currentPlayer,
+    required this.difficulty,
   });
 
   factory GameDto.fromJson(Map<String, dynamic> json) =>
@@ -21,6 +23,7 @@ class GameDto {
   final List<String?> board;
   final String status;
   final String currentPlayer;
+  final String difficulty;
 
   Map<String, dynamic> toJson() => _$GameDtoToJson(this);
 
@@ -30,6 +33,7 @@ class GameDto {
       board: board.map(_parseCell).toList(),
       status: _parseStatus(status),
       currentPlayer: _parsePlayer(currentPlayer),
+      difficulty: _parseDifficulty(difficulty),
     );
   }
 
@@ -39,6 +43,7 @@ class GameDto {
       board: game.board.map(_playerToJson).toList(),
       status: game.status.name,
       currentPlayer: game.currentPlayer.name,
+      difficulty: game.difficulty.name,
     );
   }
 
@@ -65,6 +70,15 @@ class GameDto {
       'x' || 'X' => Player.x,
       'o' || 'O' => Player.o,
       _ => Player.x,
+    };
+  }
+
+  static Difficulty _parseDifficulty(String value) {
+    return switch (value) {
+      'easy' => Difficulty.easy,
+      'medium' => Difficulty.medium,
+      'hard' => Difficulty.hard,
+      _ => throw FormatException('Unknown difficulty value: $value'),
     };
   }
 

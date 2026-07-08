@@ -5,8 +5,9 @@ import 'package:tictactoe/core/error/app_error.dart';
 import 'package:tictactoe/core/result/result.dart';
 import 'package:tictactoe/features/game/di/game_navigation_provider.dart';
 import 'package:tictactoe/features/game/di/game_repository_provider.dart';
-import 'package:tictactoe/features/game/domain/entities/game_entry_mode.dart';
+import 'package:tictactoe/features/game/domain/entities/difficulty.dart';
 import 'package:tictactoe/features/game/domain/entities/game.dart';
+import 'package:tictactoe/features/game/domain/entities/game_entry_intent.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
 import 'package:tictactoe/features/game/domain/repositories/game_repository.dart';
@@ -14,6 +15,30 @@ import 'package:tictactoe/features/game/navigation/game_navigation.dart';
 import 'package:tictactoe/features/game/presentation/notifiers/game_notifier.dart';
 
 class MockGameNavigation extends Mock implements GameNavigation {}
+
+const GameEntryIntent _newGameIntent = GameEntryIntent.newGame(
+  difficulty: Difficulty.easy,
+);
+const GameEntryIntent _resumeIntent = GameEntryIntent.resume();
+
+Game _finishedHumanWinGame({Difficulty difficulty = Difficulty.easy}) {
+  return Game(
+    board: <Player?>[
+      Player.x,
+      Player.x,
+      Player.x,
+      Player.o,
+      Player.o,
+      null,
+      null,
+      null,
+      null,
+    ],
+    status: GameStatus.won,
+    currentPlayer: Player.x,
+    difficulty: difficulty,
+  );
+}
 
 final class FakeGameRepository implements GameRepository {
   int saveCalls = 0;
@@ -72,10 +97,10 @@ void main() {
 
   void keepGameNotifierAlive(
     ProviderContainer container, {
-    GameEntryMode entryMode = GameEntryMode.newGame,
+    GameEntryIntent entryIntent = _newGameIntent,
   }) {
     container.listen(
-      gameNotifierProvider(entryMode),
+      gameNotifierProvider(entryIntent),
       (_, _) {},
       fireImmediately: true,
     );
@@ -85,12 +110,13 @@ void main() {
     final container = createContainer();
     addTearDown(container.dispose);
 
-    final state = container.read(gameNotifierProvider(GameEntryMode.newGame));
+    final state = container.read(gameNotifierProvider(_newGameIntent));
 
     expect(state.game, isNotNull);
     expect(state.game?.board, List<Player?>.filled(9, null));
     expect(state.game?.currentPlayer, Player.x);
     expect(state.game?.status, GameStatus.playing);
+    expect(state.game?.difficulty, Difficulty.easy);
     expect(state.error, isNull);
   });
 
@@ -109,14 +135,15 @@ void main() {
       ],
       status: GameStatus.playing,
       currentPlayer: Player.x,
+      difficulty: Difficulty.easy,
     );
 
     final container = createContainer();
     addTearDown(container.dispose);
-    keepGameNotifierAlive(container, entryMode: GameEntryMode.resume);
+    keepGameNotifierAlive(container, entryIntent: _resumeIntent);
 
     await pumpEventQueue();
-    final state = container.read(gameNotifierProvider(GameEntryMode.resume));
+    final state = container.read(gameNotifierProvider(_resumeIntent));
 
     expect(state.game, isNotNull);
     expect(state.game?.board[0], Player.x);
@@ -143,14 +170,15 @@ void main() {
         ],
         status: GameStatus.playing,
         currentPlayer: Player.x,
+        difficulty: Difficulty.easy,
       );
 
       final container = createContainer();
       addTearDown(container.dispose);
-      keepGameNotifierAlive(container, entryMode: GameEntryMode.resume);
+      keepGameNotifierAlive(container, entryIntent: _resumeIntent);
 
       await Future<void>.delayed(const Duration(milliseconds: 450));
-      final state = container.read(gameNotifierProvider(GameEntryMode.resume));
+      final state = container.read(gameNotifierProvider(_resumeIntent));
 
       expect(state.game, isNotNull);
       expect(state.game?.board[0], Player.x);
@@ -179,14 +207,15 @@ void main() {
         ],
         status: GameStatus.playing,
         currentPlayer: Player.o,
+        difficulty: Difficulty.easy,
       );
 
       final container = createContainer();
       addTearDown(container.dispose);
-      keepGameNotifierAlive(container, entryMode: GameEntryMode.resume);
+      keepGameNotifierAlive(container, entryIntent: _resumeIntent);
 
       await Future<void>.delayed(const Duration(milliseconds: 450));
-      final state = container.read(gameNotifierProvider(GameEntryMode.resume));
+      final state = container.read(gameNotifierProvider(_resumeIntent));
 
       expect(state.game, isNotNull);
       expect(state.game?.board.where((cell) => cell == Player.o).length, 1);
@@ -212,44 +241,40 @@ void main() {
       ],
       status: GameStatus.playing,
       currentPlayer: Player.x,
+      difficulty: Difficulty.easy,
     );
 
     final container = createContainer();
     addTearDown(container.dispose);
-    keepGameNotifierAlive(container, entryMode: GameEntryMode.resume);
+    keepGameNotifierAlive(container, entryIntent: _resumeIntent);
 
     await pumpEventQueue();
-    final state = container.read(gameNotifierProvider(GameEntryMode.resume));
+    final state = container.read(gameNotifierProvider(_resumeIntent));
 
     expect(state.game, isNotNull);
     verifyNever(mockNavigation.goHome());
   });
 
-  test('resume starts a new game when no valid save exists', () async {
+  test('resume navigates home when no valid save exists', () async {
     fakeGameRepository.savedGame = null;
 
     final container = createContainer();
     addTearDown(container.dispose);
-    keepGameNotifierAlive(container, entryMode: GameEntryMode.resume);
+    keepGameNotifierAlive(container, entryIntent: _resumeIntent);
 
     await pumpEventQueue();
-    final state = container.read(gameNotifierProvider(GameEntryMode.resume));
+    final state = container.read(gameNotifierProvider(_resumeIntent));
 
-    expect(state.game, isNotNull);
-    expect(state.game?.board, List<Player?>.filled(9, null));
-    expect(state.game?.status, GameStatus.playing);
-    expect(state.game?.currentPlayer, Player.x);
+    expect(state.game, isNull);
     expect(state.error, isNull);
-    verifyNever(mockNavigation.goHome());
+    verify(mockNavigation.goHome()).called(1);
   });
 
   test('goHome delegates to GameNavigation', () {
     final container = createContainer();
     addTearDown(container.dispose);
 
-    container
-        .read(gameNotifierProvider(GameEntryMode.newGame).notifier)
-        .goHome();
+    container.read(gameNotifierProvider(_newGameIntent).notifier).goHome();
 
     verify(mockNavigation.goHome()).called(1);
   });
@@ -259,16 +284,17 @@ void main() {
     addTearDown(container.dispose);
     keepGameNotifierAlive(container);
     final notifier = container.read(
-      gameNotifierProvider(GameEntryMode.newGame).notifier,
+      gameNotifierProvider(_newGameIntent).notifier,
     );
 
     await notifier.playMove(cellIndex: 0);
 
-    final updatedState = container.read(
-      gameNotifierProvider(GameEntryMode.newGame),
-    );
+    final updatedState = container.read(gameNotifierProvider(_newGameIntent));
     expect(updatedState.game?.board[0], Player.x);
-    expect(updatedState.game?.board[1], Player.o);
+    expect(
+      updatedState.game?.board.where((cell) => cell == Player.o).length,
+      1,
+    );
     expect(updatedState.game?.currentPlayer, Player.x);
     expect(updatedState.game?.status, GameStatus.playing);
     expect(fakeGameRepository.saveCalls, 2);
@@ -280,42 +306,54 @@ void main() {
     addTearDown(container.dispose);
     keepGameNotifierAlive(container);
     final notifier = container.read(
-      gameNotifierProvider(GameEntryMode.newGame).notifier,
+      gameNotifierProvider(_newGameIntent).notifier,
     );
 
     await notifier.playMove(cellIndex: 0);
     final saveCallsAfterValidMove = fakeGameRepository.saveCalls;
     final boardAfterValidMove = List<Player?>.from(
-      container.read(gameNotifierProvider(GameEntryMode.newGame)).game?.board ??
+      container.read(gameNotifierProvider(_newGameIntent)).game?.board ??
           List<Player?>.filled(9, null),
     );
 
     await notifier.playMove(cellIndex: 0);
 
-    final updatedState = container.read(
-      gameNotifierProvider(GameEntryMode.newGame),
-    );
+    final updatedState = container.read(gameNotifierProvider(_newGameIntent));
     expect(updatedState.game?.board, boardAfterValidMove);
     expect(fakeGameRepository.saveCalls, saveCallsAfterValidMove);
     expect(updatedState.error, isNull);
   });
 
   test('playMove does not trigger cpu when player wins', () async {
-    final container = createContainer();
-    addTearDown(container.dispose);
-    keepGameNotifierAlive(container);
-    final notifier = container.read(
-      gameNotifierProvider(GameEntryMode.newGame).notifier,
+    fakeGameRepository.savedGame = Game(
+      board: <Player?>[
+        Player.x,
+        Player.o,
+        null,
+        Player.x,
+        Player.o,
+        null,
+        null,
+        null,
+        null,
+      ],
+      status: GameStatus.playing,
+      currentPlayer: Player.x,
+      difficulty: Difficulty.easy,
     );
 
-    await notifier.playMove(cellIndex: 0);
-    await notifier.playMove(cellIndex: 3);
+    final container = createContainer();
+    addTearDown(container.dispose);
+    keepGameNotifierAlive(container, entryIntent: _resumeIntent);
+    await pumpEventQueue();
+    final notifier = container.read(
+      gameNotifierProvider(_resumeIntent).notifier,
+    );
+
     fakeGameRepository.saveCalls = 0;
     await notifier.playMove(cellIndex: 6);
 
-    final updatedState = container.read(
-      gameNotifierProvider(GameEntryMode.newGame),
-    );
+    final updatedState = container.read(gameNotifierProvider(_resumeIntent));
     expect(updatedState.game?.status, GameStatus.won);
     expect(updatedState.game?.board[0], Player.x);
     expect(updatedState.game?.board[3], Player.x);
@@ -344,24 +382,23 @@ void main() {
       ],
       status: GameStatus.playing,
       currentPlayer: Player.x,
+      difficulty: Difficulty.easy,
     );
 
     final container = createContainer();
     addTearDown(container.dispose);
-    keepGameNotifierAlive(container, entryMode: GameEntryMode.resume);
+    keepGameNotifierAlive(container, entryIntent: _resumeIntent);
     await pumpEventQueue();
 
     final notifier = container.read(
-      gameNotifierProvider(GameEntryMode.resume).notifier,
+      gameNotifierProvider(_resumeIntent).notifier,
     );
     fakeGameRepository.saveCalls = 0;
     fakeGameRepository.clearCalls = 0;
 
     await notifier.playMove(cellIndex: 8);
 
-    final updatedState = container.read(
-      gameNotifierProvider(GameEntryMode.resume),
-    );
+    final updatedState = container.read(gameNotifierProvider(_resumeIntent));
     expect(updatedState.game?.status, GameStatus.draw);
     expect(fakeGameRepository.saveCalls, 0);
     expect(fakeGameRepository.clearCalls, 1);
@@ -373,14 +410,12 @@ void main() {
     keepGameNotifierAlive(container);
     fakeGameRepository.shouldFailSave = true;
     final notifier = container.read(
-      gameNotifierProvider(GameEntryMode.newGame).notifier,
+      gameNotifierProvider(_newGameIntent).notifier,
     );
 
     await notifier.playMove(cellIndex: 0);
 
-    final updatedState = container.read(
-      gameNotifierProvider(GameEntryMode.newGame),
-    );
+    final updatedState = container.read(gameNotifierProvider(_newGameIntent));
     expect(updatedState.game?.board[0], isNull);
     expect(updatedState.game?.currentPlayer, Player.x);
     expect(updatedState.error, isA<StorageWriteError>());
@@ -391,128 +426,120 @@ void main() {
   test(
     'playAgain resets board and alternates starting player to cpu',
     () async {
+      fakeGameRepository.savedGame = _finishedHumanWinGame(
+        difficulty: Difficulty.hard,
+      );
       final container = createContainer();
       addTearDown(container.dispose);
-      keepGameNotifierAlive(container);
+      keepGameNotifierAlive(container, entryIntent: _resumeIntent);
+      await pumpEventQueue();
       final notifier = container.read(
-        gameNotifierProvider(GameEntryMode.newGame).notifier,
+        gameNotifierProvider(_resumeIntent).notifier,
       );
 
-      await notifier.playMove(cellIndex: 0);
-      await notifier.playMove(cellIndex: 3);
-      await notifier.playMove(cellIndex: 6);
-
-      final finishedState = container.read(
-        gameNotifierProvider(GameEntryMode.newGame),
-      );
+      final finishedState = container.read(gameNotifierProvider(_resumeIntent));
       expect(finishedState.game?.status, GameStatus.won);
       expect(finishedState.lastStartingPlayer, Player.x);
 
       await notifier.playAgain();
       await Future<void>.delayed(const Duration(milliseconds: 450));
 
-      final replayState = container.read(
-        gameNotifierProvider(GameEntryMode.newGame),
-      );
+      final replayState = container.read(gameNotifierProvider(_resumeIntent));
       expect(replayState.game?.status, GameStatus.playing);
-      expect(replayState.game?.board[0], Player.o);
+      expect(
+        replayState.game?.board.where((cell) => cell == Player.o).length,
+        1,
+      );
       expect(replayState.lastStartingPlayer, Player.o);
       expect(replayState.game?.currentPlayer, Player.x);
-      expect(fakeGameRepository.saveCalls, greaterThanOrEqualTo(4));
+      expect(replayState.game?.difficulty, Difficulty.hard);
+      expect(fakeGameRepository.saveCalls, greaterThanOrEqualTo(1));
     },
   );
 
-  test('playAgain alternates back to human after second replay', () async {
-    final container = createContainer();
-    addTearDown(container.dispose);
-    keepGameNotifierAlive(container);
-    final notifier = container.read(
-      gameNotifierProvider(GameEntryMode.newGame).notifier,
-    );
+  test(
+    'playAgain ignores second replay while replayed game is still playing',
+    () async {
+      fakeGameRepository.savedGame = _finishedHumanWinGame();
+      final container = createContainer();
+      addTearDown(container.dispose);
+      keepGameNotifierAlive(container, entryIntent: _resumeIntent);
+      await pumpEventQueue();
+      final notifier = container.read(
+        gameNotifierProvider(_resumeIntent).notifier,
+      );
 
-    await notifier.playMove(cellIndex: 0);
-    await notifier.playMove(cellIndex: 3);
-    await notifier.playMove(cellIndex: 6);
-    await notifier.playAgain();
-    await Future<void>.delayed(const Duration(milliseconds: 450));
+      await notifier.playAgain();
+      await Future<void>.delayed(const Duration(milliseconds: 450));
 
-    await notifier.playMove(cellIndex: 0);
-    await notifier.playMove(cellIndex: 3);
-    await notifier.playMove(cellIndex: 6);
-    final saveCallsBeforeSecondReplay = fakeGameRepository.saveCalls;
-    await notifier.playAgain();
+      final saveCallsBeforeSecondReplay = fakeGameRepository.saveCalls;
+      await notifier.playAgain();
 
-    final replayState = container.read(
-      gameNotifierProvider(GameEntryMode.newGame),
-    );
-    expect(replayState.lastStartingPlayer, Player.x);
-    expect(replayState.game?.currentPlayer, Player.x);
-    expect(replayState.game?.board, List<Player?>.filled(9, null));
-    expect(fakeGameRepository.saveCalls, saveCallsBeforeSecondReplay);
-  });
+      final replayState = container.read(gameNotifierProvider(_resumeIntent));
+      expect(replayState.lastStartingPlayer, Player.o);
+      expect(replayState.game?.status, GameStatus.playing);
+      expect(fakeGameRepository.saveCalls, saveCallsBeforeSecondReplay);
+    },
+  );
 
   test('playAgain is ignored while game is still playing', () async {
     final container = createContainer();
     addTearDown(container.dispose);
     keepGameNotifierAlive(container);
     final notifier = container.read(
-      gameNotifierProvider(GameEntryMode.newGame).notifier,
+      gameNotifierProvider(_newGameIntent).notifier,
     );
 
     await notifier.playMove(cellIndex: 0);
     final saveCallsBeforeReplay = fakeGameRepository.saveCalls;
     final boardBeforeReplay = List<Player?>.from(
-      container.read(gameNotifierProvider(GameEntryMode.newGame)).game?.board ??
+      container.read(gameNotifierProvider(_newGameIntent)).game?.board ??
           List<Player?>.filled(9, null),
     );
 
     await notifier.playAgain();
 
-    final state = container.read(gameNotifierProvider(GameEntryMode.newGame));
+    final state = container.read(gameNotifierProvider(_newGameIntent));
     expect(state.game?.board, boardBeforeReplay);
     expect(fakeGameRepository.saveCalls, saveCallsBeforeReplay);
   });
 
   test('playAgain reverts cpu move when save fails after cpu opens', () async {
+    fakeGameRepository.savedGame = _finishedHumanWinGame();
     final container = createContainer();
     addTearDown(container.dispose);
-    keepGameNotifierAlive(container);
+    keepGameNotifierAlive(container, entryIntent: _resumeIntent);
+    await pumpEventQueue();
     final notifier = container.read(
-      gameNotifierProvider(GameEntryMode.newGame).notifier,
+      gameNotifierProvider(_resumeIntent).notifier,
     );
-
-    await notifier.playMove(cellIndex: 0);
-    await notifier.playMove(cellIndex: 3);
-    await notifier.playMove(cellIndex: 6);
 
     fakeGameRepository.shouldFailSave = true;
     await notifier.playAgain();
     await Future<void>.delayed(const Duration(milliseconds: 450));
 
-    final state = container.read(gameNotifierProvider(GameEntryMode.newGame));
+    final state = container.read(gameNotifierProvider(_resumeIntent));
     expect(state.game?.board, List<Player?>.filled(9, null));
     expect(state.game?.currentPlayer, Player.o);
     expect(state.error, isA<StorageWriteError>());
   });
 
   test('playAgain ignores concurrent calls', () async {
+    fakeGameRepository.savedGame = _finishedHumanWinGame();
     final container = createContainer();
     addTearDown(container.dispose);
-    keepGameNotifierAlive(container);
+    keepGameNotifierAlive(container, entryIntent: _resumeIntent);
+    await pumpEventQueue();
     final notifier = container.read(
-      gameNotifierProvider(GameEntryMode.newGame).notifier,
+      gameNotifierProvider(_resumeIntent).notifier,
     );
-
-    await notifier.playMove(cellIndex: 0);
-    await notifier.playMove(cellIndex: 3);
-    await notifier.playMove(cellIndex: 6);
 
     final firstReplay = notifier.playAgain();
     await notifier.playAgain();
     await firstReplay;
     await Future<void>.delayed(const Duration(milliseconds: 450));
 
-    final state = container.read(gameNotifierProvider(GameEntryMode.newGame));
+    final state = container.read(gameNotifierProvider(_resumeIntent));
     expect(state.isPlayAgainInProgress, isFalse);
     expect(state.game?.status, GameStatus.playing);
     expect(state.game?.board.where((cell) => cell == Player.o).length, 1);
