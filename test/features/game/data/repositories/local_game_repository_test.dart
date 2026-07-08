@@ -5,6 +5,7 @@ import 'package:tictactoe/core/result/result.dart';
 import 'package:tictactoe/features/game/data/datasources/game_local_data_source.dart';
 import 'package:tictactoe/features/game/data/repositories/local_game_repository.dart';
 import 'package:tictactoe/features/game/domain/entities/game.dart';
+import 'package:tictactoe/features/game/domain/entities/player.dart';
 
 final class _FakeGameLocalDataSource implements GameLocalDataSource {
   _FakeGameLocalDataSource(this._value, {this.shouldFail = false});
@@ -12,6 +13,7 @@ final class _FakeGameLocalDataSource implements GameLocalDataSource {
   final String? _value;
   final bool shouldFail;
   String? lastWrittenValue;
+  int clearCalls = 0;
 
   @override
   Future<Result<String?>> readRawGameState() async {
@@ -25,6 +27,12 @@ final class _FakeGameLocalDataSource implements GameLocalDataSource {
   @override
   Future<Result<void>> writeRawGameState({required String value}) async {
     lastWrittenValue = value;
+    return const Result.success(null);
+  }
+
+  @override
+  Future<Result<void>> clearRawGameState() async {
+    clearCalls++;
     return const Result.success(null);
   }
 }
@@ -65,8 +73,8 @@ void main() {
   });
 
   test('returns true when saved game is valid and playing', () async {
-  const rawJson =
-      '{"board":["x",null,null,null,"o",null,null,null,null],"status":"playing","currentPlayer":"x"}';
+    const rawJson =
+        '{"board":["x",null,null,null,"o",null,null,null,null],"status":"playing","currentPlayer":"x"}';
     final repository = LocalGameRepository(
       dataSource: _FakeGameLocalDataSource(rawJson),
       talker: talker,
@@ -96,6 +104,42 @@ void main() {
     }, isFalse);
   });
 
+  test('loadSavedGame returns null when saved game is finished', () async {
+    const rawJson =
+        '{"board":["x","x","x",null,"o",null,null,"o",null],"status":"won","currentPlayer":"x"}';
+    final dataSource = _FakeGameLocalDataSource(rawJson);
+    final repository = LocalGameRepository(
+      dataSource: dataSource,
+      talker: talker,
+    );
+
+    final Result<Game?> result = await repository.loadSavedGame();
+
+    expect(switch (result) {
+      Success(:final value) => value,
+      Failure() => fail('expected success'),
+    }, isNull);
+    expect(dataSource.clearCalls, 1);
+  });
+
+  test('loadSavedGame clears storage when saved game is a draw', () async {
+    const rawJson =
+        '{"board":["x","o","x","x","o","o","o","x","o"],"status":"draw","currentPlayer":"x"}';
+    final dataSource = _FakeGameLocalDataSource(rawJson);
+    final repository = LocalGameRepository(
+      dataSource: dataSource,
+      talker: talker,
+    );
+
+    final Result<Game?> result = await repository.loadSavedGame();
+
+    expect(switch (result) {
+      Success(:final value) => value,
+      Failure() => fail('expected success'),
+    }, isNull);
+    expect(dataSource.clearCalls, 1);
+  });
+
   test('returns false when storage read fails', () async {
     final repository = LocalGameRepository(
       dataSource: _FakeGameLocalDataSource(null, shouldFail: true),
@@ -110,6 +154,41 @@ void main() {
     }, isFalse);
   });
 
+  test('loadSavedGame returns null when saved JSON is corrupted', () async {
+    final repository = LocalGameRepository(
+      dataSource: _FakeGameLocalDataSource('not-json'),
+      talker: talker,
+    );
+
+    final Result<Game?> result = await repository.loadSavedGame();
+
+    expect(switch (result) {
+      Success(:final value) => value,
+      Failure() => fail('expected success'),
+    }, isNull);
+  });
+
+  test('loadSavedGame returns game when save is valid', () async {
+    const rawJson =
+        '{"board":["x",null,null,null,"o",null,null,null,null],"status":"playing","currentPlayer":"x"}';
+    final repository = LocalGameRepository(
+      dataSource: _FakeGameLocalDataSource(rawJson),
+      talker: talker,
+    );
+
+    final Result<Game?> result = await repository.loadSavedGame();
+
+    final restoredGame = switch (result) {
+      Success(:final value) => value,
+      Failure() => fail('expected success'),
+    };
+
+    expect(restoredGame, isNotNull);
+    expect(restoredGame?.board[0], Player.x);
+    expect(restoredGame?.board[4], Player.o);
+    expect(restoredGame?.currentPlayer, Player.x);
+  });
+
   test('saveGame writes serialized game state', () async {
     final dataSource = _FakeGameLocalDataSource(null);
     final repository = LocalGameRepository(
@@ -122,5 +201,18 @@ void main() {
     expect(result, isA<Success<void>>());
     expect(dataSource.lastWrittenValue, isNotNull);
     expect(dataSource.lastWrittenValue, contains('"status":"playing"'));
+  });
+
+  test('clearSavedGame clears persisted state', () async {
+    final dataSource = _FakeGameLocalDataSource(null);
+    final repository = LocalGameRepository(
+      dataSource: dataSource,
+      talker: talker,
+    );
+
+    final result = await repository.clearSavedGame();
+
+    expect(result, isA<Success<void>>());
+    expect(dataSource.clearCalls, 1);
   });
 }

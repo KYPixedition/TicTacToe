@@ -10,10 +10,31 @@ Views render UI and forward user actions to the Notifier. No business logic, no 
 
 ## Widget type
 
-- **`ConsumerWidget`** (or `ConsumerStatefulWidget`) for views observing Riverpod.
+- **`HookConsumerWidget`** for views that observe Riverpod and need UI lifecycle hooks.
+- **`ConsumerWidget`** for views that only observe Riverpod (no local lifecycle).
 - **`StatelessWidget`** for extracted sub-widgets with no local state.
-- **`StatefulWidget`** only when local UI state is required (animation, scroll controller).
-- **No `flutter_hooks`** on this project — Riverpod covers app state; use `StatefulWidget` for rare local UI needs.
+- **`ConsumerStatefulWidget`** or **`StatefulWidget`** when hooks are not sufficient (rare).
+
+## flutter_hooks
+
+Use hooks for **local UI lifecycle and ephemeral state** (route visibility, animations, controllers, focus).
+
+- App / business state stays in **Notifiers** (Riverpod) — never in hooks.
+- Reusable hooks live in `lib/core/hooks/` (e.g. `useOnRouteVisible`).
+- Views with hooks use `HookConsumerWidget` from `hooks_riverpod`.
+
+```dart
+class HomeView extends HookConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    useOnRouteVisible(
+      () => ref.read(homeNotifierProvider.notifier).refreshResumeAvailability(),
+    );
+    final state = ref.watch(homeNotifierProvider);
+    // ...
+  }
+}
+```
 
 ## Extraction rules
 

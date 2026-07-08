@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:tictactoe/l10n/app_localizations.dart';
+
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:tictactoe/app/router.dart';
 import 'package:tictactoe/core/theme/app_theme.dart';
+import 'package:tictactoe/l10n/app_localizations.dart';
 
 /// Root application widget.
 class App extends ConsumerWidget {
@@ -12,7 +14,8 @@ class App extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
-      onGenerateTitle: (context) => AppLocalizations.of(context)?.homeTitle ?? 'Tic Tac Toe',
+      onGenerateTitle: (context) =>
+          AppLocalizations.of(context)?.homeTitle ?? 'Tic Tac Toe',
       theme: buildAppTheme(),
       localizationsDelegates: const [
         AppLocalizations.delegate,

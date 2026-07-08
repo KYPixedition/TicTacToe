@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:tictactoe/core/theme/app_color_palette.dart';
 import 'package:tictactoe/core/theme/app_theme_context.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
@@ -80,16 +81,15 @@ class _PlayerTurnCell extends StatelessWidget {
     final markStyle = context.typos.cellMark.copyWith(color: iconColor);
     final markWidth = markStyle.fontSize;
 
-    final activeBorderColor = isActive ? _activeBorderColor(colors) : colors.boardCellBorder;
+    final activeBorderColor = isActive
+        ? _activeBorderColor(colors)
+        : colors.boardCellBorder;
 
     return DecoratedBox(
       decoration: BoxDecoration(
         color: colors.boardCellBackground,
         borderRadius: context.radii.borderM,
-        border: Border.all(
-          color: activeBorderColor,
-          width: isActive ? 2 : 1,
-        ),
+        border: Border.all(color: activeBorderColor, width: isActive ? 2 : 1),
       ),
       child: Padding(
         padding: spacings.paddingS,
@@ -108,11 +108,7 @@ class _PlayerTurnCell extends StatelessWidget {
             spacings.gapHorizontalS,
             SizedBox(
               width: markWidth,
-              child: Text(
-                mark,
-                textAlign: TextAlign.center,
-                style: markStyle,
-              ),
+              child: Text(mark, textAlign: TextAlign.center, style: markStyle),
             ),
           ],
         ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_test/flutter_test.dart';
+
 import 'package:tictactoe/core/theme/app_theme.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
 import 'package:tictactoe/features/game/presentation/widgets/board_cell.dart';
@@ -14,10 +16,7 @@ void main() {
           body: SizedBox(
             width: 300,
             height: 300,
-            child: BoardGrid(
-              board: <Player?>[],
-              onCellTap: (_) {},
-            ),
+            child: BoardGrid(board: <Player?>[], onCellTap: (_) {}),
           ),
         ),
       ),

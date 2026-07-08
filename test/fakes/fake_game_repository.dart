@@ -7,6 +7,7 @@ import 'package:tictactoe/features/game/domain/repositories/game_repository.dart
 final class FakeGameRepository implements GameRepository {
   bool hasSavedGame = false;
   bool shouldFail = false;
+  Game? savedGame;
 
   @override
   Future<Result<bool>> hasValidSavedGame() async {
@@ -18,12 +19,33 @@ final class FakeGameRepository implements GameRepository {
   }
 
   @override
+  Future<Result<Game?>> loadSavedGame() async {
+    if (shouldFail) {
+      return const Result.failure(StorageReadError());
+    }
+
+    return Result.success(savedGame);
+  }
+
+  @override
   Future<Result<void>> saveGame({required Game game}) async {
     if (shouldFail) {
       return const Result.failure(StorageWriteError());
     }
 
     hasSavedGame = true;
+    savedGame = game;
+    return const Result.success(null);
+  }
+
+  @override
+  Future<Result<void>> clearSavedGame() async {
+    if (shouldFail) {
+      return const Result.failure(StorageWriteError());
+    }
+
+    hasSavedGame = false;
+    savedGame = null;
     return const Result.success(null);
   }
 }

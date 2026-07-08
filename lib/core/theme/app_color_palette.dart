@@ -73,13 +73,16 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
       onPrimary: onPrimary ?? this.onPrimary,
       surface: surface ?? this.surface,
       onSurface: onSurface ?? this.onSurface,
-      buttonDisabledBackground: buttonDisabledBackground ?? this.buttonDisabledBackground,
-      buttonDisabledForeground: buttonDisabledForeground ?? this.buttonDisabledForeground,
+      buttonDisabledBackground:
+          buttonDisabledBackground ?? this.buttonDisabledBackground,
+      buttonDisabledForeground:
+          buttonDisabledForeground ?? this.buttonDisabledForeground,
       buttonSecondaryBackground:
           buttonSecondaryBackground ?? this.buttonSecondaryBackground,
       buttonSecondaryForeground:
           buttonSecondaryForeground ?? this.buttonSecondaryForeground,
-      buttonSecondaryBorder: buttonSecondaryBorder ?? this.buttonSecondaryBorder,
+      buttonSecondaryBorder:
+          buttonSecondaryBorder ?? this.buttonSecondaryBorder,
       boardCellBorder: boardCellBorder ?? this.boardCellBorder,
       boardCellBackground: boardCellBackground ?? this.boardCellBackground,
       playerX: playerX ?? this.playerX,
@@ -100,26 +103,47 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
       surface: Color.lerp(surface, other.surface, t) ?? surface,
       onSurface: Color.lerp(onSurface, other.onSurface, t) ?? onSurface,
       buttonDisabledBackground:
-          Color.lerp(buttonDisabledBackground, other.buttonDisabledBackground, t) ??
+          Color.lerp(
+            buttonDisabledBackground,
+            other.buttonDisabledBackground,
+            t,
+          ) ??
           buttonDisabledBackground,
       buttonDisabledForeground:
-          Color.lerp(buttonDisabledForeground, other.buttonDisabledForeground, t) ??
+          Color.lerp(
+            buttonDisabledForeground,
+            other.buttonDisabledForeground,
+            t,
+          ) ??
           buttonDisabledForeground,
       buttonSecondaryBackground:
-          Color.lerp(buttonSecondaryBackground, other.buttonSecondaryBackground, t) ??
+          Color.lerp(
+            buttonSecondaryBackground,
+            other.buttonSecondaryBackground,
+            t,
+          ) ??
           buttonSecondaryBackground,
       buttonSecondaryForeground:
-          Color.lerp(buttonSecondaryForeground, other.buttonSecondaryForeground, t) ??
+          Color.lerp(
+            buttonSecondaryForeground,
+            other.buttonSecondaryForeground,
+            t,
+          ) ??
           buttonSecondaryForeground,
       buttonSecondaryBorder:
           Color.lerp(buttonSecondaryBorder, other.buttonSecondaryBorder, t) ??
           buttonSecondaryBorder,
-      boardCellBorder: Color.lerp(boardCellBorder, other.boardCellBorder, t) ?? boardCellBorder,
+      boardCellBorder:
+          Color.lerp(boardCellBorder, other.boardCellBorder, t) ??
+          boardCellBorder,
       boardCellBackground:
-          Color.lerp(boardCellBackground, other.boardCellBackground, t) ?? boardCellBackground,
+          Color.lerp(boardCellBackground, other.boardCellBackground, t) ??
+          boardCellBackground,
       playerX: Color.lerp(playerX, other.playerX, t) ?? playerX,
       playerO: Color.lerp(playerO, other.playerO, t) ?? playerO,
-      gameStatusPlaying: Color.lerp(gameStatusPlaying, other.gameStatusPlaying, t) ?? gameStatusPlaying,
+      gameStatusPlaying:
+          Color.lerp(gameStatusPlaying, other.gameStatusPlaying, t) ??
+          gameStatusPlaying,
     );
   }
 }

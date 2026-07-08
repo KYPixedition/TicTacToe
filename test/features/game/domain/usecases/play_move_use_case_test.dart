@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+
 import 'package:tictactoe/core/error/app_error.dart';
 import 'package:tictactoe/core/result/result.dart';
 import 'package:tictactoe/features/game/domain/entities/game.dart';
@@ -10,10 +11,7 @@ void main() {
   const useCase = PlayMoveUseCase();
 
   test('applies valid move and switches turn to cpu', () {
-    final result = useCase.execute(
-      game: Game.initial(),
-      cellIndex: 0,
-    );
+    final result = useCase.execute(game: Game.initial(), cellIndex: 0);
 
     final game = switch (result) {
       Success(:final value) => value,
@@ -40,10 +38,7 @@ void main() {
       ],
     );
 
-    final result = useCase.execute(
-      game: initialGame,
-      cellIndex: 0,
-    );
+    final result = useCase.execute(game: initialGame, cellIndex: 0);
 
     expect(result, isA<Failure<Game>>());
     final error = switch (result) {

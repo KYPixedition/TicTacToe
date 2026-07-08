@@ -39,8 +39,9 @@ Import order:
 3. Third-party packages
 4. Project imports
 
+Within each group, sort imports alphabetically by URI and keep exactly one blank line between groups.
 `package:` imports are mandatory for imports to `core/` and between layers within the same feature (e.g. `data` → `domain`).
-Relative imports are tolerated only within the same layer/folder.
+Relative imports are tolerated only within the same layer/folder and for test-only helpers under `test/`.
 Direct imports between two features are strictly forbidden (see Feature Isolation).
 
 ## Clean Code

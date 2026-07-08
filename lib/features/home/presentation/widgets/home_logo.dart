@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+
 import 'package:tictactoe/core/constants/app_assets.dart';
 import 'package:tictactoe/core/theme/app_theme_context.dart';
 
 /// Home screen logo displayed instead of the title text.
 class HomeLogo extends StatelessWidget {
-  const HomeLogo({
-    required this.semanticsLabel,
-    super.key,
-  });
+  const HomeLogo({required this.semanticsLabel, super.key});
 
   final String semanticsLabel;
 
@@ -31,7 +29,9 @@ class HomeLogo extends StatelessWidget {
               errorBuilder: (context, error, stackTrace) {
                 return Text(
                   semanticsLabel,
-                  style: context.typos.title.copyWith(color: context.colors.primary),
+                  style: context.typos.title.copyWith(
+                    color: context.colors.primary,
+                  ),
                   textAlign: TextAlign.center,
                 );
               },

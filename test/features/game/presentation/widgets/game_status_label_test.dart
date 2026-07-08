@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'package:tictactoe/core/theme/app_color_palette.dart';
 import 'package:tictactoe/core/theme/app_theme.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
@@ -37,10 +39,7 @@ void main() {
 
   testWidgets('shows your turn label when human can play', (tester) async {
     await tester.pumpWidget(
-      buildTestWidget(
-        status: GameStatus.playing,
-        currentPlayer: Player.x,
-      ),
+      buildTestWidget(status: GameStatus.playing, currentPlayer: Player.x),
     );
     await tester.pumpAndSettle();
 
@@ -51,22 +50,18 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      buildTestWidget(
-        status: GameStatus.playing,
-        currentPlayer: Player.o,
-      ),
+      buildTestWidget(status: GameStatus.playing, currentPlayer: Player.o),
     );
     await tester.pumpAndSettle();
 
     expect(find.text('En cours'), findsOneWidget);
   });
 
-  testWidgets('shows cpu thinking label while cpu is computing', (tester) async {
+  testWidgets('shows cpu thinking label while cpu is computing', (
+    tester,
+  ) async {
     await tester.pumpWidget(
-      buildTestWidget(
-        status: GameStatus.playing,
-        isCpuThinking: true,
-      ),
+      buildTestWidget(status: GameStatus.playing, isCpuThinking: true),
     );
     await tester.pumpAndSettle();
 
@@ -87,10 +82,7 @@ void main() {
 
   testWidgets('shows player won label when human wins', (tester) async {
     await tester.pumpWidget(
-      buildTestWidget(
-        status: GameStatus.won,
-        winner: Player.x,
-      ),
+      buildTestWidget(status: GameStatus.won, winner: Player.x),
     );
     await tester.pumpAndSettle();
 
@@ -99,10 +91,7 @@ void main() {
 
   testWidgets('uses player red accent when human wins', (tester) async {
     await tester.pumpWidget(
-      buildTestWidget(
-        status: GameStatus.won,
-        winner: Player.x,
-      ),
+      buildTestWidget(status: GameStatus.won, winner: Player.x),
     );
     await tester.pumpAndSettle();
 
@@ -116,10 +105,7 @@ void main() {
 
   testWidgets('shows cpu won label when cpu wins', (tester) async {
     await tester.pumpWidget(
-      buildTestWidget(
-        status: GameStatus.won,
-        winner: Player.o,
-      ),
+      buildTestWidget(status: GameStatus.won, winner: Player.o),
     );
     await tester.pumpAndSettle();
 
@@ -127,23 +113,20 @@ void main() {
   });
 
   testWidgets('shows draw label when game ends in a draw', (tester) async {
-    await tester.pumpWidget(
-      buildTestWidget(status: GameStatus.draw),
-    );
+    await tester.pumpWidget(buildTestWidget(status: GameStatus.draw));
     await tester.pumpAndSettle();
 
     expect(find.text('Égalité'), findsOneWidget);
   });
 
-  testWidgets('does not overflow on a narrow screen when cpu wins', (tester) async {
+  testWidgets('does not overflow on a narrow screen when cpu wins', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(320, 640));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
     await tester.pumpWidget(
-      buildTestWidget(
-        status: GameStatus.won,
-        winner: Player.o,
-      ),
+      buildTestWidget(status: GameStatus.won, winner: Player.o),
     );
     await tester.pumpAndSettle();
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:tictactoe/core/hooks/use_on_route_visible.dart';
 import 'package:tictactoe/core/theme/app_theme_context.dart';
 import 'package:tictactoe/core/widgets/app_button.dart';
 import 'package:tictactoe/features/home/presentation/notifiers/home_notifier.dart';
@@ -7,13 +8,17 @@ import 'package:tictactoe/features/home/presentation/widgets/home_logo.dart';
 import 'package:tictactoe/l10n/app_localizations.dart';
 
 /// Home screen with new game and resume actions.
-class HomeView extends ConsumerWidget {
+class HomeView extends HookConsumerWidget {
   const HomeView({super.key});
 
   static const double _buttonMinWidth = 240;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    useOnRouteVisible(
+      () => ref.read(homeNotifierProvider.notifier).refreshResumeAvailability(),
+    );
+
     final state = ref.watch(homeNotifierProvider);
     final l10n = AppLocalizations.of(context);
     final colors = context.colors;

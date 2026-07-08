@@ -61,10 +61,9 @@ class GameView extends ConsumerWidget {
                   ),
                 ),
               ] else ...[
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: _GameResumePlaceholder(entryMode: entryMode),
+                const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
                 ),
               ],
@@ -93,27 +92,6 @@ class GameView extends ConsumerWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-/// Placeholder shown when resume is not yet implemented.
-class _GameResumePlaceholder extends StatelessWidget {
-  const _GameResumePlaceholder({required this.entryMode});
-
-  final GameEntryMode entryMode;
-
-  @override
-  Widget build(BuildContext context) {
-    if (entryMode != GameEntryMode.resume) {
-      return const SizedBox.shrink();
-    }
-
-    final l10n = AppLocalizations.of(context);
-
-    return Text(
-      l10n?.gameEntryModeResume ?? '',
-      style: context.typos.body.copyWith(color: context.colors.onSurface),
     );
   }
 }

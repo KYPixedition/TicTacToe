@@ -287,15 +287,45 @@ void main() {
     expect(boardCellCount(tester, Player.o), 1);
   });
 
-  testWidgets('shows resume placeholder when entry mode is resume', (
-    tester,
-  ) async {
+  testWidgets('shows restored board when entry mode is resume', (tester) async {
+    fakeGameRepository.savedGame = Game(
+      board: <Player?>[
+        Player.x,
+        null,
+        null,
+        null,
+        Player.o,
+        null,
+        null,
+        null,
+        null,
+      ],
+      status: GameStatus.playing,
+      currentPlayer: Player.x,
+    );
+
     await tester.pumpWidget(
       buildTestApp(home: const GameView(entryMode: GameEntryMode.resume)),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Reprise de partie'), findsOneWidget);
-    expect(find.byType(BoardCell), findsNothing);
+    expect(find.byType(BoardCell), findsNWidgets(9));
+    expect(boardCellCount(tester, Player.x), 1);
+    expect(boardCellCount(tester, Player.o), 1);
   });
+
+  testWidgets('starts a new game in resume mode when save is missing', (tester) async {
+    fakeGameRepository.savedGame = null;
+
+    await tester.pumpWidget(
+      buildTestApp(home: const GameView(entryMode: GameEntryMode.resume)),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BoardCell), findsNWidgets(9));
+    expect(boardCellCount(tester, Player.x), 0);
+    expect(boardCellCount(tester, Player.o), 0);
+    expect(find.text('À votre tour'), findsOneWidget);
+  });
+
 }
