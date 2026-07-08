@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -17,6 +18,8 @@ class App extends ConsumerWidget {
       onGenerateTitle: (context) =>
           AppLocalizations.of(context)?.homeTitle ?? 'Tic Tac Toe',
       theme: buildAppTheme(),
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
