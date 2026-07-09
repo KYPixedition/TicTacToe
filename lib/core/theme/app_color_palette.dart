@@ -21,9 +21,19 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
     required this.buttonSecondaryBorder,
     required this.boardCellBorder,
     required this.boardCellBackground,
+    required this.boardGridLine,
+    required this.boardCellRecessedBackground,
+    required this.boardCellRecessedInsetShadow,
+    required this.boardCellRecessedInsetHighlight,
     required this.playerX,
+    required this.playerXMarkShadow,
+    required this.playerXMarkHighlight,
     required this.playerO,
+    required this.playerOMarkShadow,
+    required this.playerOMarkHighlight,
     required this.gameStatusPlaying,
+    required this.playerTurnActiveBorder,
+    required this.boardCellWinningGlow,
   });
 
   final Color primary;
@@ -44,9 +54,19 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
   final Color buttonSecondaryBorder;
   final Color boardCellBorder;
   final Color boardCellBackground;
+  final Color boardGridLine;
+  final Color boardCellRecessedBackground;
+  final Color boardCellRecessedInsetShadow;
+  final Color boardCellRecessedInsetHighlight;
   final Color playerX;
+  final Color playerXMarkShadow;
+  final Color playerXMarkHighlight;
   final Color playerO;
+  final Color playerOMarkShadow;
+  final Color playerOMarkHighlight;
   final Color gameStatusPlaying;
+  final Color playerTurnActiveBorder;
+  final Color boardCellWinningGlow;
 
   static const AppColorPalette light = AppColorPalette(
     primary: Color(0xFF64B5AD),
@@ -67,9 +87,19 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
     buttonSecondaryBorder: Color(0xFFFDB851),
     boardCellBorder: Color(0xFF9E9E9E),
     boardCellBackground: Color(0xFFFFFFFF),
+    boardGridLine: Color(0xFFDCD8F0),
+    boardCellRecessedBackground: Color(0xFF9490B0),
+    boardCellRecessedInsetShadow: Color(0xFF5A5675),
+    boardCellRecessedInsetHighlight: Color(0xFFD8D4EC),
     playerX: Color(0xFF64B5AD),
+    playerXMarkShadow: Color(0xFF2E6B64),
+    playerXMarkHighlight: Color(0xFF9FE0D8),
     playerO: Color(0xFFF17D52),
+    playerOMarkShadow: Color(0xFFB84E24),
+    playerOMarkHighlight: Color(0xFFFFD48A),
     gameStatusPlaying: Color(0xFF64B5AD),
+    playerTurnActiveBorder: Color(0xFF4ECDC4),
+    boardCellWinningGlow: Color(0xFFFDB851),
   );
 
   @override
@@ -92,9 +122,19 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
     Color? buttonSecondaryBorder,
     Color? boardCellBorder,
     Color? boardCellBackground,
+    Color? boardGridLine,
+    Color? boardCellRecessedBackground,
+    Color? boardCellRecessedInsetShadow,
+    Color? boardCellRecessedInsetHighlight,
     Color? playerX,
+    Color? playerXMarkShadow,
+    Color? playerXMarkHighlight,
     Color? playerO,
+    Color? playerOMarkShadow,
+    Color? playerOMarkHighlight,
     Color? gameStatusPlaying,
+    Color? playerTurnActiveBorder,
+    Color? boardCellWinningGlow,
   }) {
     return AppColorPalette(
       primary: primary ?? this.primary,
@@ -120,9 +160,24 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
           buttonSecondaryBorder ?? this.buttonSecondaryBorder,
       boardCellBorder: boardCellBorder ?? this.boardCellBorder,
       boardCellBackground: boardCellBackground ?? this.boardCellBackground,
+      boardGridLine: boardGridLine ?? this.boardGridLine,
+      boardCellRecessedBackground:
+          boardCellRecessedBackground ?? this.boardCellRecessedBackground,
+      boardCellRecessedInsetShadow:
+          boardCellRecessedInsetShadow ?? this.boardCellRecessedInsetShadow,
+      boardCellRecessedInsetHighlight:
+          boardCellRecessedInsetHighlight ??
+          this.boardCellRecessedInsetHighlight,
       playerX: playerX ?? this.playerX,
+      playerXMarkShadow: playerXMarkShadow ?? this.playerXMarkShadow,
+      playerXMarkHighlight: playerXMarkHighlight ?? this.playerXMarkHighlight,
       playerO: playerO ?? this.playerO,
+      playerOMarkShadow: playerOMarkShadow ?? this.playerOMarkShadow,
+      playerOMarkHighlight: playerOMarkHighlight ?? this.playerOMarkHighlight,
       gameStatusPlaying: gameStatusPlaying ?? this.gameStatusPlaying,
+      playerTurnActiveBorder:
+          playerTurnActiveBorder ?? this.playerTurnActiveBorder,
+      boardCellWinningGlow: boardCellWinningGlow ?? this.boardCellWinningGlow,
     );
   }
 
@@ -185,11 +240,51 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
       boardCellBackground:
           Color.lerp(boardCellBackground, other.boardCellBackground, t) ??
           boardCellBackground,
+      boardGridLine: Color.lerp(boardGridLine, other.boardGridLine, t) ?? boardGridLine,
+      boardCellRecessedBackground:
+          Color.lerp(
+            boardCellRecessedBackground,
+            other.boardCellRecessedBackground,
+            t,
+          ) ??
+          boardCellRecessedBackground,
+      boardCellRecessedInsetShadow:
+          Color.lerp(
+            boardCellRecessedInsetShadow,
+            other.boardCellRecessedInsetShadow,
+            t,
+          ) ??
+          boardCellRecessedInsetShadow,
+      boardCellRecessedInsetHighlight:
+          Color.lerp(
+            boardCellRecessedInsetHighlight,
+            other.boardCellRecessedInsetHighlight,
+            t,
+          ) ??
+          boardCellRecessedInsetHighlight,
       playerX: Color.lerp(playerX, other.playerX, t) ?? playerX,
+      playerXMarkShadow:
+          Color.lerp(playerXMarkShadow, other.playerXMarkShadow, t) ??
+          playerXMarkShadow,
+      playerXMarkHighlight:
+          Color.lerp(playerXMarkHighlight, other.playerXMarkHighlight, t) ??
+          playerXMarkHighlight,
       playerO: Color.lerp(playerO, other.playerO, t) ?? playerO,
+      playerOMarkShadow:
+          Color.lerp(playerOMarkShadow, other.playerOMarkShadow, t) ??
+          playerOMarkShadow,
+      playerOMarkHighlight:
+          Color.lerp(playerOMarkHighlight, other.playerOMarkHighlight, t) ??
+          playerOMarkHighlight,
       gameStatusPlaying:
           Color.lerp(gameStatusPlaying, other.gameStatusPlaying, t) ??
           gameStatusPlaying,
+      playerTurnActiveBorder:
+          Color.lerp(playerTurnActiveBorder, other.playerTurnActiveBorder, t) ??
+          playerTurnActiveBorder,
+      boardCellWinningGlow:
+          Color.lerp(boardCellWinningGlow, other.boardCellWinningGlow, t) ??
+          boardCellWinningGlow,
     );
   }
 }

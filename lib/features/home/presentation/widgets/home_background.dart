@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:tictactoe/core/theme/app_theme_context.dart';
+import 'package:tictactoe/core/widgets/app_gradient_background.dart';
 
 /// Gradient background for the home screen — light at the top, darker at the bottom.
 class HomeBackground extends StatelessWidget {
@@ -10,17 +10,6 @@ class HomeBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [colors.homeBackgroundStart, colors.homeBackgroundEnd],
-        ),
-      ),
-      child: child,
-    );
+    return AppGradientBackground(child: child);
   }
 }
