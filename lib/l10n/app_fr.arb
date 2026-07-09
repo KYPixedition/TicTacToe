@@ -12,7 +12,7 @@
   "@homeResumeGame": {
     "description": "Label for the resume game button"
   },
-  "difficultySelectionTitle": "Choisissez la difficulté",
+  "difficultySelectionTitle": "Niveau",
   "@difficultySelectionTitle": {
     "description": "Title of the dialog asking the player to choose a CPU difficulty"
   },

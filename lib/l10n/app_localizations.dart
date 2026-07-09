@@ -115,7 +115,7 @@ abstract class AppLocalizations {
   /// Title of the dialog asking the player to choose a CPU difficulty
   ///
   /// In fr, this message translates to:
-  /// **'Choisissez la difficulté'**
+  /// **'Niveau'**
   String get difficultySelectionTitle;
 
   /// Easy CPU difficulty label

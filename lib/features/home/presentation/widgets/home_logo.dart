@@ -9,34 +9,28 @@ class HomeLogo extends StatelessWidget {
 
   final String semanticsLabel;
 
-  static const double _widthFactor = 0.8;
+  static const double _maxHeight = 260;
 
   @override
   Widget build(BuildContext context) {
-    final spacings = context.spacings;
-
-    return Center(
-      child: FractionallySizedBox(
-        widthFactor: _widthFactor,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: spacings.huge),
-          child: Semantics(
-            label: semanticsLabel,
-            image: true,
-            child: Image.asset(
-              AppAssets.homeLogo,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return Text(
-                  semanticsLabel,
-                  style: context.typos.title.copyWith(
-                    color: context.colors.primary,
-                  ),
-                  textAlign: TextAlign.center,
-                );
-              },
-            ),
-          ),
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxHeight: _maxHeight),
+      child: Semantics(
+        label: semanticsLabel,
+        image: true,
+        child: Image.asset(
+          AppAssets.homeLogo,
+          width: double.infinity,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return Text(
+              semanticsLabel,
+              style: context.typos.title.copyWith(
+                color: context.colors.logoBorder,
+              ),
+              textAlign: TextAlign.center,
+            );
+          },
         ),
       ),
     );

@@ -4,9 +4,9 @@ import 'package:tictactoe/core/theme/app_color_palette.dart';
 import 'package:tictactoe/core/theme/app_theme_context.dart';
 import 'package:tictactoe/core/widgets/shadowed_container.dart';
 
-enum AppButtonVariant { primary, secondary }
+enum AppButtonVariant { primary, secondary, tertiary }
 
-/// Themed action button with primary and secondary visual variants.
+/// Themed action button with primary, secondary and tertiary visual variants.
 class AppButton extends StatelessWidget {
   const AppButton._({
     super.key,
@@ -19,7 +19,7 @@ class AppButton extends StatelessWidget {
     this.minWidth,
   });
 
-  /// Filled button with brand background and contrasting label.
+  /// Filled button with the primary brand color and contrasting label.
   const AppButton.primary({
     Key? key,
     required VoidCallback? onPressed,
@@ -39,7 +39,7 @@ class AppButton extends StatelessWidget {
          minWidth: minWidth,
        );
 
-  /// Outlined button with light background, brand label and border.
+  /// Filled button with the secondary brand color and contrasting label.
   const AppButton.secondary({
     Key? key,
     required VoidCallback? onPressed,
@@ -51,6 +51,26 @@ class AppButton extends StatelessWidget {
   }) : this._(
          key: key,
          variant: AppButtonVariant.secondary,
+         onPressed: onPressed,
+         icon: icon,
+         label: label,
+         size: size,
+         borderRadius: borderRadius,
+         minWidth: minWidth,
+       );
+
+  /// Filled button with the tertiary brand color and contrasting label.
+  const AppButton.tertiary({
+    Key? key,
+    required VoidCallback? onPressed,
+    IconData? icon,
+    String? label,
+    double size = 48,
+    double? borderRadius,
+    double? minWidth,
+  }) : this._(
+         key: key,
+         variant: AppButtonVariant.tertiary,
          onPressed: onPressed,
          icon: icon,
          label: label,
@@ -85,10 +105,7 @@ class AppButton extends StatelessWidget {
     final BorderRadius resolvedBorderRadius = customRadius != null
         ? BorderRadius.circular(customRadius)
         : radii.borderRound;
-    final shape = RoundedRectangleBorder(
-      borderRadius: resolvedBorderRadius,
-      side: style.borderSide,
-    );
+    final shape = RoundedRectangleBorder(borderRadius: resolvedBorderRadius);
     final hasLabel = label != null;
     final buttonStyle = ElevatedButton.styleFrom(
       backgroundColor: style.backgroundColor,
@@ -124,7 +141,7 @@ class AppButton extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              if (currentIcon != null) Icon(currentIcon, size: size * 0.4),
+              if (currentIcon != null) Icon(currentIcon, size: size * 0.5),
             ],
           ),
         ),
@@ -143,15 +160,11 @@ class AppButton extends StatelessWidget {
       );
     }
 
-    if (variant == AppButtonVariant.primary) {
-      return ShadowedContainer(
-        borderRadius: resolvedBorderRadius,
-        boxShadow: shadows.button,
-        child: button,
-      );
-    }
-
-    return button;
+    return ShadowedContainer(
+      borderRadius: resolvedBorderRadius,
+      boxShadow: shadows.button,
+      child: button,
+    );
   }
 
   static _AppButtonStyle _resolveStyle({
@@ -163,9 +176,6 @@ class AppButton extends StatelessWidget {
       return _AppButtonStyle(
         backgroundColor: colors.buttonDisabledBackground,
         foregroundColor: colors.buttonDisabledForeground,
-        borderSide: variant == AppButtonVariant.secondary
-            ? BorderSide(color: colors.buttonDisabledForeground)
-            : BorderSide.none,
       );
     }
 
@@ -175,9 +185,12 @@ class AppButton extends StatelessWidget {
         foregroundColor: colors.onPrimary,
       ),
       AppButtonVariant.secondary => _AppButtonStyle(
-        backgroundColor: colors.buttonSecondaryBackground,
-        foregroundColor: colors.buttonSecondaryForeground,
-        borderSide: BorderSide(color: colors.buttonSecondaryBorder),
+        backgroundColor: colors.secondary,
+        foregroundColor: colors.onSecondary,
+      ),
+      AppButtonVariant.tertiary => _AppButtonStyle(
+        backgroundColor: colors.tertiary,
+        foregroundColor: colors.onTertiary,
       ),
     };
   }
@@ -187,10 +200,8 @@ final class _AppButtonStyle {
   const _AppButtonStyle({
     required this.backgroundColor,
     required this.foregroundColor,
-    this.borderSide = BorderSide.none,
   });
 
   final Color backgroundColor;
   final Color foregroundColor;
-  final BorderSide borderSide;
 }
