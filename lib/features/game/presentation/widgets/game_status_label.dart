@@ -51,12 +51,12 @@ class GameStatusLabel extends StatelessWidget {
   }
 
   _StatusContent? _resolveContent({
-    required AppLocalizations? l10n,
+    required AppLocalizations l10n,
     required AppColorPalette colors,
   }) {
     if (isCpuThinking && status == GameStatus.playing) {
       return _forPlayer(
-        label: l10n?.gameStatusCpuThinking ?? '',
+        label: l10n.gameStatusCpuThinking,
         player: Player.o,
         colors: colors,
       );
@@ -64,31 +64,31 @@ class GameStatusLabel extends StatelessWidget {
 
     return switch (status) {
       GameStatus.playing when currentPlayer == Player.x => _forPlayer(
-        label: l10n?.gameStatusYourTurn ?? '',
+        label: l10n.gameStatusYourTurn,
         player: Player.x,
         colors: colors,
         accentColor: colors.gameStatusPlaying,
       ),
       GameStatus.playing => _forPlayer(
-        label: l10n?.gameStatusPlaying ?? '',
+        label: l10n.gameStatusPlaying,
         player: Player.o,
         colors: colors,
         accentColor: colors.gameStatusPlaying,
       ),
       GameStatus.draw => _StatusContent(
-        label: l10n?.gameStatusDraw ?? '',
+        label: l10n.gameStatusDraw,
         markDisplay: const _BothPlayersMark(),
         accentColor: colors.onSurface,
         backgroundColor: colors.surface,
       ),
       GameStatus.won => switch (winner) {
         Player.x => _forPlayer(
-          label: l10n?.gameStatusPlayerWon ?? '',
+          label: l10n.gameStatusPlayerWon,
           player: Player.x,
           colors: colors,
         ),
         Player.o => _forPlayer(
-          label: l10n?.gameStatusCpuWon ?? '',
+          label: l10n.gameStatusCpuWon,
           player: Player.o,
           colors: colors,
         ),

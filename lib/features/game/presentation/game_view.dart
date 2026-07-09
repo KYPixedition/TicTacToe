@@ -80,7 +80,7 @@ class GameView extends ConsumerWidget {
                                 )
                                 .playAgain()
                           : null,
-                      label: l10n?.gamePlayAgain ?? '',
+                      label: l10n.gamePlayAgain,
                       icon: Icons.replay_rounded,
                       minWidth: AppButton.defaultMinWidth,
                     ),
@@ -89,7 +89,7 @@ class GameView extends ConsumerWidget {
                   onPressed: () => ref
                       .read(gameNotifierProvider(entryIntent).notifier)
                       .goHome(),
-                  label: l10n?.gameBackToHome ?? '',
+                  label: l10n.gameBackToHome,
                   icon: Icons.home_rounded,
                   minWidth: AppButton.defaultMinWidth,
                 ),

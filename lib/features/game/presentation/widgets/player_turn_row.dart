@@ -25,14 +25,14 @@ class PlayerTurnRow extends StatelessWidget {
         spacings.gapHorizontalM,
         _PlayerTurnSide(
           player: Player.x,
-          label: l10n?.gamePlayerHuman ?? '',
+          label: l10n.gamePlayerHuman,
           labelStyle: labelStyle,
           markFirst: true,
         ),
         const Spacer(),
         _PlayerTurnSide(
           player: Player.o,
-          label: l10n?.gamePlayerCpu ?? '',
+          label: l10n.gamePlayerCpu,
           labelStyle: labelStyle,
           markFirst: false,
         ),
