@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'package:tictactoe/core/error/app_error.dart';
+import 'package:tictactoe/core/result/result.dart';
 import 'package:tictactoe/features/game/domain/entities/difficulty.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
@@ -84,11 +86,15 @@ abstract class Game with _$Game {
     return board[cellIndex] == null;
   }
 
-  /// Applies a human move at [cellIndex].
-  ///
-  /// Caller must ensure [canHumanPlayAt] is true.
-  Game applyHumanMove(int cellIndex) {
-    return _applyMove(cellIndex: cellIndex, player: Player.x);
+  /// Validates and applies a human move at [cellIndex].
+  Result<Game> applyHumanMove(int cellIndex) {
+    if (!canHumanPlayAt(cellIndex)) {
+      return const Result.failure(InvalidMoveError());
+    }
+
+    return Result.success(
+      _applyMove(cellIndex: cellIndex, player: Player.x),
+    );
   }
 
   /// Applies a CPU move at [cellIndex].
