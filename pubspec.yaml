@@ -37,12 +37,21 @@ dev_dependencies:
   json_serializable: ^6.14.0
   mockito: ^5.6.4
 
-# Regenerate launcher icons after changing app_icon.png:
+# Regenerate Android launcher icons after changing app icon assets:
 #   dart run flutter_launcher_icons
+#
+# Android adaptive icon rules:
+# - image_path: full composite (logo + #5857D6) — legacy icons + iOS reference
+# - adaptive_icon_background: solid #5857D6 (same as iOS app_icon corners)
+# - adaptive_icon_foreground: logo ONLY on transparent canvas (app_icon_foreground.png)
+# - adaptive_icon_foreground_inset: 16 (Android safe zone — do NOT use 0 with full app_icon)
 flutter_launcher_icons:
   android: true
   ios: true
   image_path: assets/images/app_icon.png
+  adaptive_icon_background: "#5857D6"
+  adaptive_icon_foreground: assets/images/app_icon_foreground.png
+  adaptive_icon_foreground_inset: 16
 
 flutter:
   uses-material-design: true
