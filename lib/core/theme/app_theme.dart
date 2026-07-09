@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:tictactoe/core/theme/app_border_radii.dart';
+import 'package:tictactoe/core/theme/app_radius.dart';
 import 'package:tictactoe/core/theme/app_color_palette.dart';
 import 'package:tictactoe/core/theme/app_shadows.dart';
 import 'package:tictactoe/core/theme/app_spacings.dart';
@@ -14,7 +14,7 @@ ThemeData buildAppTheme() {
       AppColorPalette.light,
       AppTypography.light,
       AppSpacings.standard,
-      AppBorderRadii.standard,
+      AppRadius.standard,
       AppShadows.standard,
     ],
   );

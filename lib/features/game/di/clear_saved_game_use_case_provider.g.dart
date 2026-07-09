@@ -8,12 +8,9 @@ part of 'clear_saved_game_use_case_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provides the [ClearSavedGameUseCase].
 
 @ProviderFor(clearSavedGameUseCase)
 final clearSavedGameUseCaseProvider = ClearSavedGameUseCaseProvider._();
-
-/// Provides the [ClearSavedGameUseCase].
 
 final class ClearSavedGameUseCaseProvider
     extends
@@ -23,7 +20,6 @@ final class ClearSavedGameUseCaseProvider
           ClearSavedGameUseCase
         >
     with $Provider<ClearSavedGameUseCase> {
-  /// Provides the [ClearSavedGameUseCase].
   ClearSavedGameUseCaseProvider._()
     : super(
         from: null,

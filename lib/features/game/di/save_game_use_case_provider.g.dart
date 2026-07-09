@@ -8,18 +8,14 @@ part of 'save_game_use_case_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provides the [SaveGameUseCase].
 
 @ProviderFor(saveGameUseCase)
 final saveGameUseCaseProvider = SaveGameUseCaseProvider._();
-
-/// Provides the [SaveGameUseCase].
 
 final class SaveGameUseCaseProvider
     extends
         $FunctionalProvider<SaveGameUseCase, SaveGameUseCase, SaveGameUseCase>
     with $Provider<SaveGameUseCase> {
-  /// Provides the [SaveGameUseCase].
   SaveGameUseCaseProvider._()
     : super(
         from: null,

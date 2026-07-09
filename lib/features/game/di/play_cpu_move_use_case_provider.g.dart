@@ -8,12 +8,9 @@ part of 'play_cpu_move_use_case_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provides the [PlayCpuMoveUseCase].
 
 @ProviderFor(playCpuMoveUseCase)
 final playCpuMoveUseCaseProvider = PlayCpuMoveUseCaseProvider._();
-
-/// Provides the [PlayCpuMoveUseCase].
 
 final class PlayCpuMoveUseCaseProvider
     extends
@@ -23,7 +20,6 @@ final class PlayCpuMoveUseCaseProvider
           PlayCpuMoveUseCase
         >
     with $Provider<PlayCpuMoveUseCase> {
-  /// Provides the [PlayCpuMoveUseCase].
   PlayCpuMoveUseCaseProvider._()
     : super(
         from: null,

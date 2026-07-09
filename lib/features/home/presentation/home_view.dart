@@ -10,7 +10,6 @@ import 'package:tictactoe/features/home/presentation/widgets/difficulty_selectio
 import 'package:tictactoe/features/home/presentation/widgets/home_logo.dart';
 import 'package:tictactoe/l10n/app_localizations.dart';
 
-/// Home screen with new game and resume actions.
 class HomeView extends HookConsumerWidget {
   const HomeView({super.key});
 

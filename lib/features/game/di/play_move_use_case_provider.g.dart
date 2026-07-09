@@ -8,18 +8,14 @@ part of 'play_move_use_case_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provides the [PlayMoveUseCase].
 
 @ProviderFor(playMoveUseCase)
 final playMoveUseCaseProvider = PlayMoveUseCaseProvider._();
-
-/// Provides the [PlayMoveUseCase].
 
 final class PlayMoveUseCaseProvider
     extends
         $FunctionalProvider<PlayMoveUseCase, PlayMoveUseCase, PlayMoveUseCase>
     with $Provider<PlayMoveUseCase> {
-  /// Provides the [PlayMoveUseCase].
   PlayMoveUseCaseProvider._()
     : super(
         from: null,

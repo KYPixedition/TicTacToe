@@ -2,9 +2,8 @@ import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/material.dart';
 
-/// Border radius tokens for the TicTacToe application.
-final class AppBorderRadii extends ThemeExtension<AppBorderRadii> {
-  const AppBorderRadii({
+final class AppRadius extends ThemeExtension<AppRadius> {
+  const AppRadius({
     required this.s,
     required this.m,
     required this.l,
@@ -16,7 +15,7 @@ final class AppBorderRadii extends ThemeExtension<AppBorderRadii> {
   final double l;
   final double round;
 
-  static const AppBorderRadii standard = AppBorderRadii(
+  static const AppRadius standard = AppRadius(
     s: 4,
     m: 12,
     l: 20,
@@ -39,13 +38,13 @@ final class AppBorderRadii extends ThemeExtension<AppBorderRadii> {
   BorderRadius get borderCell => borderM;
 
   @override
-  AppBorderRadii copyWith({
+  AppRadius copyWith({
     double? s,
     double? m,
     double? l,
     double? round,
   }) {
-    return AppBorderRadii(
+    return AppRadius(
       s: s ?? this.s,
       m: m ?? this.m,
       l: l ?? this.l,
@@ -54,12 +53,12 @@ final class AppBorderRadii extends ThemeExtension<AppBorderRadii> {
   }
 
   @override
-  AppBorderRadii lerp(ThemeExtension<AppBorderRadii>? other, double t) {
-    if (other is! AppBorderRadii) {
+  AppRadius lerp(ThemeExtension<AppRadius>? other, double t) {
+    if (other is! AppRadius) {
       return this;
     }
 
-    return AppBorderRadii(
+    return AppRadius(
       s: lerpDouble(s, other.s, t) ?? s,
       m: lerpDouble(m, other.m, t) ?? m,
       l: lerpDouble(l, other.l, t) ?? l,

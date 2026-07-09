@@ -8,7 +8,6 @@ import 'package:tictactoe/app/router.dart';
 import 'package:tictactoe/core/theme/app_theme.dart';
 import 'package:tictactoe/l10n/app_localizations.dart';
 
-/// Root application widget.
 class App extends ConsumerWidget {
   const App({super.key});
 

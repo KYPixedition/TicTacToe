@@ -8,12 +8,9 @@ part of 'start_game_use_case_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provides the [StartGameUseCase].
 
 @ProviderFor(startGameUseCase)
 final startGameUseCaseProvider = StartGameUseCaseProvider._();
-
-/// Provides the [StartGameUseCase].
 
 final class StartGameUseCaseProvider
     extends
@@ -23,7 +20,6 @@ final class StartGameUseCaseProvider
           StartGameUseCase
         >
     with $Provider<StartGameUseCase> {
-  /// Provides the [StartGameUseCase].
   StartGameUseCaseProvider._()
     : super(
         from: null,
