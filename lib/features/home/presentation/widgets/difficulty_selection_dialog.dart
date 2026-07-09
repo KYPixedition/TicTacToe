@@ -40,26 +40,26 @@ class DifficultySelectionDialog extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  l10n?.difficultySelectionTitle ?? '',
+                  l10n.difficultySelectionTitle,
                   textAlign: TextAlign.center,
                   style: typos.title.copyWith(color: colors.logoBorder),
                 ),
                 spacings.gapVerticalL,
                 AppButton.primary(
                   onPressed: () => Navigator.of(context).pop(Difficulty.easy),
-                  label: l10n?.difficultyEasy ?? '',
+                  label: l10n.difficultyEasy,
                   minWidth: AppButton.defaultMinWidth,
                 ),
                 spacings.gapVerticalM,
                 AppButton.secondary(
                   onPressed: () => Navigator.of(context).pop(Difficulty.medium),
-                  label: l10n?.difficultyMedium ?? '',
+                  label: l10n.difficultyMedium,
                   minWidth: AppButton.defaultMinWidth,
                 ),
                 spacings.gapVerticalM,
                 AppButton.tertiary(
                   onPressed: () => Navigator.of(context).pop(Difficulty.hard),
-                  label: l10n?.difficultyHard ?? '',
+                  label: l10n.difficultyHard,
                   minWidth: AppButton.defaultMinWidth,
                 ),
               ],

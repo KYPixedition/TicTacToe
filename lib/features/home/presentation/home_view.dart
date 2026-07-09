@@ -35,7 +35,7 @@ class HomeView extends HookConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 spacings.gapVerticalL,
-                HomeLogo(semanticsLabel: l10n?.homeTitle ?? ''),
+                HomeLogo(semanticsLabel: l10n.homeTitle),
                 const Spacer(),
                 AppButton.primary(
                   onPressed: () async {
@@ -50,7 +50,7 @@ class HomeView extends HookConsumerWidget {
                         .read(homeNotifierProvider.notifier)
                         .openNewGame(difficulty: difficulty);
                   },
-                  label: l10n?.homeNewGame ?? '',
+                  label: l10n.homeNewGame,
                   icon: Icons.add_circle_outlined,
                   minWidth: _buttonMinWidth,
                 ),
@@ -60,7 +60,7 @@ class HomeView extends HookConsumerWidget {
                     onPressed: () => ref
                         .read(homeNotifierProvider.notifier)
                         .openResumeGame(),
-                    label: l10n?.homeResumeGame ?? '',
+                    label: l10n.homeResumeGame,
                     icon: Icons.play_arrow_sharp,
                     minWidth: _buttonMinWidth,
                   ),

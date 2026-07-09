@@ -15,8 +15,7 @@ class App extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      onGenerateTitle: (context) =>
-          AppLocalizations.of(context)?.homeTitle ?? 'Tic Tac Toe',
+      onGenerateTitle: (context) => AppLocalizations.of(context).homeTitle,
       theme: buildAppTheme(),
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
