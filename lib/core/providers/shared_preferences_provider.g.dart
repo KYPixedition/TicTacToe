@@ -8,12 +8,12 @@ part of 'shared_preferences_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provides the [SharedPreferences] instance injected at bootstrap.
+/// Provides the [SharedPreferences] instance initialized at app startup.
 
 @ProviderFor(sharedPreferences)
 final sharedPreferencesProvider = SharedPreferencesProvider._();
 
-/// Provides the [SharedPreferences] instance injected at bootstrap.
+/// Provides the [SharedPreferences] instance initialized at app startup.
 
 final class SharedPreferencesProvider
     extends
@@ -23,7 +23,7 @@ final class SharedPreferencesProvider
           SharedPreferences
         >
     with $Provider<SharedPreferences> {
-  /// Provides the [SharedPreferences] instance injected at bootstrap.
+  /// Provides the [SharedPreferences] instance initialized at app startup.
   SharedPreferencesProvider._()
     : super(
         from: null,
@@ -58,4 +58,4 @@ final class SharedPreferencesProvider
   }
 }
 
-String _$sharedPreferencesHash() => r'ce89d92a08adfda64437a4e032e2c96d3fd9f9cb';
+String _$sharedPreferencesHash() => r'b10c0282672c93223ffc100f129eec8746b02b9a';

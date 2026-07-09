@@ -1,10 +1,12 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:tictactoe/core/providers/app_startup_provider.dart';
+
 part 'shared_preferences_provider.g.dart';
 
-/// Provides the [SharedPreferences] instance injected at bootstrap.
+/// Provides the [SharedPreferences] instance initialized at app startup.
 @riverpod
 SharedPreferences sharedPreferences(Ref ref) {
-  throw UnimplementedError('Override sharedPreferencesProvider in main()');
+  return ref.watch(appStartupProvider).requireValue;
 }

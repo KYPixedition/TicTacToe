@@ -142,14 +142,21 @@ import 'package:tictactoe/features/settings/presentation/notifiers/settings_noti
 
 ## Runtime providers
 
-External dependencies (persistence, env) declared as `@riverpod` with `UnimplementedError` by default, override mandatory in `main()` or in `ProviderScope(overrides: [...])` for tests.
+Async runtime dependencies (persistence, env) are initialized in `appStartupProvider` (`keepAlive: true`). Dependent sync providers read from startup via `ref.watch(appStartupProvider).requireValue`.
 
 ```dart
+@Riverpod(keepAlive: true)
+Future<SharedPreferences> appStartup(Ref ref) async {
+  return SharedPreferences.getInstance();
+}
+
 @riverpod
 SharedPreferences sharedPreferences(Ref ref) {
-  throw UnimplementedError('Override in main()');
+  return ref.watch(appStartupProvider).requireValue;
 }
 ```
+
+In tests, override `sharedPreferencesProvider` (or `appStartupProvider`) via `overrideWithValue` — no need to call `main()`.
 
 ## Testing
 
