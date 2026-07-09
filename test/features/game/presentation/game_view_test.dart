@@ -99,8 +99,6 @@ void main() {
     expect(find.text('À votre tour'), findsOneWidget);
     expect(find.text('Joueur'), findsOneWidget);
     expect(find.text('Bot AI'), findsOneWidget);
-    expect(find.text('X'), findsOneWidget);
-    expect(find.text('O'), findsOneWidget);
     expect(find.byType(BoardCell), findsNWidgets(9));
     expect(boardCellCount(tester, Player.x), 0);
     expect(boardCellCount(tester, Player.o), 0);
@@ -321,7 +319,15 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Rejouer'), findsNothing);
+    final Visibility playAgainVisibility = tester.widget<Visibility>(
+      find.ancestor(
+        of: find.text('Rejouer'),
+        matching: find.byType(Visibility),
+      ),
+    );
+
+    expect(playAgainVisibility.visible, isFalse);
+    expect(playAgainVisibility.maintainSize, isTrue);
   });
 
   testWidgets('play again resets the board', (tester) async {

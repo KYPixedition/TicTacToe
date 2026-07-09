@@ -173,6 +173,132 @@ void main() {
     expect(Game.statusForBoard(board), GameStatus.won);
   });
 
+  test('winningLineIndicesForBoard returns top row indices', () {
+    final board = <Player?>[
+      Player.x,
+      Player.x,
+      Player.x,
+      null,
+      Player.o,
+      null,
+      null,
+      null,
+      null,
+    ];
+
+    expect(Game.winningLineIndicesForBoard(board), <int>[0, 1, 2]);
+  });
+
+  test('winningLineIndicesForBoard returns middle column indices', () {
+    final board = <Player?>[
+      null,
+      Player.o,
+      null,
+      Player.x,
+      Player.o,
+      null,
+      Player.x,
+      Player.o,
+      null,
+    ];
+
+    expect(Game.winningLineIndicesForBoard(board), <int>[1, 4, 7]);
+  });
+
+  test('winningLineIndicesForBoard returns main diagonal indices', () {
+    final board = <Player?>[
+      Player.o,
+      Player.x,
+      null,
+      Player.x,
+      Player.o,
+      null,
+      null,
+      null,
+      Player.o,
+    ];
+
+    expect(Game.winningLineIndicesForBoard(board), <int>[0, 4, 8]);
+  });
+
+  test('winningLineIndicesForBoard returns anti-diagonal indices', () {
+    final board = <Player?>[
+      null,
+      Player.x,
+      Player.o,
+      Player.x,
+      Player.o,
+      null,
+      Player.o,
+      null,
+      Player.x,
+    ];
+
+    expect(Game.winningLineIndicesForBoard(board), <int>[2, 4, 6]);
+  });
+
+  test('winningLineIndicesForBoard returns null when there is no winner', () {
+    final board = <Player?>[
+      Player.x,
+      null,
+      Player.o,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+    ];
+
+    expect(Game.winningLineIndicesForBoard(board), isNull);
+  });
+
+  test('winningLineIndices is null when game is playing', () {
+    expect(Game.initial(difficulty: Difficulty.easy).winningLineIndices, isNull);
+  });
+
+  test('winningLineIndices is null when game is draw', () {
+    final game = Game(
+      board: <Player?>[
+        Player.x,
+        Player.o,
+        Player.x,
+        Player.x,
+        Player.o,
+        Player.o,
+        Player.o,
+        Player.x,
+        Player.x,
+      ],
+      status: GameStatus.draw,
+      currentPlayer: Player.x,
+      difficulty: Difficulty.easy,
+    );
+
+    expect(game.winningLineIndices, isNull);
+  });
+
+  test('winningLineIndices returns winning line when game is won', () {
+    final game = Game(
+      board: <Player?>[
+        Player.x,
+        Player.x,
+        Player.x,
+        null,
+        Player.o,
+        null,
+        null,
+        null,
+        null,
+      ],
+      status: GameStatus.won,
+      currentPlayer: Player.x,
+      difficulty: Difficulty.easy,
+    );
+
+    expect(game.winningLineIndices, <int>[0, 1, 2]);
+  });
+
   test('applyHumanMove updates board and switches turn to cpu', () {
     final updatedGame = Game.initial(
       difficulty: Difficulty.easy,

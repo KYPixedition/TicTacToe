@@ -98,19 +98,32 @@ abstract class Game with _$Game {
     return _applyMove(cellIndex: cellIndex, player: Player.o);
   }
 
-  /// Returns the winning player for [board], or null when there is no winner.
-  static Player? winnerForBoard(List<Player?> board) {
+  /// Returns the indices of the winning line for [board], or null when there is no winner.
+  static List<int>? winningLineIndicesForBoard(List<Player?> board) {
     for (final line in _winningLines) {
       final first = board[line[0]];
       if (first == null) {
         continue;
       }
       if (board[line[1]] == first && board[line[2]] == first) {
-        return first;
+        return line;
       }
     }
     return null;
   }
+
+  /// Returns the winning player for [board], or null when there is no winner.
+  static Player? winnerForBoard(List<Player?> board) {
+    final winningLine = winningLineIndicesForBoard(board);
+    if (winningLine == null) {
+      return null;
+    }
+    return board[winningLine[0]];
+  }
+
+  /// The indices of the winning line when [status] is [GameStatus.won].
+  List<int>? get winningLineIndices =>
+      status == GameStatus.won ? winningLineIndicesForBoard(board) : null;
 
   /// The winning player when [status] is [GameStatus.won].
   Player? get winner => status == GameStatus.won ? winnerForBoard(board) : null;

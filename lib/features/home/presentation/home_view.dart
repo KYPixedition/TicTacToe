@@ -3,10 +3,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:tictactoe/core/hooks/use_on_route_visible.dart';
 import 'package:tictactoe/core/theme/app_theme_context.dart';
 import 'package:tictactoe/core/widgets/app_button.dart';
+import 'package:tictactoe/core/widgets/app_gradient_background.dart';
 import 'package:tictactoe/features/game/domain/entities/difficulty.dart';
 import 'package:tictactoe/features/home/presentation/notifiers/home_notifier.dart';
 import 'package:tictactoe/features/home/presentation/widgets/difficulty_selection_dialog.dart';
-import 'package:tictactoe/features/home/presentation/widgets/home_background.dart';
 import 'package:tictactoe/features/home/presentation/widgets/home_logo.dart';
 import 'package:tictactoe/l10n/app_localizations.dart';
 
@@ -28,7 +28,7 @@ class HomeView extends HookConsumerWidget {
     final isResumeEnabled = state.isResumeEnabled;
 
     return Scaffold(
-      body: HomeBackground(
+      body: AppGradientBackground(
         child: SafeArea(
           child: Padding(
             padding: spacings.paddingL,

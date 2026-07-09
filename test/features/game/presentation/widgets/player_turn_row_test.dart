@@ -5,104 +5,96 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:tictactoe/core/theme/app_color_palette.dart';
 import 'package:tictactoe/core/theme/app_theme.dart';
-import 'package:tictactoe/features/game/domain/entities/game_status.dart';
-import 'package:tictactoe/features/game/domain/entities/player.dart';
+import 'package:tictactoe/features/game/presentation/widgets/board_mark_o.dart';
+import 'package:tictactoe/features/game/presentation/widgets/board_mark_x.dart';
 import 'package:tictactoe/features/game/presentation/widgets/player_turn_row.dart';
 import 'package:tictactoe/l10n/app_localizations.dart';
 
 void main() {
-  Widget buildTestWidget({
-    required Player currentPlayer,
-    required GameStatus status,
-  }) {
-    return MaterialApp(
-      theme: buildAppTheme(),
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: Scaffold(
-        body: PlayerTurnRow(currentPlayer: currentPlayer, status: status),
+  testWidgets('shows X mark, human label, cpu label and O mark', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const Scaffold(
+          body: Center(
+            child: SizedBox(
+              width: 400,
+              child: PlayerTurnRow(),
+            ),
+          ),
+        ),
       ),
     );
-  }
-
-  Future<BoxDecoration> humanCellDecoration(WidgetTester tester) async {
-    final humanIcon = find.byIcon(Icons.person);
-    final decoratedBox = find.ancestor(
-      of: humanIcon,
-      matching: find.byType(DecoratedBox),
-    );
-    final widget = tester.widget<DecoratedBox>(decoratedBox);
-    return widget.decoration as BoxDecoration;
-  }
-
-  Future<BoxDecoration> cpuCellDecoration(WidgetTester tester) async {
-    final cpuIcon = find.byIcon(Icons.smart_toy);
-    final decoratedBox = find.ancestor(
-      of: cpuIcon,
-      matching: find.byType(DecoratedBox),
-    );
-    final widget = tester.widget<DecoratedBox>(decoratedBox);
-    return widget.decoration as BoxDecoration;
-  }
-
-  testWidgets('highlights human player when it is their turn', (tester) async {
-    await tester.pumpWidget(
-      buildTestWidget(currentPlayer: Player.x, status: GameStatus.playing),
-    );
     await tester.pumpAndSettle();
 
-    final humanDecoration = await humanCellDecoration(tester);
-    final cpuDecoration = await cpuCellDecoration(tester);
-
-    expect((humanDecoration.border as Border).top.width, 2);
-    expect((cpuDecoration.border as Border).top.width, 1);
+    expect(find.byType(BoardMarkX), findsOneWidget);
+    expect(find.byType(BoardMarkO), findsOneWidget);
+    expect(find.text('Joueur'), findsOneWidget);
+    expect(find.text('Bot AI'), findsOneWidget);
   });
 
-  testWidgets('highlights cpu player when it is their turn', (tester) async {
+  testWidgets('shows player marks at icon size', (tester) async {
     await tester.pumpWidget(
-      buildTestWidget(currentPlayer: Player.o, status: GameStatus.playing),
+      MaterialApp(
+        theme: buildAppTheme(),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const Scaffold(
+          body: Center(child: PlayerTurnRow()),
+        ),
+      ),
     );
     await tester.pumpAndSettle();
 
-    final humanDecoration = await humanCellDecoration(tester);
-    final cpuDecoration = await cpuCellDecoration(tester);
-
-    expect((humanDecoration.border as Border).top.width, 1);
-    expect((cpuDecoration.border as Border).top.width, 2);
-    expect(
-      (cpuDecoration.border as Border).top.color,
-      AppColorPalette.light.playerO,
+    final Finder humanMarkHost = find.ancestor(
+      of: find.byType(BoardMarkX),
+      matching: find.byWidgetPredicate(
+        (widget) =>
+            widget is SizedBox &&
+            widget.width == PlayerTurnRow.playerIconSize &&
+            widget.height == PlayerTurnRow.playerIconSize,
+      ),
     );
+
+    expect(tester.getSize(humanMarkHost), const Size(32, 32));
   });
 
-  testWidgets('shows no active border when game is won', (tester) async {
+  testWidgets('uses larger white labels on the app bar row', (tester) async {
     await tester.pumpWidget(
-      buildTestWidget(currentPlayer: Player.x, status: GameStatus.won),
+      MaterialApp(
+        theme: buildAppTheme(),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const Scaffold(
+          body: Center(child: PlayerTurnRow()),
+        ),
+      ),
     );
     await tester.pumpAndSettle();
 
-    final humanDecoration = await humanCellDecoration(tester);
-    final cpuDecoration = await cpuCellDecoration(tester);
+    final Text humanLabel = tester.widget<Text>(find.text('Joueur'));
+    final Text cpuLabel = tester.widget<Text>(find.text('Bot AI'));
 
-    expect((humanDecoration.border as Border).top.width, 1);
-    expect((cpuDecoration.border as Border).top.width, 1);
-  });
-
-  testWidgets('shows no active border when game is draw', (tester) async {
-    await tester.pumpWidget(
-      buildTestWidget(currentPlayer: Player.o, status: GameStatus.draw),
-    );
-    await tester.pumpAndSettle();
-
-    final humanDecoration = await humanCellDecoration(tester);
-    final cpuDecoration = await cpuCellDecoration(tester);
-
-    expect((humanDecoration.border as Border).top.width, 1);
-    expect((cpuDecoration.border as Border).top.width, 1);
+    expect(humanLabel.style?.color, AppColorPalette.light.onPrimary);
+    expect(humanLabel.style?.fontSize, 20);
+    expect(cpuLabel.style?.color, AppColorPalette.light.onPrimary);
+    expect(cpuLabel.style?.fontSize, 20);
   });
 }
