@@ -8,17 +8,13 @@ part of 'home_navigation_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provides the [HomeNavigation] implementation.
 
 @ProviderFor(homeNavigation)
 final homeNavigationProvider = HomeNavigationProvider._();
 
-/// Provides the [HomeNavigation] implementation.
-
 final class HomeNavigationProvider
     extends $FunctionalProvider<HomeNavigation, HomeNavigation, HomeNavigation>
     with $Provider<HomeNavigation> {
-  /// Provides the [HomeNavigation] implementation.
   HomeNavigationProvider._()
     : super(
         from: null,

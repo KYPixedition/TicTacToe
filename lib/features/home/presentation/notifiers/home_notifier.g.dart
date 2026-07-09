@@ -8,15 +8,12 @@ part of 'home_notifier.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Manages home screen state and user commands.
 
 @ProviderFor(HomeNotifier)
 final homeNotifierProvider = HomeNotifierProvider._();
 
-/// Manages home screen state and user commands.
 final class HomeNotifierProvider
     extends $NotifierProvider<HomeNotifier, HomeState> {
-  /// Manages home screen state and user commands.
   HomeNotifierProvider._()
     : super(
         from: null,
@@ -45,8 +42,6 @@ final class HomeNotifierProvider
 }
 
 String _$homeNotifierHash() => r'798b193ef7643875302da898886030ae8ea78d78';
-
-/// Manages home screen state and user commands.
 
 abstract class _$HomeNotifier extends $Notifier<HomeState> {
   HomeState build();

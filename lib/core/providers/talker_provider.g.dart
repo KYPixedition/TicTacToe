@@ -8,16 +8,12 @@ part of 'talker_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provides the application [Talker] logger instance.
 
 @ProviderFor(talker)
 final talkerProvider = TalkerProvider._();
 
-/// Provides the application [Talker] logger instance.
-
 final class TalkerProvider extends $FunctionalProvider<Talker, Talker, Talker>
     with $Provider<Talker> {
-  /// Provides the application [Talker] logger instance.
   TalkerProvider._()
     : super(
         from: null,

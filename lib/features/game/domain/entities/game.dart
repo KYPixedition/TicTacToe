@@ -8,7 +8,6 @@ import 'package:tictactoe/features/game/domain/entities/player.dart';
 
 part 'game.freezed.dart';
 
-/// Domain entity representing a Tic-Tac-Toe game state.
 @freezed
 abstract class Game with _$Game {
   const factory Game({

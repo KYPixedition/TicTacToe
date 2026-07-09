@@ -7,7 +7,6 @@ import 'package:tictactoe/features/home/presentation/notifiers/home_state.dart';
 
 part 'home_notifier.g.dart';
 
-/// Manages home screen state and user commands.
 @Riverpod(name: 'homeNotifierProvider')
 class HomeNotifier extends _$HomeNotifier {
   int _resumeAvailabilityRequestId = 0;

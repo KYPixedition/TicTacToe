@@ -11,7 +11,6 @@ import 'package:tictactoe/features/game/presentation/widgets/game_app_bar.dart';
 import 'package:tictactoe/features/game/presentation/widgets/game_status_label.dart';
 import 'package:tictactoe/l10n/app_localizations.dart';
 
-/// Game screen for a new or resumed match.
 class GameView extends ConsumerWidget {
   const GameView({super.key, required this.entryIntent});
 

@@ -5,7 +5,6 @@ import 'package:tictactoe/core/widgets/app_button.dart';
 import 'package:tictactoe/features/game/domain/entities/difficulty.dart';
 import 'package:tictactoe/l10n/app_localizations.dart';
 
-/// Dialog asking the player to choose a CPU difficulty before a new game.
 class DifficultySelectionDialog extends StatelessWidget {
   const DifficultySelectionDialog({super.key});
 

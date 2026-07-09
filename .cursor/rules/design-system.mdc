@@ -16,7 +16,7 @@ lib/core/theme/
 ├── app_color_palette.dart      # AppColorPalette extends ThemeExtension
 ├── app_typography.dart         # AppTypography extends ThemeExtension
 ├── app_spacings.dart           # AppSpacings extends ThemeExtension
-├── app_border_radii.dart       # AppBorderRadii extends ThemeExtension
+├── app_radius.dart             # AppRadius extends ThemeExtension
 ├── app_shadows.dart            # AppShadows extends ThemeExtension
 └── app_theme_context.dart      # AppThemeContextX on BuildContext
 
@@ -31,7 +31,7 @@ ThemeData buildAppTheme() => ThemeData(
     AppColorPalette.light,
     AppTypography.light,
     AppSpacings.standard,
-    AppBorderRadii.standard,
+    AppRadius.standard,
     AppShadows.standard,
   ],
 );
@@ -49,8 +49,8 @@ extension AppThemeContextX on BuildContext {
   AppSpacings get spacings =>
       Theme.of(this).extension<AppSpacings>() ?? AppSpacings.standard;
 
-  AppBorderRadii get radii =>
-      Theme.of(this).extension<AppBorderRadii>() ?? AppBorderRadii.standard;
+  AppRadius get radii =>
+      Theme.of(this).extension<AppRadius>() ?? AppRadius.standard;
 
   AppTypography get typos =>
       Theme.of(this).extension<AppTypography>() ?? AppTypography.light;
@@ -126,14 +126,15 @@ Raw `double` tokens (`s`, `m`, `l`, `xl`) are reserved for custom layout math �
 
 ## Border radii
 
-`AppBorderRadii` exposes raw `double` tokens (`s`, `m`, `l`, `cell`) and derived `BorderRadius` getters:
+`AppRadius` exposes raw `double` tokens (`s`, `m`, `l`, `round`) and derived `BorderRadius` getters:
 
 | Token | Getter | Usage |
 | --- | --- | --- |
 | `s` | `borderS` | Small corners |
 | `m` | `borderM` | Buttons, cards |
 | `l` | `borderL` | Large surfaces |
-| `cell` | `borderCell` | Board cells |
+| `round` | `borderRound` | Pill shapes |
+| — | `borderCell` | Board cells (alias of `borderM`) |
 
 Prefer the getters in widgets — never call `BorderRadius.circular(context.radii.m)` directly:
 

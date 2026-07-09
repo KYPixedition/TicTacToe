@@ -8,12 +8,9 @@ part of 'game_local_data_source_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provides the local game data source.
 
 @ProviderFor(gameLocalDataSource)
 final gameLocalDataSourceProvider = GameLocalDataSourceProvider._();
-
-/// Provides the local game data source.
 
 final class GameLocalDataSourceProvider
     extends
@@ -23,7 +20,6 @@ final class GameLocalDataSourceProvider
           GameLocalDataSource
         >
     with $Provider<GameLocalDataSource> {
-  /// Provides the local game data source.
   GameLocalDataSourceProvider._()
     : super(
         from: null,

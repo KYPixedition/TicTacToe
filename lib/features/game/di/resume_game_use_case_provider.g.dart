@@ -8,12 +8,9 @@ part of 'resume_game_use_case_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provides the [ResumeGameUseCase].
 
 @ProviderFor(resumeGameUseCase)
 final resumeGameUseCaseProvider = ResumeGameUseCaseProvider._();
-
-/// Provides the [ResumeGameUseCase].
 
 final class ResumeGameUseCaseProvider
     extends
@@ -23,7 +20,6 @@ final class ResumeGameUseCaseProvider
           ResumeGameUseCase
         >
     with $Provider<ResumeGameUseCase> {
-  /// Provides the [ResumeGameUseCase].
   ResumeGameUseCaseProvider._()
     : super(
         from: null,

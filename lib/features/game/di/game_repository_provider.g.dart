@@ -8,17 +8,13 @@ part of 'game_repository_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provides the [GameRepository] implementation.
 
 @ProviderFor(gameRepository)
 final gameRepositoryProvider = GameRepositoryProvider._();
 
-/// Provides the [GameRepository] implementation.
-
 final class GameRepositoryProvider
     extends $FunctionalProvider<GameRepository, GameRepository, GameRepository>
     with $Provider<GameRepository> {
-  /// Provides the [GameRepository] implementation.
   GameRepositoryProvider._()
     : super(
         from: null,

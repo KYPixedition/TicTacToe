@@ -18,7 +18,6 @@ part 'game_notifier.g.dart';
 
 const Duration _cpuTurnDelay = Duration(milliseconds: 400);
 
-/// Manages game screen state and user commands.
 @Riverpod(name: 'gameNotifierProvider')
 class GameNotifier extends _$GameNotifier {
   @override

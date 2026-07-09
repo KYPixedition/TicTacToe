@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:tictactoe/core/theme/app_border_radii.dart';
+import 'package:tictactoe/core/theme/app_radius.dart';
 import 'package:tictactoe/core/theme/app_color_palette.dart';
 import 'package:tictactoe/core/theme/app_theme.dart';
 import 'package:tictactoe/core/widgets/shadowed_container.dart';
@@ -128,7 +128,7 @@ void main() {
     final decoration = await statusBannerDecoration(tester);
     final Text label = tester.widget<Text>(find.text('À votre tour'));
 
-    expect(decoration.borderRadius, AppBorderRadii.standard.borderM);
+    expect(decoration.borderRadius, AppRadius.standard.borderM);
     expect(label.style?.fontSize, 16);
   });
 
