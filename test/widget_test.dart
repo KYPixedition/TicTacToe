@@ -36,6 +36,6 @@ void main() {
 
     expect(find.bySemanticsLabel('Tic Tac Toe'), findsOneWidget);
     expect(find.text('Nouvelle partie'), findsOneWidget);
-    expect(find.text('Reprendre la partie'), findsOneWidget);
+    expect(find.text('Reprendre la partie'), findsNothing);
   });
 }

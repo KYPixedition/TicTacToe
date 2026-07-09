@@ -9,48 +9,64 @@ import 'package:tictactoe/l10n/app_localizations.dart';
 class DifficultySelectionDialog extends StatelessWidget {
   const DifficultySelectionDialog({super.key});
 
-  /// Shows the difficulty selection dialog.
-  static Future<Difficulty?> show(BuildContext context) {
-    return showDialog<Difficulty>(
-      context: context,
-      builder: (context) => const DifficultySelectionDialog(),
-    );
-  }
+  static const double _borderWidth = 4;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final colors = context.colors;
     final spacings = context.spacings;
+    final radii = context.radii;
+    final typos = context.typos;
 
-    return AlertDialog(
-      title: Text(
-        l10n?.difficultySelectionTitle ?? '',
-        textAlign: TextAlign.center,
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AppButton.primary(
-            onPressed: () => Navigator.of(context).pop(Difficulty.easy),
-            label: l10n?.difficultyEasy ?? '',
-            icon: Icons.sentiment_satisfied_alt_rounded,
-            minWidth: AppButton.defaultMinWidth,
+    return Padding(
+      padding: EdgeInsets.all(spacings.l),
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                colors.homeBackgroundStart,
+                colors.homeBackgroundEnd,
+              ],
+            ),
+            borderRadius: radii.borderL,
+            border: Border.all(color: colors.logoBorder, width: _borderWidth),
+            boxShadow: context.shadows.card,
           ),
-          spacings.gapVerticalM,
-          AppButton.primary(
-            onPressed: () => Navigator.of(context).pop(Difficulty.medium),
-            label: l10n?.difficultyMedium ?? '',
-            icon: Icons.psychology_alt_rounded,
-            minWidth: AppButton.defaultMinWidth,
+          padding: spacings.paddingL,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l10n?.difficultySelectionTitle ?? '',
+                textAlign: TextAlign.center,
+                style: typos.title.copyWith(color: colors.logoBorder),
+              ),
+              spacings.gapVerticalL,
+              AppButton.primary(
+                onPressed: () => Navigator.of(context).pop(Difficulty.easy),
+                label: l10n?.difficultyEasy ?? '',
+                minWidth: AppButton.defaultMinWidth,
+              ),
+              spacings.gapVerticalM,
+              AppButton.secondary(
+                onPressed: () => Navigator.of(context).pop(Difficulty.medium),
+                label: l10n?.difficultyMedium ?? '',
+                minWidth: AppButton.defaultMinWidth,
+              ),
+              spacings.gapVerticalM,
+              AppButton.tertiary(
+                onPressed: () => Navigator.of(context).pop(Difficulty.hard),
+                label: l10n?.difficultyHard ?? '',
+                minWidth: AppButton.defaultMinWidth,
+              ),
+            ],
           ),
-          spacings.gapVerticalM,
-          AppButton.primary(
-            onPressed: () => Navigator.of(context).pop(Difficulty.hard),
-            label: l10n?.difficultyHard ?? '',
-            icon: Icons.smart_toy_rounded,
-            minWidth: AppButton.defaultMinWidth,
-          ),
-        ],
+        ),
       ),
     );
   }

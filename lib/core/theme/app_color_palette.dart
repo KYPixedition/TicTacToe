@@ -5,8 +5,15 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
   const AppColorPalette({
     required this.primary,
     required this.onPrimary,
+    required this.secondary,
+    required this.onSecondary,
+    required this.tertiary,
+    required this.onTertiary,
+    required this.logoBorder,
     required this.surface,
     required this.onSurface,
+    required this.homeBackgroundStart,
+    required this.homeBackgroundEnd,
     required this.buttonDisabledBackground,
     required this.buttonDisabledForeground,
     required this.buttonSecondaryBackground,
@@ -21,8 +28,15 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
 
   final Color primary;
   final Color onPrimary;
+  final Color secondary;
+  final Color onSecondary;
+  final Color tertiary;
+  final Color onTertiary;
+  final Color logoBorder;
   final Color surface;
   final Color onSurface;
+  final Color homeBackgroundStart;
+  final Color homeBackgroundEnd;
   final Color buttonDisabledBackground;
   final Color buttonDisabledForeground;
   final Color buttonSecondaryBackground;
@@ -35,28 +49,42 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
   final Color gameStatusPlaying;
 
   static const AppColorPalette light = AppColorPalette(
-    primary: Color(0xFFE53935),
+    primary: Color(0xFF64B5AD),
     onPrimary: Color(0xFFFFFFFF),
-    surface: Color(0xFFFCE4EC),
+    secondary: Color(0xFFFDB851),
+    onSecondary: Color(0xFFFFFFFF),
+    tertiary: Color(0xFFE8938F),
+    onTertiary: Color(0xFFFFFFFF),
+    logoBorder: Color(0xFF4A4891),
+    surface: Color(0xFFE8E5F5),
     onSurface: Color(0xFF212121),
+    homeBackgroundStart: Color(0xFFD0CEE8),
+    homeBackgroundEnd: Color(0xFF72709A),
     buttonDisabledBackground: Color(0xFFBDBDBD),
     buttonDisabledForeground: Color(0xFF757575),
-    buttonSecondaryBackground: Color(0xFFFFFFFF),
-    buttonSecondaryForeground: Color(0xFFE53935),
-    buttonSecondaryBorder: Color(0xFFE53935),
+    buttonSecondaryBackground: Color(0xFFFDB851),
+    buttonSecondaryForeground: Color(0xFFFFFFFF),
+    buttonSecondaryBorder: Color(0xFFFDB851),
     boardCellBorder: Color(0xFF9E9E9E),
     boardCellBackground: Color(0xFFFFFFFF),
-    playerX: Color(0xFFE53935),
-    playerO: Color(0xFF1E88E5),
-    gameStatusPlaying: Color(0xFFE53935),
+    playerX: Color(0xFF64B5AD),
+    playerO: Color(0xFFF17D52),
+    gameStatusPlaying: Color(0xFF64B5AD),
   );
 
   @override
   AppColorPalette copyWith({
     Color? primary,
     Color? onPrimary,
+    Color? secondary,
+    Color? onSecondary,
+    Color? tertiary,
+    Color? onTertiary,
+    Color? logoBorder,
     Color? surface,
     Color? onSurface,
+    Color? homeBackgroundStart,
+    Color? homeBackgroundEnd,
     Color? buttonDisabledBackground,
     Color? buttonDisabledForeground,
     Color? buttonSecondaryBackground,
@@ -71,8 +99,15 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
     return AppColorPalette(
       primary: primary ?? this.primary,
       onPrimary: onPrimary ?? this.onPrimary,
+      secondary: secondary ?? this.secondary,
+      onSecondary: onSecondary ?? this.onSecondary,
+      tertiary: tertiary ?? this.tertiary,
+      onTertiary: onTertiary ?? this.onTertiary,
+      logoBorder: logoBorder ?? this.logoBorder,
       surface: surface ?? this.surface,
       onSurface: onSurface ?? this.onSurface,
+      homeBackgroundStart: homeBackgroundStart ?? this.homeBackgroundStart,
+      homeBackgroundEnd: homeBackgroundEnd ?? this.homeBackgroundEnd,
       buttonDisabledBackground:
           buttonDisabledBackground ?? this.buttonDisabledBackground,
       buttonDisabledForeground:
@@ -100,8 +135,19 @@ final class AppColorPalette extends ThemeExtension<AppColorPalette> {
     return AppColorPalette(
       primary: Color.lerp(primary, other.primary, t) ?? primary,
       onPrimary: Color.lerp(onPrimary, other.onPrimary, t) ?? onPrimary,
+      secondary: Color.lerp(secondary, other.secondary, t) ?? secondary,
+      onSecondary: Color.lerp(onSecondary, other.onSecondary, t) ?? onSecondary,
+      tertiary: Color.lerp(tertiary, other.tertiary, t) ?? tertiary,
+      onTertiary: Color.lerp(onTertiary, other.onTertiary, t) ?? onTertiary,
+      logoBorder: Color.lerp(logoBorder, other.logoBorder, t) ?? logoBorder,
       surface: Color.lerp(surface, other.surface, t) ?? surface,
       onSurface: Color.lerp(onSurface, other.onSurface, t) ?? onSurface,
+      homeBackgroundStart:
+          Color.lerp(homeBackgroundStart, other.homeBackgroundStart, t) ??
+          homeBackgroundStart,
+      homeBackgroundEnd:
+          Color.lerp(homeBackgroundEnd, other.homeBackgroundEnd, t) ??
+          homeBackgroundEnd,
       buttonDisabledBackground:
           Color.lerp(
             buttonDisabledBackground,
