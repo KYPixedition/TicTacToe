@@ -203,11 +203,14 @@ Exemple titre : `feat(game): play move on board (TIC-3)`
 - [ ] `git pull --rebase origin develop`
 - [ ] `git branch -d feature/…` — OK
 - [ ] `git push origin --delete feature/…` — OK | déjà absente
+- [ ] `fvm dart run build_runner build --delete-conflicting-outputs` — codegen local restauré
+- [ ] `dart analyze` — OK
 
 ### État final
 
 - Branche courante : `develop`
 - Synchronisation : `develop` à jour avec `origin/develop`
+- Fichiers générés présents en local, absents de `git status`
 
 ```
 
