@@ -9,7 +9,7 @@ Quand l'utilisateur envoie un **gate explicite**, exécuter **immédiatement** l
 
 | Gate utilisateur | Action obligatoire |
 | --- | --- |
-| `OK MERGE` (ou « PR mergée », « nettoie la branche ») | Lire `.cursor/skills/us-post-merge/SKILL.md` et exécuter **toute** la procédure Git (fetch, checkout develop, pull --rebase, `git branch -d`, `git push origin --delete`). Produire `## Cleanup Summary`. |
+| `OK MERGE` (ou « PR mergée », « nettoie la branche ») | Lire `.cursor/skills/us-post-merge/SKILL.md` et exécuter **toute** la procédure (fetch, checkout develop, pull --rebase, `git branch -d`, `git push origin --delete`, `build_runner`, `dart analyze`). Produire `## Cleanup Summary`. |
 | `OK review` | Passer à l'étape 5 (commit / push / `gh pr create`) si pas encore fait. |
 | `OK PR` | Commit, push, `gh pr create` selon `.cursor/skills/us-pipeline/SKILL.md` étape 5. |
 

@@ -3,12 +3,13 @@ name: us-post-merge
 description: >-
   Post-merge Git cleanup after a merged US PR. MANDATORY when user says OK MERGE:
   verify merge via gh pr view, checkout develop, fetch --prune, pull --rebase,
-  delete local and remote feature branch. Produce Cleanup Summary.
+  delete local and remote feature branch, regenerate gitignored codegen files via
+  build_runner. Produce Cleanup Summary.
 ---
 
 # Agent Post-Merge — nettoyage Git
 
-Rôle : **nettoyage Git uniquement** après merge confirmé — pas de code, pas de nouvelle PR.
+Rôle : **nettoyage Git + restauration codegen locale** après merge confirmé — pas de code métier, pas de nouvelle PR.
 
 ## Entrée
 
@@ -70,7 +71,19 @@ git branch -d feature/TIC-3-play-move
 git push origin --delete feature/TIC-3-play-move
 ```
 
-### 4. État final
+### 4. Régénérer les fichiers codegen (obligatoire)
+
+Les fichiers `*.g.dart`, `*.freezed.dart` et `*.mocks.dart` sont **gitignored**. Un `git pull` après merge peut les **supprimer du disque** — l'IDE affiche alors des erreurs tant qu'ils ne sont pas régénérés.
+
+```bash
+fvm dart run build_runner build --delete-conflicting-outputs
+```
+
+- Si `fvm` n'est pas disponible : `dart run build_runner build --delete-conflicting-outputs`.
+- Vérifier : `dart analyze` — doit passer sans erreur.
+- Les fichiers régénérés ne doivent **pas** apparaître dans `git status` (gitignored).
+
+### 5. État final
 
 ```bash
 git status -sb
@@ -78,7 +91,7 @@ git branch -vv
 
 ```
 
-Confirmer : sur `develop`, à jour avec `origin/develop`, branche feature absente en local (et remote si applicable).
+Confirmer : sur `develop`, à jour avec `origin/develop`, branche feature absente en local (et remote si applicable), codegen local présent et analyse OK.
 
 ## Règles de sécurité
 
