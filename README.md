@@ -123,7 +123,10 @@ cd TicTacToe
 ```bash
 fvm install
 fvm flutter pub get
+fvm dart run build_runner build --delete-conflicting-outputs
 ```
+
+See **Code Generation** below for when to rerun `build_runner`.
 
 ### Run Application
 
@@ -135,13 +138,9 @@ Device Preview is enabled automatically in debug mode to inspect layouts on diff
 
 ### Code Generation
 
-After changing `@riverpod`, `freezed`, `json_serializable`, or l10n sources, regenerate code with:
+Generated files (`.g.dart`, `.freezed.dart`, `.mocks.dart`) are gitignored — run the `build_runner` command from **Setup** after every clone.
 
-```bash
-fvm dart run build_runner build --delete-conflicting-outputs
-```
-
-Generated files (`.g.dart`, `.freezed.dart`) are committed to the repository.
+When you change `@riverpod`, `freezed`, `json_serializable`, or l10n sources, rerun that same command.
 
 ## Quality Checks
 
