@@ -62,38 +62,29 @@ void main() {
   }
 
   testWidgets(
-    'shows both buttons immediately with resume disabled on first frame',
+    'shows new game button immediately without resume on first frame',
     (tester) async {
       await tester.pumpWidget(buildTestApp(hasSavedGame: true));
 
       expect(find.text('Nouvelle partie'), findsOneWidget);
-      expect(find.text('Reprendre la partie'), findsOneWidget);
-
-      final resumeButton = tester.widget<ElevatedButton>(
-        find.widgetWithText(ElevatedButton, 'Reprendre la partie'),
-      );
-      expect(resumeButton.onPressed, isNull);
+      expect(find.text('Reprendre la partie'), findsNothing);
     },
   );
 
-  testWidgets('shows both buttons with resume disabled when no saved game', (
-    tester,
-  ) async {
+  testWidgets('hides resume button when no saved game', (tester) async {
     await tester.pumpWidget(buildTestApp(hasSavedGame: false));
     await tester.pumpAndSettle();
 
     expect(find.text('Nouvelle partie'), findsOneWidget);
-    expect(find.text('Reprendre la partie'), findsOneWidget);
-
-    final resumeButton = tester.widget<ElevatedButton>(
-      find.widgetWithText(ElevatedButton, 'Reprendre la partie'),
-    );
-    expect(resumeButton.onPressed, isNull);
+    expect(find.text('Reprendre la partie'), findsNothing);
   });
 
-  testWidgets('enables resume button when saved game exists', (tester) async {
+  testWidgets('shows resume button when saved game exists', (tester) async {
     await tester.pumpWidget(buildTestApp(hasSavedGame: true));
     await tester.pumpAndSettle();
+
+    expect(find.text('Nouvelle partie'), findsOneWidget);
+    expect(find.text('Reprendre la partie'), findsOneWidget);
 
     final resumeButton = tester.widget<ElevatedButton>(
       find.widgetWithText(ElevatedButton, 'Reprendre la partie'),
@@ -110,7 +101,7 @@ void main() {
     await tester.tap(find.text('Nouvelle partie'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Choisissez la difficulté'), findsOneWidget);
+    expect(find.text('Niveau'), findsOneWidget);
     expect(find.text('Facile'), findsOneWidget);
     expect(find.text('Moyen'), findsOneWidget);
     expect(find.text('Difficile'), findsOneWidget);
@@ -130,7 +121,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(navigation.openedDifficulty, Difficulty.hard);
-    expect(find.text('Choisissez la difficulté'), findsNothing);
+    expect(find.text('Niveau'), findsNothing);
   });
 
   testWidgets('dismisses difficulty dialog without starting a game', (
@@ -149,10 +140,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(navigation.openedDifficulty, isNull);
-    expect(find.text('Choisissez la difficulté'), findsNothing);
+    expect(find.text('Niveau'), findsNothing);
   });
 
-  testWidgets('disables resume after pop when saved game was cleared', (
+  testWidgets('hides resume after pop when saved game was cleared', (
     tester,
   ) async {
     final repository = FakeGameRepository()..hasSavedGame = true;
@@ -195,10 +186,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    var resumeButton = tester.widget<ElevatedButton>(
-      find.widgetWithText(ElevatedButton, 'Reprendre la partie'),
-    );
-    expect(resumeButton.onPressed, isNotNull);
+    expect(find.text('Reprendre la partie'), findsOneWidget);
 
     router.push(GameRoutes.path);
     await tester.pumpAndSettle();
@@ -208,9 +196,6 @@ void main() {
     router.pop();
     await tester.pumpAndSettle();
 
-    resumeButton = tester.widget<ElevatedButton>(
-      find.widgetWithText(ElevatedButton, 'Reprendre la partie'),
-    );
-    expect(resumeButton.onPressed, isNull);
+    expect(find.text('Reprendre la partie'), findsNothing);
   });
 }

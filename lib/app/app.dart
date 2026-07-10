@@ -8,15 +8,14 @@ import 'package:tictactoe/app/router.dart';
 import 'package:tictactoe/core/theme/app_theme.dart';
 import 'package:tictactoe/l10n/app_localizations.dart';
 
-/// Root application widget.
 class App extends ConsumerWidget {
   const App({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
-      onGenerateTitle: (context) =>
-          AppLocalizations.of(context)?.homeTitle ?? 'Tic Tac Toe',
+      debugShowCheckedModeBanner: false,
+      onGenerateTitle: (context) => AppLocalizations.of(context).homeTitle,
       theme: buildAppTheme(),
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,

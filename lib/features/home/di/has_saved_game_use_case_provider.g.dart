@@ -8,12 +8,9 @@ part of 'has_saved_game_use_case_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provides the [HasSavedGameUseCase].
 
 @ProviderFor(hasSavedGameUseCase)
 final hasSavedGameUseCaseProvider = HasSavedGameUseCaseProvider._();
-
-/// Provides the [HasSavedGameUseCase].
 
 final class HasSavedGameUseCaseProvider
     extends
@@ -23,7 +20,6 @@ final class HasSavedGameUseCaseProvider
           HasSavedGameUseCase
         >
     with $Provider<HasSavedGameUseCase> {
-  /// Provides the [HasSavedGameUseCase].
   HasSavedGameUseCaseProvider._()
     : super(
         from: null,

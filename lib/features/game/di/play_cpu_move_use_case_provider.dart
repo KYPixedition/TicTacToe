@@ -5,7 +5,6 @@ import 'package:tictactoe/features/game/domain/usecases/play_cpu_move_use_case.d
 
 part 'play_cpu_move_use_case_provider.g.dart';
 
-/// Provides the [PlayCpuMoveUseCase].
 @riverpod
 PlayCpuMoveUseCase playCpuMoveUseCase(Ref ref) {
   return const PlayCpuMoveUseCase(strategy: MinimaxAiStrategy());

@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 
 import 'package:tictactoe/core/theme/app_color_palette.dart';
 import 'package:tictactoe/core/theme/app_theme_context.dart';
+import 'package:tictactoe/core/widgets/shadowed_container.dart';
 import 'package:tictactoe/features/game/domain/entities/game_status.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
+import 'package:tictactoe/features/game/presentation/widgets/game_player_mark.dart';
 import 'package:tictactoe/l10n/app_localizations.dart';
 
-/// Displays the current game status below the player turn row.
+const double _statusMarkSize = 28;
+const double _playerBackgroundAlpha = 0.18;
+
+/// Displays the current game status below the game app bar.
 class GameStatusLabel extends StatelessWidget {
   const GameStatusLabel({
     super.key,
@@ -21,126 +26,201 @@ class GameStatusLabel extends StatelessWidget {
   final Player currentPlayer;
   final bool isCpuThinking;
 
-  static const double _iconSize = 28;
-  static const int _maxTextLines = 2;
-
-  @override
-  Widget build(BuildContext context) {
-    final presentation = _resolvePresentation(
-      l10n: AppLocalizations.of(context),
-      colors: context.colors,
-    );
-    final spacings = context.spacings;
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final maxBannerWidth = constraints.maxWidth;
-        final maxTextWidth =
-            maxBannerWidth - spacings.m * 2 - _iconSize - spacings.m;
-
-        return Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxBannerWidth),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: context.colors.boardCellBackground,
-                borderRadius: context.radii.borderM,
-                border: Border.all(color: presentation.accentColor, width: 2),
-                boxShadow: context.shadows.card,
-              ),
-              child: Padding(
-                padding: spacings.paddingM,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      presentation.icon,
-                      color: presentation.accentColor,
-                      size: _iconSize,
-                    ),
-                    spacings.gapHorizontalM,
-                    ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: maxTextWidth.clamp(0, maxBannerWidth),
-                      ),
-                      child: Text(
-                        presentation.label,
-                        style: context.typos.gameStatus.copyWith(
-                          color: presentation.accentColor,
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: _maxTextLines,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
+  /// Blends [playerColor] onto [baseColor] for status banner backgrounds.
+  static Color tintedPlayerBackground({
+    required Color playerColor,
+    required Color baseColor,
+  }) {
+    return Color.alphaBlend(
+      playerColor.withValues(alpha: _playerBackgroundAlpha),
+      baseColor,
     );
   }
 
-  _StatusPresentation _resolvePresentation({
-    required AppLocalizations? l10n,
+  @override
+  Widget build(BuildContext context) {
+    final _StatusContent? content = _resolveContent(
+      l10n: AppLocalizations.of(context),
+      colors: context.colors,
+    );
+    if (content == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Center(child: _GameStatusBanner(content: content));
+  }
+
+  _StatusContent? _resolveContent({
+    required AppLocalizations l10n,
     required AppColorPalette colors,
   }) {
     if (isCpuThinking && status == GameStatus.playing) {
-      return _StatusPresentation(
-        label: l10n?.gameStatusCpuThinking ?? '',
-        icon: Icons.smart_toy_rounded,
-        accentColor: colors.playerO,
+      return _forPlayer(
+        label: l10n.gameStatusCpuThinking,
+        player: Player.o,
+        colors: colors,
       );
     }
 
     return switch (status) {
-      GameStatus.playing when currentPlayer == Player.x => _StatusPresentation(
-        label: l10n?.gameStatusYourTurn ?? '',
-        icon: Icons.person_rounded,
+      GameStatus.playing when currentPlayer == Player.x => _forPlayer(
+        label: l10n.gameStatusYourTurn,
+        player: Player.x,
+        colors: colors,
         accentColor: colors.gameStatusPlaying,
       ),
-      GameStatus.playing => _StatusPresentation(
-        label: l10n?.gameStatusPlaying ?? '',
-        icon: Icons.sports_esports_rounded,
+      GameStatus.playing => _forPlayer(
+        label: l10n.gameStatusPlaying,
+        player: Player.o,
+        colors: colors,
         accentColor: colors.gameStatusPlaying,
       ),
-      GameStatus.draw => _StatusPresentation(
-        label: l10n?.gameStatusDraw ?? '',
-        icon: Icons.handshake_rounded,
+      GameStatus.draw => _StatusContent(
+        label: l10n.gameStatusDraw,
+        markDisplay: const _BothPlayersMark(),
         accentColor: colors.onSurface,
+        backgroundColor: colors.surface,
       ),
       GameStatus.won => switch (winner) {
-        Player.x => _StatusPresentation(
-          label: l10n?.gameStatusPlayerWon ?? '',
-          icon: Icons.emoji_events_rounded,
-          accentColor: colors.playerX,
+        Player.x => _forPlayer(
+          label: l10n.gameStatusPlayerWon,
+          player: Player.x,
+          colors: colors,
         ),
-        Player.o => _StatusPresentation(
-          label: l10n?.gameStatusCpuWon ?? '',
-          icon: Icons.smart_toy_rounded,
-          accentColor: colors.playerO,
+        Player.o => _forPlayer(
+          label: l10n.gameStatusCpuWon,
+          player: Player.o,
+          colors: colors,
         ),
-        null => _StatusPresentation(
-          label: '',
-          icon: Icons.help_outline_rounded,
-          accentColor: colors.boardCellBorder,
-        ),
+        null => null,
       },
+    };
+  }
+
+  _StatusContent _forPlayer({
+    required String label,
+    required Player player,
+    required AppColorPalette colors,
+    Color? accentColor,
+  }) {
+    final Color playerColor = switch (player) {
+      Player.x => colors.playerX,
+      Player.o => colors.playerO,
+    };
+
+    return _StatusContent(
+      label: label,
+      markDisplay: _SinglePlayerMark(player),
+      accentColor: accentColor ?? playerColor,
+      backgroundColor: tintedPlayerBackground(
+        playerColor: playerColor,
+        baseColor: colors.boardCellBackground,
+      ),
+    );
+  }
+}
+
+class _GameStatusBanner extends StatelessWidget {
+  const _GameStatusBanner({required this.content});
+
+  final _StatusContent content;
+
+  static const int _maxTextLines = 2;
+  static const double _borderWidth = 1.5;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacings = context.spacings;
+    final radii = context.radii;
+    final typos = context.typos;
+
+    return Semantics(
+      label: content.label,
+      child: ShadowedContainer(
+        borderRadius: radii.borderM,
+        boxShadow: context.shadows.card,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: content.backgroundColor,
+            borderRadius: radii.borderM,
+            border: Border.all(color: content.accentColor, width: _borderWidth),
+          ),
+          child: Padding(
+            padding: spacings.paddingS,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _GameStatusMarks(display: content.markDisplay),
+                spacings.gapHorizontalS,
+                Flexible(
+                  child: Text(
+                    content.label,
+                    style: typos.body.copyWith(
+                      color: content.accentColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: _maxTextLines,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GameStatusMarks extends StatelessWidget {
+  const _GameStatusMarks({required this.display});
+
+  final _StatusMarkDisplay display;
+
+  @override
+  Widget build(BuildContext context) {
+    return switch (display) {
+      _SinglePlayerMark(:final player) => GamePlayerMark(
+        player: player,
+        size: _statusMarkSize,
+      ),
+      _BothPlayersMark() => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const GamePlayerMark(player: Player.x, size: _statusMarkSize),
+          context.spacings.gapHorizontalS,
+          const GamePlayerMark(player: Player.o, size: _statusMarkSize),
+        ],
+      ),
     };
   }
 }
 
-final class _StatusPresentation {
-  const _StatusPresentation({
+sealed class _StatusMarkDisplay {
+  const _StatusMarkDisplay();
+}
+
+final class _SinglePlayerMark extends _StatusMarkDisplay {
+  const _SinglePlayerMark(this.player);
+
+  final Player player;
+}
+
+final class _BothPlayersMark extends _StatusMarkDisplay {
+  const _BothPlayersMark();
+}
+
+final class _StatusContent {
+  const _StatusContent({
     required this.label,
-    required this.icon,
+    required this.markDisplay,
     required this.accentColor,
+    required this.backgroundColor,
   });
 
   final String label;
-  final IconData icon;
+  final _StatusMarkDisplay markDisplay;
   final Color accentColor;
+  final Color backgroundColor;
 }

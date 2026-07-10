@@ -4,7 +4,6 @@ import 'package:tictactoe/features/game/domain/usecases/play_move_use_case.dart'
 
 part 'play_move_use_case_provider.g.dart';
 
-/// Provides the [PlayMoveUseCase].
 @riverpod
 PlayMoveUseCase playMoveUseCase(Ref ref) {
   return const PlayMoveUseCase();

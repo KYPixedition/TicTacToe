@@ -5,7 +5,6 @@ import 'package:tictactoe/features/home/domain/usecases/has_saved_game_use_case.
 
 part 'has_saved_game_use_case_provider.g.dart';
 
-/// Provides the [HasSavedGameUseCase].
 @riverpod
 HasSavedGameUseCase hasSavedGameUseCase(Ref ref) {
   return HasSavedGameUseCase(repository: ref.watch(gameRepositoryProvider));

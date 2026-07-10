@@ -6,7 +6,6 @@ import 'package:tictactoe/features/game/domain/repositories/game_repository.dart
 
 part 'game_repository_provider.g.dart';
 
-/// Provides the [GameRepository] implementation.
 @riverpod
 GameRepository gameRepository(Ref ref) {
   return LocalGameRepository(

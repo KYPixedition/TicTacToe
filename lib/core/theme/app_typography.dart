@@ -19,7 +19,7 @@ final class AppTypography extends ThemeExtension<AppTypography> {
   static const AppTypography light = AppTypography(
     title: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
     body: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-    button: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+    button: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
     cellMark: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
     gameStatus: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
   );

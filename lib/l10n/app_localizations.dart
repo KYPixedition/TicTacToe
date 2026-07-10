@@ -66,8 +66,8 @@ abstract class AppLocalizations {
 
   final String localeName;
 
-  static AppLocalizations? of(BuildContext context) {
-    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
@@ -115,7 +115,7 @@ abstract class AppLocalizations {
   /// Title of the dialog asking the player to choose a CPU difficulty
   ///
   /// In fr, this message translates to:
-  /// **'Choisissez la difficulté'**
+  /// **'Niveau'**
   String get difficultySelectionTitle;
 
   /// Easy CPU difficulty label

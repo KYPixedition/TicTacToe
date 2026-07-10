@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import 'package:tictactoe/core/theme/app_theme_context.dart';
 import 'package:tictactoe/features/game/domain/entities/game.dart';
 import 'package:tictactoe/features/game/domain/entities/player.dart';
 import 'package:tictactoe/features/game/presentation/widgets/board_cell.dart';
@@ -14,13 +13,16 @@ class BoardGrid extends StatelessWidget {
     required this.board,
     required this.onCellTap,
     this.isInteractionEnabled = true,
+    this.winningLineIndices,
   });
 
   final List<Player?> board;
   final ValueChanged<int> onCellTap;
   final bool isInteractionEnabled;
+  final List<int>? winningLineIndices;
 
   static const int _gridDimension = 3;
+  static const double _cellGap = 10;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class BoardGrid extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final gap = context.spacings.s;
+    final winningIndices = winningLineIndices;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -44,27 +46,27 @@ class BoardGrid extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        return Align(
-          alignment: Alignment.topCenter,
-          child: SizedBox(
-            width: side,
-            height: side,
-            child: GridView.count(
-              crossAxisCount: _gridDimension,
-              mainAxisSpacing: gap,
-              crossAxisSpacing: gap,
-              padding: EdgeInsets.zero,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                for (int index = 0; index < board.length; index++)
-                  GestureDetector(
-                    onTap: isInteractionEnabled && board[index] == null
-                        ? () => onCellTap(index)
-                        : null,
-                    child: BoardCell(player: board[index]),
+        return SizedBox(
+          width: side,
+          height: side,
+          child: GridView.count(
+            crossAxisCount: _gridDimension,
+            mainAxisSpacing: _cellGap,
+            crossAxisSpacing: _cellGap,
+            padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              for (int index = 0; index < board.length; index++)
+                GestureDetector(
+                  onTap: isInteractionEnabled && board[index] == null
+                      ? () => onCellTap(index)
+                      : null,
+                  child: BoardCell(
+                    player: board[index],
+                    isWinning: winningIndices?.contains(index) ?? false,
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         );
       },

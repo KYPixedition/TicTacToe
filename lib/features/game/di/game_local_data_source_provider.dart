@@ -5,7 +5,6 @@ import 'package:tictactoe/features/game/data/datasources/game_local_data_source.
 
 part 'game_local_data_source_provider.g.dart';
 
-/// Provides the local game data source.
 @riverpod
 GameLocalDataSource gameLocalDataSource(Ref ref) {
   return SharedPreferencesGameLocalDataSource(

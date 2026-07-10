@@ -8,17 +8,13 @@ part of 'game_navigation_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provides the [GameNavigation] implementation.
 
 @ProviderFor(gameNavigation)
 final gameNavigationProvider = GameNavigationProvider._();
 
-/// Provides the [GameNavigation] implementation.
-
 final class GameNavigationProvider
     extends $FunctionalProvider<GameNavigation, GameNavigation, GameNavigation>
     with $Provider<GameNavigation> {
-  /// Provides the [GameNavigation] implementation.
   GameNavigationProvider._()
     : super(
         from: null,

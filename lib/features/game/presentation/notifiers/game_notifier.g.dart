@@ -8,15 +8,12 @@ part of 'game_notifier.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Manages game screen state and user commands.
 
 @ProviderFor(GameNotifier)
 final gameNotifierProvider = GameNotifierFamily._();
 
-/// Manages game screen state and user commands.
 final class GameNotifierProvider
     extends $NotifierProvider<GameNotifier, GameState> {
-  /// Manages game screen state and user commands.
   GameNotifierProvider._({
     required GameNotifierFamily super.from,
     required GameEntryIntent super.argument,
@@ -61,9 +58,7 @@ final class GameNotifierProvider
   }
 }
 
-String _$gameNotifierHash() => r'6775e3c5098560b3669d78a57a97fc065d0b4b2c';
-
-/// Manages game screen state and user commands.
+String _$gameNotifierHash() => r'aae3508b6b3239b78eb7a90931d818dd9f936b68';
 
 final class GameNotifierFamily extends $Family
     with
@@ -83,16 +78,12 @@ final class GameNotifierFamily extends $Family
         isAutoDispose: true,
       );
 
-  /// Manages game screen state and user commands.
-
   GameNotifierProvider call(GameEntryIntent entryIntent) =>
       GameNotifierProvider._(argument: entryIntent, from: this);
 
   @override
   String toString() => r'gameNotifierProvider';
 }
-
-/// Manages game screen state and user commands.
 
 abstract class _$GameNotifier extends $Notifier<GameState> {
   late final _$args = ref.$arg as GameEntryIntent;

@@ -4,7 +4,6 @@ import 'package:tictactoe/features/game/domain/usecases/resume_game_use_case.dar
 
 part 'resume_game_use_case_provider.g.dart';
 
-/// Provides the [ResumeGameUseCase].
 @riverpod
 ResumeGameUseCase resumeGameUseCase(Ref ref) {
   return ResumeGameUseCase(
