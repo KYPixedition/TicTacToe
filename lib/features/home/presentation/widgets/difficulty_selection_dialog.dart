@@ -21,7 +21,10 @@ class DifficultySelectionDialog extends StatelessWidget {
     return Material(
       type: MaterialType.transparency,
       child: Padding(
-        padding: EdgeInsets.all(spacings.l),
+        padding: EdgeInsets.symmetric(
+          horizontal: spacings.l,
+          vertical: spacings.xxl,
+        ),
         child: Align(
           alignment: Alignment.bottomCenter,
           child: Container(

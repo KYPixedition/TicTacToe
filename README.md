@@ -8,21 +8,27 @@ show production-ready Flutter engineering practices: Clean Architecture, feature
 dependency inversion, testable business logic, Riverpod state management, GoRouter navigation, and
 maintainable code.
 
-![Home screen](docs/screenshots/home.png)
+## Screenshots
+
+| Home | Difficulty selection | Game over |
+| --- | --- | --- |
+| ![Home screen](docs/screenshots/home.png) | ![Difficulty selection dialog](docs/screenshots/difficulty_selection.png) | ![Player victory screen](docs/screenshots/game_win.png) |
 
 ## Features
 
 ### Current Features
 
-- Human vs CPU gameplay.
-- New game creation from the home screen.
-- Resume game entry point when a saved game exists.
-- Turn management for human and CPU players.
-- Win and draw detection.
-- End-of-game state handling inside the game screen.
-- Local game persistence with `SharedPreferences`.
-- CPU difficulty selection before starting a new game.
-- Invalid action prevention, including occupied cells, finished games, and CPU turns.
+- Human vs CPU gameplay with turn management and invalid action prevention.
+- Home screen with new game and resume game entry points.
+- CPU difficulty selection (Easy, Medium, Hard) before starting a new game.
+- Minimax-based CPU strategy with difficulty-dependent move quality.
+- Win and draw detection with winning line highlight on the board.
+- End-of-game overlay inside the game screen (play again or return to home).
+- Local game persistence with `SharedPreferences` and resume support.
+- French localization via Flutter gen-l10n.
+- ThemeExtension-based design system (colors, typography, spacing, radii, shadows).
+- Golden tests for key game screen states.
+- Device Preview enabled in debug mode for responsive layout checks.
 
 ## Technical Stack
 
@@ -32,10 +38,13 @@ maintainable code.
 | Language | Dart `^3.12.1` |
 | State management and DI | Riverpod 3 with code generation |
 | Navigation | GoRouter |
+| UI lifecycle hooks | flutter_hooks + hooks_riverpod |
 | Immutability | freezed |
 | Persistence | SharedPreferences |
 | Logging | Talker |
-| Tests | `flutter_test`, Mockito, manual fakes |
+| Localization | flutter_localizations + gen-l10n |
+| Debug tooling | device_preview (debug builds only) |
+| Tests | `flutter_test`, Mockito, manual fakes, golden tests |
 | Code generation | build_runner, riverpod_generator, freezed, json_serializable |
 
 ## Architecture
@@ -119,9 +128,11 @@ flutter pub get
 flutter run
 ```
 
+Device Preview is enabled automatically in debug mode to inspect layouts on different screen sizes.
+
 ### Code Generation
 
-After changing `@riverpod`, `freezed`, or `json_serializable` sources, regenerate code with:
+After changing `@riverpod`, `freezed`, `json_serializable`, or l10n sources, regenerate code with:
 
 ```bash
 dart run build_runner build --delete-conflicting-outputs
@@ -143,13 +154,21 @@ Run tests:
 flutter test
 ```
 
+Update golden files when intentional UI changes are made:
+
+```bash
+flutter test --update-goldens
+```
+
 ## Testing Strategy
 
 The test suite focuses on behavior that is valuable to keep stable:
 
 - Domain and use case tests for game rules, win detection, draw detection, invalid moves, and CPU moves.
+- Minimax strategy tests for difficulty-dependent CPU behavior.
 - Notifier tests for orchestration, persistence calls, state transitions, and navigation requests.
 - Widget tests for visible UI behavior and key user interactions.
+- Golden tests for the game screen end state (player victory).
 
 Business rules are tested independently from Flutter widgets whenever possible, which keeps failures easier
 to diagnose.
