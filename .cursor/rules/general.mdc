@@ -85,5 +85,5 @@ Never read, modify or expose secrets stored in configuration files.
 - `freezed`: entities and states with multiple fields (e.g. `GameState`, `Board`).
 - `json_serializable`: DTOs/models in the `data` layer requiring JSON serialization.
 - Manual sealed classes allowed for simple, stable cases (e.g. `Result<T>`, `AppError`).
-- Generated files (`.g.dart`, `.freezed.dart`) always committed.
+- Generated files (`.g.dart`, `.freezed.dart`, `.mocks.dart`) are gitignored — never committed; regenerate via `build_runner`.
 - Never manually write code that `build_runner` can generate.

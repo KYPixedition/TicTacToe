@@ -115,13 +115,13 @@ Commit (si demandé), push, `gh pr create` avec :
 
 Terminer par : « Mergez la PR sur GitHub, puis validez avec **OK MERGE** pour le nettoyage Git (étape 6). »
 
-## Étape 6 — Post-merge (nettoyage Git)
+## Étape 6 — Post-merge (nettoyage Git + codegen)
 
 **Uniquement après merge confirmé sur `develop` et gate « OK MERGE ».**
 
 1. Invoquer [us-post-merge](../us-post-merge/SKILL.md).
 2. Vérifier `gh pr view` → `state: MERGED`.
-3. Exécuter le cleanup Git.
+3. Exécuter le cleanup Git puis `build_runner` (fichiers générés gitignored — voir skill).
 4. Produire `## Cleanup Summary`.
 
 ## Reprise après interruption
