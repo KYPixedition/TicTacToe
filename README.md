@@ -106,8 +106,10 @@ domain code:
 
 ### Prerequisites
 
-- Flutter SDK compatible with Dart `^3.12.1`.
-- Git.
+- FVM
+- Git
+
+This project uses FVM to pin Flutter `3.44.4`, which includes Dart `3.12.2`.
 
 ### Clone Repository
 
@@ -116,16 +118,17 @@ git clone https://github.com/KYPixedition/TicTacToe.git
 cd TicTacToe
 ```
 
-### Install Dependencies
+### Setup
 
 ```bash
-flutter pub get
+fvm install
+fvm flutter pub get
 ```
 
 ### Run Application
 
 ```bash
-flutter run
+fvm flutter run
 ```
 
 Device Preview is enabled automatically in debug mode to inspect layouts on different screen sizes.
@@ -135,7 +138,7 @@ Device Preview is enabled automatically in debug mode to inspect layouts on diff
 After changing `@riverpod`, `freezed`, `json_serializable`, or l10n sources, regenerate code with:
 
 ```bash
-dart run build_runner build --delete-conflicting-outputs
+fvm dart run build_runner build --delete-conflicting-outputs
 ```
 
 Generated files (`.g.dart`, `.freezed.dart`) are committed to the repository.
@@ -145,19 +148,19 @@ Generated files (`.g.dart`, `.freezed.dart`) are committed to the repository.
 Run static analysis:
 
 ```bash
-dart analyze
+fvm dart analyze
 ```
 
 Run tests:
 
 ```bash
-flutter test
+fvm flutter test
 ```
 
 Update golden files when intentional UI changes are made:
 
 ```bash
-flutter test --update-goldens
+fvm flutter test --update-goldens
 ```
 
 ## Testing Strategy
