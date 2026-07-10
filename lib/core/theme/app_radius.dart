@@ -34,7 +34,7 @@ final class AppRadius extends ThemeExtension<AppRadius> {
   /// Fully rounded (pill) border radius token as [BorderRadius].
   BorderRadius get borderRound => BorderRadius.circular(round);
 
-  /// Board cell border radius — same as [borderM].
+  /// Board cell border radius - same as [borderM].
   BorderRadius get borderCell => borderM;
 
   @override
