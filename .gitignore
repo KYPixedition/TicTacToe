@@ -47,3 +47,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Code generation — never commit (regenerate via build_runner)
+*.g.dart
+*.freezed.dart
+*.mocks.dart

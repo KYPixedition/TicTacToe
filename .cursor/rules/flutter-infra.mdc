@@ -135,7 +135,8 @@ See `design-system.mdc` for ThemeExtension usage. Never hardcode colors or text 
 
 ## Generated files — never edit by hand
 
-- `*.g.dart`, `*.freezed.dart` — regenerate via `dart run build_runner build --delete-conflicting-outputs`
+- `*.g.dart`, `*.freezed.dart`, `*.mocks.dart` — gitignored, never committed
+- Regenerate via `dart run build_runner build --delete-conflicting-outputs` after clone and when sources change
 
 ## Secrets and config
 
